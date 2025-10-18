@@ -1,0 +1,12 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+
+# Virtual environments
+.venv/
+
+# uv build directories
+.uv/
+
+# OS files
+.DS_Store

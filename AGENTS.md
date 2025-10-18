@@ -75,3 +75,11 @@
 2. `uv pip install -e .[dev]`
 
 Future updates to this plan should timestamp new sections to preserve progress history.
+
+## Stage 1 – Configuration & Auxiliary Field (2025-10-18)
+- Documented detailed objectives in `docs/plan_stage1.md`, including validation rules and FFT conventions.
+- Implemented `config.load_parameters` with JSON/mapping support, derived quantities, and extensive validations (`src/worldline_qmc/config.py`).
+- Added lattice helpers for momentum grids and dispersion (`src/worldline_qmc/lattice.py`).
+- Implemented auxiliary-field sampling and Fourier caches with reproducible seeding (`src/worldline_qmc/auxiliary.py`).
+- Introduced targeted tests in `tests/test_config.py` and `tests/test_auxiliary.py` (all passing via `uv run pytest`).
+- Added `.gitignore` to drop Python bytecode artifacts and removed tracked `__pycache__/` directories.

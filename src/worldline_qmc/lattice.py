@@ -16,20 +16,29 @@ def momentum_grid(lattice_size: int) -> np.ndarray:
     """
     Return an array of momentum vectors compatible with periodic boundaries.
 
-    The actual grid construction is deferred to Stage 1.
+    The grid is ordered in the standard FFT layout corresponding to
+    `np.fft.fftfreq`, yielding components in the range [-π, π).
     """
 
-    raise NotImplementedError("Stage 1 provides the momentum grid generator.")
+    _validate_lattice_size(lattice_size)
+
+    k_components = 2.0 * np.pi * np.fft.fftfreq(lattice_size)
+    kx, ky = np.meshgrid(k_components, k_components, indexing="ij", copy=False)
+    return np.stack((kx, ky), axis=-1).reshape(-1, 2)
 
 
 def dispersion(momentum: np.ndarray, hopping: float) -> np.ndarray:
     """
     Compute epsilon_k = -2t (cos kx + cos ky) for the provided momentum grid.
-
-    Stage 1 will replace this placeholder implementation.
     """
 
-    raise NotImplementedError("Stage 1 provides the dispersion calculation.")
+    momentum = np.asarray(momentum, dtype=float)
+    if momentum.ndim != 2 or momentum.shape[1] != 2:
+        raise ValueError("Momentum array must have shape (N, 2).")
+
+    kx = momentum[:, 0]
+    ky = momentum[:, 1]
+    return -2.0 * hopping * (np.cos(kx) + np.cos(ky))
 
 
 def half_filling_particle_count(lattice_size: int) -> Tuple[int, int]:
@@ -40,3 +49,7 @@ def half_filling_particle_count(lattice_size: int) -> Tuple[int, int]:
     particles = lattice_size * lattice_size // 2
     return particles, particles
 
+
+def _validate_lattice_size(lattice_size: int) -> None:
+    if lattice_size <= 0:
+        raise ValueError("lattice_size must be positive.")
