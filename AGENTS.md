@@ -97,3 +97,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Implemented Metropolis sweep with momentum and permutation moves in `src/worldline_qmc/updates.py`, including note-referenced acceptance/phase increments.
 - Added deterministic Monte Carlo unit tests using stubbed transition amplitudes (`tests/test_updates.py`) and expanded permutation tests (`tests/test_worldline.py`).
 - All tests pass after the update via `uv run pytest` (21 tests).
+
+## Stage 4 – Measurement & Output (2025-10-18)
+- Recorded measurement plan in `docs/plan_stage4.md`, emphasizing `S(X)` statistics per `note.md`.
+- Implemented accumulator with variance diagnostics in `src/worldline_qmc/measurement.py`, including explicit references to the $S(X)$ definition.
+- Added measurement unit tests `tests/test_measurement.py` covering averaging, variance, and invalid inputs.
+- Test suite (`uv run pytest`) now includes 24 passing cases.
