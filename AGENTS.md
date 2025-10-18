@@ -103,3 +103,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Implemented accumulator with variance diagnostics in `src/worldline_qmc/measurement.py`, including explicit references to the $S(X)$ definition.
 - Added measurement unit tests `tests/test_measurement.py` covering averaging, variance, and invalid inputs.
 - Test suite (`uv run pytest`) now includes 24 passing cases.
+
+## Stage 5 – CLI & Simulation Orchestration (2025-10-18)
+- Documented CLI and orchestration goals in `docs/plan_stage5.md`.
+- Implemented full simulation loop in `src/worldline_qmc/simulation.py`, including initialization, scheduling, and diagnostics aligned with `note.md` formulas.
+- Added command-line interface in `src/worldline_qmc/cli.py` for running simulations and exporting JSON results.
+- Created integration tests `tests/test_simulation.py` and `tests/test_cli.py`; full suite (`uv run pytest`) passes with 27 tests.
