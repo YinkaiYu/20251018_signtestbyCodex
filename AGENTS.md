@@ -115,3 +115,13 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Added inline comments in `simulation.py` highlighting the correspondence with the product `w(X)=Π_l M_{l,σ}` and boundary terms.
 - Remaining optional improvements from `note.md` (importance-sampled momentum proposals, loop/"洗牌" updates) are not implemented yet; current sampler relies on uniform proposals only.
 - No extraneous generated files tracked; `.gitignore` covers caches. Repo ready for further extensions.
+
+## Stage 7 – Usage & Documentation Refresh (2025-10-19)
+- Expanded `README.md` with module-to-formula mapping, configuration details, programmatic usage example, and CLI/JSON output description.
+- Added `.gitignore` rule for `experiments/output/` to keep generated data out of version control.
+- Created template configuration `experiments/config_samples/quick_config.json` for quick CLI trials.
+
+## Stage 8 – Average Sign Experiments (2025-10-19)
+- Added Matplotlib dependency and created `experiments/run_average_sign.py` for parameter sweeps (`U`, `β`, `L`) with default settings matching the requested scenarios.
+- Script exports JSON datasets and PNG plots under `experiments/output/`; optional CLI overrides control sweep counts and parameter ranges.
+- Added regression tests (`tests/test_experiments.py`) ensuring the script produces outputs with minimal sweeps and uses `Agg` backend for headless environments.

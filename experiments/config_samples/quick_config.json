@@ -1,0 +1,10 @@
+{
+  "lattice_size": 2,
+  "beta": 1.0,
+  "delta_tau": 0.5,
+  "hopping": 1.0,
+  "interaction": 0.0,
+  "sweeps": 1,
+  "thermalization_sweeps": 0,
+  "seed": 1
+}

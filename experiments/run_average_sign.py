@@ -1,0 +1,178 @@
+"""Average sign parameter studies and visualization.
+
+This script runs the simulation for two scenarios:
+1. Fixed L=32, beta=32 while scanning the interaction strength U.
+2. Fixed U=20 while scanning beta and lattice size L.
+
+Results (JSON + plots) are stored under ``experiments/output`` by default.
+"""
+
+from __future__ import annotations
+
+import argparse
+import json
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable, List
+
+import matplotlib.pyplot as plt
+import numpy as np
+
+from worldline_qmc import auxiliary, config, simulation
+
+
+DEFAULT_OUTPUT_DIR = Path("experiments/output")
+DEFAULT_DELTA_TAU = 1.0 / 32.0
+DEFAULT_SWEEPS = 8
+DEFAULT_THERMALIZATION = 2
+DEFAULT_HOPPING = 1.0
+
+
+@dataclass
+class RunSpec:
+    lattice_size: int
+    beta: float
+    interaction: float
+    seed: int
+
+
+def build_parameters(spec: RunSpec, sweeps: int, thermalization: int) -> config.SimulationParameters:
+    payload = {
+        "lattice_size": spec.lattice_size,
+        "beta": spec.beta,
+        "delta_tau": DEFAULT_DELTA_TAU,
+        "hopping": DEFAULT_HOPPING,
+        "interaction": spec.interaction,
+        "sweeps": sweeps,
+        "thermalization_sweeps": thermalization,
+        "seed": spec.seed,
+    }
+    return config.load_parameters(payload)
+
+
+def run_experiment(specs: Iterable[RunSpec], sweeps: int, thermalization: int) -> List[dict]:
+    results: List[dict] = []
+    for spec in specs:
+        params = build_parameters(spec, sweeps, thermalization)
+        aux_field = auxiliary.generate_auxiliary_field(params)
+        result = simulation.run_simulation(params, aux_field)
+        results.append(
+            {
+                "lattice_size": spec.lattice_size,
+                "beta": spec.beta,
+                "interaction": spec.interaction,
+                "seed": spec.seed,
+                "measurements": result.measurements,
+                "variances": result.variances,
+                "diagnostics": result.diagnostics,
+                "samples": result.samples,
+            }
+        )
+    return results
+
+
+def plot_u_sweep(data: List[dict], output_path: Path) -> None:
+    interactions = [entry["interaction"] for entry in data]
+    avg_sign = [entry["measurements"]["abs"] for entry in data]
+    plt.figure(figsize=(6, 4))
+    plt.plot(interactions, avg_sign, marker="o")
+    plt.xlabel("Interaction U")
+    plt.ylabel("Average sign |S|")
+    plt.title("Average sign vs U (L=32, beta=32)")
+    plt.grid(True)
+    plt.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+
+def plot_beta_l_sweep(data: List[dict], output_path: Path) -> None:
+    # Group by lattice size and plot |S| vs beta for each L.
+    grouped: dict[int, list[tuple[float, float]]] = {}
+    for entry in data:
+        grouped.setdefault(entry["lattice_size"], []).append(
+            (entry["beta"], entry["measurements"]["abs"])
+        )
+    plt.figure(figsize=(6, 4))
+    for lattice_size, values in sorted(grouped.items()):
+        values.sort(key=lambda pair: pair[0])
+        betas, avg_sign = zip(*values)
+        plt.plot(betas, avg_sign, marker="o", label=f"L={lattice_size}")
+    plt.xlabel("Beta")
+    plt.ylabel("Average sign |S|")
+    plt.title("Average sign vs Beta and L (U=20)")
+    plt.legend()
+    plt.grid(True)
+    plt.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(output_path, dpi=150)
+    plt.close()
+
+
+def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Average sign studies")
+    parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
+    parser.add_argument("--sweeps", type=int, default=DEFAULT_SWEEPS)
+    parser.add_argument("--thermalization", type=int, default=DEFAULT_THERMALIZATION)
+    parser.add_argument("--seed", type=int, default=0)
+    parser.add_argument(
+        "--u-values",
+        type=float,
+        nargs="*",
+        default=[0.0, 4.0, 8.0, 12.0, 16.0, 20.0],
+        help="Interaction values for U sweep (L=32, beta=32)",
+    )
+    parser.add_argument(
+        "--beta-values",
+        type=float,
+        nargs="*",
+        default=[16.0, 24.0, 32.0],
+        help="Beta values for the (beta, L) sweep (U=20)",
+    )
+    parser.add_argument(
+        "--l-values",
+        type=int,
+        nargs="*",
+        default=[16, 24, 32],
+        help="Lattice sizes for the (beta, L) sweep (U=20)",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = parse_args(argv)
+    output_dir = args.output_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    # Scenario 1: vary U at fixed L and beta.
+    u_specs = [
+        RunSpec(lattice_size=32, beta=32.0, interaction=u_value, seed=args.seed + idx)
+        for idx, u_value in enumerate(args.u_values)
+    ]
+    u_results = run_experiment(u_specs, args.sweeps, args.thermalization)
+    u_json_path = output_dir / "average_sign_vs_U.json"
+    u_json_path.write_text(json.dumps(u_results, indent=2), encoding="utf-8")
+    plot_u_sweep(u_results, output_dir / "average_sign_vs_U.png")
+
+    # Scenario 2: vary beta and L at fixed U.
+    beta_l_specs: List[RunSpec] = []
+    for l in args.l_values:
+        for idx, beta_value in enumerate(args.beta_values):
+            beta_l_specs.append(
+                RunSpec(
+                    lattice_size=l,
+                    beta=beta_value,
+                    interaction=20.0,
+                    seed=args.seed + 100 + len(beta_l_specs),
+                )
+            )
+    beta_l_results = run_experiment(beta_l_specs, args.sweeps, args.thermalization)
+    beta_l_json_path = output_dir / "average_sign_vs_beta_L.json"
+    beta_l_json_path.write_text(json.dumps(beta_l_results, indent=2), encoding="utf-8")
+    plot_beta_l_sweep(beta_l_results, output_dir / "average_sign_vs_beta_L.png")
+
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(main())

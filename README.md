@@ -22,7 +22,7 @@ For further detail reference the staged notes (`docs/plan_stage*.md`) which incl
 
 ## Quick Start
 
-1. 准备配置文件（JSON），包含 `note.md` 中列出的物理参数，例如：
+1. 准备配置文件（JSON），包含 `note.md` 中列出的物理参数，例如（`experiments/config_samples/quick_config.json` 提供了一个模板）：
 
 ```json
 {
@@ -88,6 +88,21 @@ The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 - `variances`: sample variances (no autocorrelation correction) for diagnostics.
 - `diagnostics`: counts/acceptance ratios for momentum & permutation moves, plus sweep totals.
 - `samples`: number of measurement samples accumulated (`sweeps`).
+
+## Experiments & Visualization
+
+The helper script `experiments/run_average_sign.py` reproduces the parameter studies described in the project request. By default it saves JSON data and Matplotlib PNG plots into `experiments/output/`:
+
+```bash
+uv run python experiments/run_average_sign.py --verbose
+```
+
+Key scenarios implemented:
+
+1. Fixed `L=32`, `β=32`, varying `U` (plot `average_sign_vs_U.png`).
+2. Fixed `U=20`, varying `β` and `L` (plot `average_sign_vs_beta_L.png`).
+
+Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, and `--seed` to customise workloads. Figures are generated with Matplotlib (English labels only per requirement).
 
 ## Tests
 
