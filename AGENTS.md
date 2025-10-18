@@ -61,3 +61,17 @@
 ## Communication Guidance
 - If uncertainties arise, halt and contact the user with specific questions.
 - Summaries and code comments should assume no prior conversation history, enabling future contributors to continue seamlessly.
+
+---
+
+## Stage 0 – Planning & Scaffolding (2025-10-18)
+- Confirmed requirements in `note.md`; key data structures and modules captured in `docs/plan_stage0.md`.
+- Established Python package skeleton under `src/worldline_qmc` with placeholder modules for upcoming stages.
+- Added `tests/test_placeholder.py` to keep the pytest harness active during scaffolding.
+- Declared dependencies (`numpy`, `scipy`, `pytest`) in `pyproject.toml`; CLI documentation resides in `README.md`.
+
+### Environment Setup (uv)
+1. `uv venv`
+2. `uv pip install -e .[dev]`
+
+Future updates to this plan should timestamp new sections to preserve progress history.
