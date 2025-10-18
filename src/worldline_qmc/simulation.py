@@ -157,7 +157,7 @@ def _compute_weight_and_phase(
         sign_factor *= perm.parity()
 
         for n in range(worldline.particles):
-            # note.md: weight w(X) includes product over slices of M_{l,σ}(k' ← k)
+            # note.md: w(X) = Π_l M_{l,σ}(k_{l+1} ← k_l) with periodic boundary.
             for l in range(max(time_slices - 1, 0)):
                 k_from = int(worldline.trajectories[l, n])
                 k_to = int(worldline.trajectories[(l + 1) % time_slices, n])
@@ -166,7 +166,7 @@ def _compute_weight_and_phase(
                     amplitude, total_log_mag, phase_angle
                 )
 
-            # note.md: boundary link couples slice Lτ-1 to slice 0 via P_σ
+            # note.md: boundary link couples slice L_τ-1 to slice 0 through P_σ.
             l_boundary = time_slices - 1
             k_last = int(worldline.trajectories[l_boundary, n])
             target = int(perm.values[n])

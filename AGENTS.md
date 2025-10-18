@@ -109,3 +109,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Implemented full simulation loop in `src/worldline_qmc/simulation.py`, including initialization, scheduling, and diagnostics aligned with `note.md` formulas.
 - Added command-line interface in `src/worldline_qmc/cli.py` for running simulations and exporting JSON results.
 - Created integration tests `tests/test_simulation.py` and `tests/test_cli.py`; full suite (`uv run pytest`) passes with 27 tests.
+
+## Stage 6 – Repository Audit & Alignment (2025-10-19)
+- Cross-checked implementations against `note.md`; local momentum and permutation Metropolis ratios follow the listed `\mathcal{R}_k`/`\mathcal{R}_p` expressions, and `S(X)` accumulation matches the phase definition.
+- Added inline comments in `simulation.py` highlighting the correspondence with the product `w(X)=Π_l M_{l,σ}` and boundary terms.
+- Remaining optional improvements from `note.md` (importance-sampled momentum proposals, loop/"洗牌" updates) are not implemented yet; current sampler relies on uniform proposals only.
+- No extraneous generated files tracked; `.gitignore` covers caches. Repo ready for further extensions.
