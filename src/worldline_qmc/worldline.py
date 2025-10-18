@@ -78,6 +78,26 @@ class PermutationState:
     def copy(self) -> "PermutationState":
         return PermutationState(self.values.copy())
 
+    def inverse(self) -> np.ndarray:
+        """Return the inverse permutation indices.
+
+        This is used when applying the boundary link updates described in
+        ``note.md`` for momentum moves at ``l = 0``.
+        """
+
+        inverse = np.empty_like(self.values)
+        inverse[self.values] = np.arange(self.values.size, dtype=np.int64)
+        return inverse
+
+    def swap(self, a: int, b: int) -> None:
+        """Swap the images of particle labels ``a`` and ``b`` in place."""
+
+        if a == b:
+            return
+        if not (0 <= a < self.size and 0 <= b < self.size):
+            raise IndexError("Permutation swap indices out of range.")
+        self.values[a], self.values[b] = self.values[b], self.values[a]
+
     def _validate_is_permutation(self) -> None:
         expected = np.arange(self.values.size, dtype=np.int64)
         if not np.array_equal(np.sort(self.values), expected):

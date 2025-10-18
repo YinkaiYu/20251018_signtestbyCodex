@@ -90,3 +90,10 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Implemented transition amplitudes using auxiliary-field caches and memoized dispersions in `src/worldline_qmc/transitions.py`.
 - Added deterministic tests covering worldline behavior and transition amplitudes (`tests/test_worldline.py`, `tests/test_transitions.py`).
 - All Stage 2 tests pass via `uv run pytest` (17 tests).
+
+## Stage 3 – Monte Carlo Updates (2025-10-18)
+- Documented update strategy and testing plan in `docs/plan_stage3.md`.
+- Added worldline permutation utilities (`inverse`, `swap`) in `src/worldline_qmc/worldline.py` to support boundary handling.
+- Implemented Metropolis sweep with momentum and permutation moves in `src/worldline_qmc/updates.py`, including note-referenced acceptance/phase increments.
+- Added deterministic Monte Carlo unit tests using stubbed transition amplitudes (`tests/test_updates.py`) and expanded permutation tests (`tests/test_worldline.py`).
+- All tests pass after the update via `uv run pytest` (21 tests).

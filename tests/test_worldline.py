@@ -14,6 +14,14 @@ def test_permutation_parity_transposition() -> None:
     assert perm.parity() == -1
 
 
+def test_permutation_inverse_and_swap() -> None:
+    perm = worldline.PermutationState(np.array([2, 0, 1], dtype=np.int64))
+    inverse = perm.inverse()
+    assert np.array_equal(inverse, np.array([1, 2, 0]))
+    perm.swap(0, 1)
+    assert np.array_equal(perm.values, np.array([0, 2, 1]))
+
+
 def test_worldline_enforces_pauli_on_init() -> None:
     trajectories = np.array([[0, 1], [2, 2]], dtype=np.int64)
     with pytest.raises(ValueError):
