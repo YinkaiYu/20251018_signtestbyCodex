@@ -83,3 +83,10 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Implemented auxiliary-field sampling and Fourier caches with reproducible seeding (`src/worldline_qmc/auxiliary.py`).
 - Introduced targeted tests in `tests/test_config.py` and `tests/test_auxiliary.py` (all passing via `uv run pytest`).
 - Added `.gitignore` to drop Python bytecode artifacts and removed tracked `__pycache__/` directories.
+
+## Stage 2 – Worldlines & Transitions (2025-10-18)
+- Captured momentum-index conventions and testing targets in `docs/plan_stage2.md`.
+- Implemented permutation parity, Pauli-safe worldline updates, and momentum index helpers in `src/worldline_qmc/worldline.py`.
+- Implemented transition amplitudes using auxiliary-field caches and memoized dispersions in `src/worldline_qmc/transitions.py`.
+- Added deterministic tests covering worldline behavior and transition amplitudes (`tests/test_worldline.py`, `tests/test_transitions.py`).
+- All Stage 2 tests pass via `uv run pytest` (17 tests).
