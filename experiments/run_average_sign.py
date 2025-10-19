@@ -79,6 +79,16 @@ def plot_u_sweep(data: List[dict], output_path: Path) -> None:
     plt.xlabel("Interaction U")
     plt.ylabel("Average sign |S|")
     plt.title("Average sign vs U (L=32, beta=32)")
+    if avg_sign:
+        y_min = min(avg_sign)
+        y_max = max(avg_sign)
+        if y_max == y_min:
+            margin = max(0.05 * abs(y_max), 0.05)
+            plt.ylim(y_min - margin, y_max + margin)
+        else:
+            span = y_max - y_min
+            margin = span * 0.1
+            plt.ylim(y_min - margin, y_max + margin)
     plt.grid(True)
     plt.tight_layout()
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -101,6 +111,17 @@ def plot_beta_l_sweep(data: List[dict], output_path: Path) -> None:
     plt.xlabel("Beta")
     plt.ylabel("Average sign |S|")
     plt.title("Average sign vs Beta and L (U=20)")
+    if grouped:
+        all_values = [value for values in grouped.values() for _, value in values]
+        y_min = min(all_values)
+        y_max = max(all_values)
+        if y_max == y_min:
+            margin = max(0.05 * abs(y_max), 0.05)
+            plt.ylim(y_min - margin, y_max + margin)
+        else:
+            span = y_max - y_min
+            margin = span * 0.1
+            plt.ylim(y_min - margin, y_max + margin)
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
