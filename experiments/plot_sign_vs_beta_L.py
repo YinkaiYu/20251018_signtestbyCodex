@@ -33,7 +33,7 @@ def plot(data: List[dict], output: Path, title: str | None = None) -> None:
             title = "Re S vs Beta and L"
 
     plt.figure(figsize=(6, 4))
-    all_values: List[float] = []
+    bounds: List[Tuple[float, float]] = []
     for lattice_size, values in sorted(grouped.items()):
         values.sort(key=lambda item: item[0])
         betas, avg_vals, errors = [], [], []
@@ -45,7 +45,7 @@ def plot(data: List[dict], output: Path, title: str | None = None) -> None:
             samples = entry.get("samples", 0)
             err = np.sqrt(var / samples) if samples > 0 else 0.0
             errors.append(err)
-            all_values.append(avg_val)
+            bounds.append((avg_val - err, avg_val + err))
         plt.errorbar(
             betas,
             avg_vals,
@@ -58,10 +58,19 @@ def plot(data: List[dict], output: Path, title: str | None = None) -> None:
     plt.xlabel("Beta")
     plt.ylabel("Re S")
     plt.title(title)
-    if all_values:
-        span = max(abs(val) for val in all_values)
-        margin = max(span * 0.2, 0.02)
-        plt.ylim(-span - margin, span + margin)
+    if bounds:
+        y_min = min(b[0] for b in bounds)
+        y_max = max(b[1] for b in bounds)
+        if y_max == y_min:
+            margin = max(0.02, abs(y_max) * 0.1)
+            y_min -= margin
+            y_max += margin
+        else:
+            span = y_max - y_min
+            margin = max(0.02, span * 0.1)
+            y_min -= margin
+            y_max += margin
+        plt.ylim(y_min, y_max)
     plt.legend()
     plt.grid(True)
     plt.tight_layout()

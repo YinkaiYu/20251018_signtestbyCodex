@@ -98,30 +98,37 @@ The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 
 `experiments/run_average_sign.py` reproduces the parameter studies described in the project request（默认输出 `Re S` 数据与日志，**不直接绘图**）：
 
+数据生成拆分为两个脚本：
+
 ```bash
-uv run python experiments/run_average_sign.py --verbose
+# L=12, β=12, varying U
+uv run python experiments/run_sign_vs_U.py \
+    --output-dir experiments/output_u \
+    --sweeps 64 --thermalization 16 \
+    --fft-mode complex --measurement-interval 32
+
+# U=20, varying β 与 L
+uv run python experiments/run_sign_vs_beta_L.py \
+    --output-dir experiments/output_beta_L \
+    --sweeps 64 --thermalization 16 \
+    --fft-mode complex --measurement-interval 32
 ```
 
-Key scenarios implemented:
+`--u-values`、`--beta-values`、`--l-values`、`--fft-mode`、`--measurement-interval`、`--seed` 可定制采样点；日志存放于 `logs_u/`、`logs_beta_l/`。
 
-1. Fixed `L=12`, `β=12`, varying `U`（生成 `average_sign_vs_U.json` 与对应日志）。
-2. Fixed `U=20`, varying `β` 与 `L ∈ {4,6,8,12}`（生成 `average_sign_vs_beta_L.json` 与对应日志）。
-
-Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, `--measurement-interval`, and `--seed` to customise workloads；脚本还会在 `logs_u/`、`logs_beta_l/` 中生成 JSONL 诊断。
-
-绘图使用单独脚本：
+绘图使用独立脚本：
 
 ```bash
 uv run python experiments/plot_sign_vs_U.py \
-    --data experiments/output/average_sign_vs_U.json \
-    --output experiments/output/average_sign_vs_U.png
+    --data experiments/output_u/average_sign_vs_U.json \
+    --output experiments/output_u/average_sign_vs_U.png
 
 uv run python experiments/plot_sign_vs_beta_L.py \
-    --data experiments/output/average_sign_vs_beta_L.json \
-    --output experiments/output/average_sign_vs_beta_L.png
+    --data experiments/output_beta_L/average_sign_vs_beta_L.json \
+    --output experiments/output_beta_L/average_sign_vs_beta_L.png
 ```
 
-图像默认展示 `Re S` 及其标准误差（来自方差/有效样本数），y 轴会根据数据自动聚焦在 0 周围。若需要自定义标题，可使用 `--title` 参数。
+图像展示 `Re S` 与标准误差（来自方差/有效样本数），y 轴按数据最小/最大值自动设置并留出 10% 余量。可使用 `--title` 覆盖默认标题。
 
 ## Tests
 

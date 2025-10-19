@@ -122,9 +122,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Created template configuration `experiments/config_samples/quick_config.json` for quick CLI trials.
 
 ## Stage 8 – Average Sign Experiments (2025-10-19)
-- Added Matplotlib dependency and created `experiments/run_average_sign.py` for parameter sweeps (`U`, `β`, `L`) with default settings matching the requested scenarios.
-- Script exports JSON datasets and PNG plots under `experiments/output/`; optional CLI overrides control sweep counts and parameter ranges.
-- Added regression tests (`tests/test_experiments.py`) ensuring the script produces outputs with minimal sweeps and uses `Agg` backend for headless environments.
+- Added Matplotlib dependency and initial sweep script for the requested parameter studies (`U`, `β`, `L`).
+- Script exported JSON datasets and PNG plots under `experiments/output/`; optional CLI overrides controlled sweep counts and parameter ranges.
+- Added regression tests (`tests/test_experiments.py`) ensuring the data generator runs with minimal sweeps and uses `Agg` backend for headless environments.
 
 ## Stage 9 – Sampler Improvements (2025-10-19)
 - Simulation now initializes worldlines in the zero-temperature Fermi sea (`initial_state='fermi_sea'`) and keeps them constant along imaginary time.
@@ -136,7 +136,7 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - README expanded with module-to-formula mapping, configuration options (`fft_mode`, `initial_state`, `log_path`), and updated experiment description focusing on `Re S`.
 
 ## Stage 11 – Updated Experiments (2025-10-19)
-- `experiments/run_average_sign.py` now defaults to small lattices (`L=12, β=12` for U sweeps; `L, β ∈ {4,6,8,12}` for the second scenario), plots `Re S` with standard-error bars, and samples `S(X)` multiple times per sweep (`measurement_interval` configurable).
-- Script logs each run under `logs_u/` / `logs_beta_l/` using descriptive filenames (`L{L}_beta{β}_U{U}.jsonl`), and exposes both `--fft-mode` and `--measurement-interval`.
-- Fresh experimental outputs generated for complex and real FFT modes (64 sweeps, 16 thermalization sweeps) stored in `experiments/results/{complex,real}/` along with JSONL diagnostics.
-- Plotting is decoupled into `plot_sign_vs_U.py` / `plot_sign_vs_beta_L.py`, avoiding costly reruns when tweaking visualization parameters.
+- Data generation split into `experiments/run_sign_vs_U.py` (default `L=12, β=12` sweep over `U`) and `experiments/run_sign_vs_beta_L.py` (`U=20`, sweeping `β` 与 `L ∈ {4,6,8,12}`) with multi-sample measurement support (`measurement_interval` configurable).
+- Each run logs to `logs_u/` / `logs_beta_l/` using descriptive filenames (`L{L}_beta{β}_U{U}.jsonl`) and exposes `--fft-mode`, `--measurement-interval`, et al.
+- Fresh experimental outputs generated for complex and real FFT modes (64 sweeps, 16 thermalization sweeps) stored in `experiments/results/{complex,real}/` accompanied by JSONL diagnostics.
+- Plotting is handled by `plot_sign_vs_U.py` / `plot_sign_vs_beta_L.py`, enabling visualization tweaks without rerunning simulations.

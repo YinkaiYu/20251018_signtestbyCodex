@@ -19,11 +19,13 @@ def plot(data: List[dict], output: Path, title: str | None = None) -> None:
     interactions = [entry["interaction"] for entry in data]
     avg_sign = [entry["measurements"]["re"] for entry in data]
     errors = []
+    bounds = []
     for entry in data:
         var = entry["variances"]["re"]
         samples = entry.get("samples", 0)
         err = np.sqrt(var / samples) if samples > 0 else 0.0
         errors.append(err)
+        bounds.append((entry["measurements"]["re"] - err, entry["measurements"]["re"] + err))
 
     if title is None:
         lattices = {entry["lattice_size"] for entry in data}
@@ -40,10 +42,19 @@ def plot(data: List[dict], output: Path, title: str | None = None) -> None:
     plt.xlabel("Interaction U")
     plt.ylabel("Re S")
     plt.title(title)
-    if avg_sign:
-        span = max(abs(val) for val in avg_sign)
-        margin = max(span * 0.2, 0.02)
-        plt.ylim(-span - margin, span + margin)
+    if bounds:
+        y_min = min(b[0] for b in bounds)
+        y_max = max(b[1] for b in bounds)
+        if y_max == y_min:
+            margin = max(0.02, abs(y_max) * 0.1)
+            y_min -= margin
+            y_max += margin
+        else:
+            span = y_max - y_min
+            margin = max(0.02, span * 0.1)
+            y_min -= margin
+            y_max += margin
+        plt.ylim(y_min, y_max)
     plt.grid(True)
     plt.tight_layout()
     output.parent.mkdir(parents=True, exist_ok=True)

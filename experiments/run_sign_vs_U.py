@@ -1,11 +1,8 @@
-"""Average sign parameter sweeps (data generation only).
+"""Generate average-sign data for varying interaction U.
 
-This script runs simulations for two scenarios:
-1. Fixed L=12, beta=12 while scanning the interaction strength U.
-2. Fixed U=20 while scanning beta and lattice size L (defaults: L∈{4,6,8,12}).
-
-It produces JSON data (and per-run logs) in the chosen output directory. Plotting
-is handled separately by ``plot_average_sign.py``.
+Outputs:
+  - average_sign_vs_U.json
+  - logs_u/L{L}_beta{beta}_U{U}.jsonl per parameter point
 """
 
 from __future__ import annotations
@@ -14,20 +11,19 @@ import argparse
 import json
 from dataclasses import dataclass, replace
 from pathlib import Path
-from typing import Iterable, List
-
-import numpy as np
+from typing import List
 
 from worldline_qmc import auxiliary, config, simulation
 
-
-DEFAULT_OUTPUT_DIR = Path("experiments/output")
+DEFAULT_OUTPUT_DIR = Path("experiments/output_u")
 DEFAULT_DELTA_TAU = 1.0 / 32.0
 DEFAULT_SWEEPS = 16
 DEFAULT_THERMALIZATION = 4
 DEFAULT_HOPPING = 1.0
 DEFAULT_FFT_MODE = "complex"
 DEFAULT_MEASUREMENT_INTERVAL = 32
+DEFAULT_LATTICE_SIZE = 12
+DEFAULT_BETA = 12.0
 
 
 @dataclass
@@ -62,16 +58,17 @@ def build_parameters(
 
 
 def run_experiment(
-    specs: Iterable[RunSpec],
+    specs: List[RunSpec],
     sweeps: int,
     thermalization: int,
-    log_dir: Path | None = None,
-    fft_mode: str = DEFAULT_FFT_MODE,
-    measurement_interval: int = DEFAULT_MEASUREMENT_INTERVAL,
+    output_dir: Path,
+    *,
+    fft_mode: str,
+    measurement_interval: int,
 ) -> List[dict]:
     results: List[dict] = []
-    if log_dir is not None:
-        log_dir.mkdir(parents=True, exist_ok=True)
+    log_dir = output_dir / "logs_u"
+    log_dir.mkdir(parents=True, exist_ok=True)
 
     for idx, spec in enumerate(specs):
         params = build_parameters(
@@ -81,10 +78,10 @@ def run_experiment(
             fft_mode=fft_mode,
             measurement_interval=measurement_interval,
         )
-        if log_dir is not None:
-            tag = f"L{spec.lattice_size}_beta{spec.beta}_U{spec.interaction}"
-            log_path = log_dir / f"{idx:03d}_{tag}.jsonl"
-            params = replace(params, log_path=log_path)
+        tag = f"L{spec.lattice_size}_beta{spec.beta}_U{spec.interaction}"
+        log_path = log_dir / f"{idx:03d}_{tag}.jsonl"
+        params = replace(params, log_path=log_path)
+
         aux_field = auxiliary.generate_auxiliary_field(params)
         result = simulation.run_simulation(params, aux_field)
         results.append(
@@ -99,11 +96,12 @@ def run_experiment(
                 "samples": result.samples,
             }
         )
+
     return results
 
 
-def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Average sign studies")
+def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Average sign vs U data generator")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--sweeps", type=int, default=DEFAULT_SWEEPS)
     parser.add_argument("--thermalization", type=int, default=DEFAULT_THERMALIZATION)
@@ -113,80 +111,53 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         type=float,
         nargs="*",
         default=[0.0, 4.0, 6.0, 8.0, 10.0, 12.0],
-        help="Interaction values for U sweep (default L=12, beta=12)",
+        help="Interaction values to sample",
     )
-    parser.add_argument(
-        "--beta-values",
-        type=float,
-        nargs="*",
-        default=[4.0, 6.0, 8.0, 12.0],
-        help="Beta values for the (beta, L) sweep (U=20)",
-    )
-    parser.add_argument(
-        "--l-values",
-        type=int,
-        nargs="*",
-        default=[4, 6, 8, 12],
-        help="Lattice sizes for the (beta, L) sweep (U=20)",
-    )
+    parser.add_argument("--lattice-size", type=int, default=DEFAULT_LATTICE_SIZE)
+    parser.add_argument("--beta", type=float, default=DEFAULT_BETA)
     parser.add_argument(
         "--fft-mode",
         choices=["complex", "real"],
         default=DEFAULT_FFT_MODE,
-        help="Select complex FFT (with phases) or real part only.",
+        help="Choose complex FFT (with phases) or real cosine component.",
     )
     parser.add_argument(
         "--measurement-interval",
         type=int,
         default=DEFAULT_MEASUREMENT_INTERVAL,
-        help="Record S after this many Metropolis attempts (per run).",
+        help="Record S(X) after this many Metropolis attempts.",
     )
     return parser.parse_args(argv)
 
 
-def main(argv: list[str] | None = None) -> int:
+def main(argv: List[str] | None = None) -> int:
     args = parse_args(argv)
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Scenario 1: vary U at fixed L and beta.
-    u_specs = [
-        RunSpec(lattice_size=12, beta=12.0, interaction=u_value, seed=args.seed + idx)
+    specs = [
+        RunSpec(
+            lattice_size=args.lattice_size,
+            beta=args.beta,
+            interaction=u_value,
+            seed=args.seed + idx,
+        )
         for idx, u_value in enumerate(args.u_values)
     ]
-    u_results = run_experiment(
-        u_specs,
-        args.sweeps,
-        args.thermalization,
-        log_dir=output_dir / "logs_u",
-        fft_mode=args.fft_mode,
-        measurement_interval=args.measurement_interval,
-    )
-    u_json_path = output_dir / "average_sign_vs_U.json"
-    u_json_path.write_text(json.dumps(u_results, indent=2), encoding="utf-8")
 
-    # Scenario 2: vary beta and L at fixed U.
-    beta_l_specs: List[RunSpec] = []
-    for l in args.l_values:
-        for idx, beta_value in enumerate(args.beta_values):
-            beta_l_specs.append(
-                RunSpec(
-                    lattice_size=l,
-                    beta=beta_value,
-                    interaction=20.0,
-                    seed=args.seed + 100 + len(beta_l_specs),
-                )
-            )
-    beta_l_results = run_experiment(
-        beta_l_specs,
+    results = run_experiment(
+        specs,
         args.sweeps,
         args.thermalization,
-        log_dir=output_dir / "logs_beta_l",
+        output_dir,
         fft_mode=args.fft_mode,
         measurement_interval=args.measurement_interval,
     )
-    beta_l_json_path = output_dir / "average_sign_vs_beta_L.json"
-    beta_l_json_path.write_text(json.dumps(beta_l_results, indent=2), encoding="utf-8")
+
+    (output_dir / "average_sign_vs_U.json").write_text(
+        json.dumps(results, indent=2),
+        encoding="utf-8",
+    )
 
     return 0
 
