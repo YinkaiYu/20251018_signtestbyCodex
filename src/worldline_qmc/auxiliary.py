@@ -45,6 +45,7 @@ class AuxiliaryField:
     slices: Tuple[AuxiliaryFieldSlice, ...]
     lattice_size: int
     auxiliary_coupling: float
+    fft_mode: str
 
     def magnitude(self, slice_index: int, spin: Spin) -> np.ndarray:
         """Return |W_{l, sigma}(q)| for the requested slice and spin."""
@@ -87,6 +88,7 @@ def generate_auxiliary_field(
     lattice_size = params.lattice_size
     time_slices = params.time_slices
     coupling = params.auxiliary_coupling
+    fft_mode = params.fft_mode
 
     rng_seed = params.seed if seed is None else seed
     rng = make_generator(rng_seed)
@@ -101,8 +103,8 @@ def generate_auxiliary_field(
         exp_up = np.exp(coupling * spatial_float)
         exp_down = np.exp(-coupling * spatial_float)
 
-        w_up = _fourier_sum(exp_up)
-        w_down = _fourier_sum(exp_down)
+        w_up = _fourier_sum(exp_up, mode=fft_mode)
+        w_down = _fourier_sum(exp_down, mode=fft_mode)
 
         slice_cache = AuxiliaryFieldSlice(
             slice_index=l,
@@ -115,15 +117,21 @@ def generate_auxiliary_field(
         slices=tuple(slices),
         lattice_size=lattice_size,
         auxiliary_coupling=coupling,
+        fft_mode=fft_mode,
     )
 
 
-def _fourier_sum(field: np.ndarray) -> np.ndarray:
+def _fourier_sum(field: np.ndarray, mode: str) -> np.ndarray:
     """
     Compute Σ_i exp(i q · r_i) field_i via FFT conventions.
 
     NumPy's FFT implements the negative exponential convention; we take the
     complex conjugate to match the positive phase definition in `note.md`.
     """
-
-    return np.fft.fftn(field, norm=None).conj()
+    fft = np.fft.fftn(field, norm=None).conj()
+    if mode == "complex":
+        return fft
+    if mode == "real":
+        return np.real(fft)
+    msg = f"Unsupported fft_mode: {mode}"
+    raise ValueError(msg)

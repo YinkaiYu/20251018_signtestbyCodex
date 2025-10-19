@@ -20,6 +20,9 @@ def test_load_parameters_from_mapping() -> None:
         "worldline_moves_per_slice": 5,
         "permutation_moves_per_slice": 3,
         "output_path": "outputs/run.json",
+        "log_path": "outputs/diag.jsonl",
+        "fft_mode": "real",
+        "initial_state": "random",
         "custom_note": "test",
     }
 
@@ -33,6 +36,9 @@ def test_load_parameters_from_mapping() -> None:
     assert math.isclose(params.auxiliary_coupling, expected_lambda)
     assert params.extra["custom_note"] == "test"
     assert isinstance(params.output_path, Path)
+    assert isinstance(params.log_path, Path)
+    assert params.fft_mode == "real"
+    assert params.initial_state == "random"
 
 
 def test_load_parameters_from_json(tmp_path: Path) -> None:
@@ -86,3 +92,16 @@ def test_load_parameters_rejects_negative_moves() -> None:
     with pytest.raises(ValueError):
         config.load_parameters(mapping)
 
+
+def test_load_parameters_invalid_fft_mode() -> None:
+    mapping = {
+        "lattice_size": 4,
+        "beta": 1.0,
+        "delta_tau": 0.25,
+        "hopping": 1.0,
+        "interaction": 4.0,
+        "fft_mode": "invalid",
+    }
+
+    with pytest.raises(ValueError):
+        config.load_parameters(mapping)

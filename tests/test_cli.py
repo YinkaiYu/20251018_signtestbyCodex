@@ -33,3 +33,7 @@ def test_cli_runs_and_writes_output(tmp_path: Path) -> None:
     assert "measurements" in data
     assert "diagnostics" in data
     assert data["samples"] == 1
+
+    log_path = output_path.with_name(output_path.name + ".log.jsonl")
+    assert log_path.exists()
+    assert log_path.read_text(encoding="utf-8").strip() != ""

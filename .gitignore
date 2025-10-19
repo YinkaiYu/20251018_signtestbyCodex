@@ -10,6 +10,7 @@ __pycache__/
 
 # Experiment artifacts
 experiments/output/
+experiments/output_real/
 
 # OS files
 .DS_Store

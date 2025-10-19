@@ -32,3 +32,5 @@ def test_run_average_sign_script(tmp_path, monkeypatch):
     assert len(beta_l_json) == 1
     assert (output_dir / "average_sign_vs_U.png").exists()
     assert (output_dir / "average_sign_vs_beta_L.png").exists()
+    assert any((output_dir / "logs_u").glob("*.jsonl"))
+    assert any((output_dir / "logs_beta_l").glob("*.jsonl"))

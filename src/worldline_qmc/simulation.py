@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from typing import Any, Dict, Optional
 
 import numpy as np
+import json
 
 from .auxiliary import AuxiliaryField
 from .config import SimulationParameters
@@ -14,6 +15,7 @@ from .rng import make_generator
 from .transitions import transition_amplitude
 from .updates import MonteCarloState, UpdateSchedule, metropolis_sweep
 from .worldline import PermutationState, Worldline, WorldlineConfiguration
+from . import lattice
 
 Spin = str
 _SPINS: tuple[Spin, Spin] = ("up", "down")
@@ -65,16 +67,41 @@ def run_simulation(
     total_permutation_attempts = 0
     total_permutation_accepts = 0
 
-    total_sweeps = params.thermalization_sweeps + params.sweeps
-    for sweep_index in range(total_sweeps):
-        diagnostics = metropolis_sweep(params, auxiliary, mc_state, resolved_schedule)
-        total_momentum_attempts += diagnostics.get("momentum_attempts", 0)
-        total_momentum_accepts += diagnostics.get("momentum_accepts", 0)
-        total_permutation_attempts += diagnostics.get("permutation_attempts", 0)
-        total_permutation_accepts += diagnostics.get("permutation_accepts", 0)
+    log_handle = None
+    if params.log_path is not None:
+        params.log_path.parent.mkdir(parents=True, exist_ok=True)
+        log_handle = params.log_path.open("w", encoding="utf-8")
 
-        if sweep_index >= params.thermalization_sweeps:
-            accumulator.push(mc_state.phase)
+    total_sweeps = params.thermalization_sweeps + params.sweeps
+    try:
+        for sweep_index in range(total_sweeps):
+            diagnostics = metropolis_sweep(params, auxiliary, mc_state, resolved_schedule)
+            total_momentum_attempts += diagnostics.get("momentum_attempts", 0)
+            total_momentum_accepts += diagnostics.get("momentum_accepts", 0)
+            total_permutation_attempts += diagnostics.get("permutation_attempts", 0)
+            total_permutation_accepts += diagnostics.get("permutation_accepts", 0)
+
+            is_measurement = sweep_index >= params.thermalization_sweeps
+            if is_measurement:
+                accumulator.push(mc_state.phase)
+
+            if log_handle is not None:
+                log_entry = {
+                    "sweep": sweep_index,
+                    "is_measurement": is_measurement,
+                    "momentum_attempts": diagnostics.get("momentum_attempts", 0),
+                    "momentum_accepts": diagnostics.get("momentum_accepts", 0),
+                    "permutation_attempts": diagnostics.get("permutation_attempts", 0),
+                    "permutation_accepts": diagnostics.get("permutation_accepts", 0),
+                    "phase_re": float(np.real(mc_state.phase)),
+                    "phase_im": float(np.imag(mc_state.phase)),
+                    "phase_abs": float(np.abs(mc_state.phase)),
+                }
+                log_handle.write(json.dumps(log_entry))
+                log_handle.write("\n")
+    finally:
+        if log_handle is not None:
+            log_handle.close()
 
     measurement_count = accumulator.samples
     momentum_acceptance = (
@@ -114,11 +141,22 @@ def _initialize_configuration(
     particles = params.particles_per_spin
     volume = params.volume
 
+    if params.initial_state == "fermi_sea":
+        momentum_grid = lattice.momentum_grid(params.lattice_size)
+        energies = lattice.dispersion(momentum_grid, params.hopping)
+        ordering = np.argsort(energies)
+        occupied = ordering[:particles].astype(np.int64)
+    else:
+        occupied = None
+
     worldlines: Dict[Spin, Worldline] = {}
     permutations: Dict[Spin, PermutationState] = {}
     for spin in _SPINS:
-        base_slice = rng.choice(volume, size=particles, replace=False)
-        trajectories = np.tile(base_slice, (time_slices, 1))
+        if params.initial_state == "fermi_sea":
+            trajectories = np.tile(occupied, (time_slices, 1))
+        else:
+            base_slice = rng.choice(volume, size=particles, replace=False)
+            trajectories = np.tile(base_slice, (time_slices, 1))
         worldlines[spin] = Worldline(trajectories)
         permutations[spin] = PermutationState.identity(particles)
     return WorldlineConfiguration(worldlines=worldlines, permutations=permutations)

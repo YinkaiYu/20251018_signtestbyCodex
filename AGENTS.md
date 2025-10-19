@@ -125,3 +125,17 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Added Matplotlib dependency and created `experiments/run_average_sign.py` for parameter sweeps (`U`, `β`, `L`) with default settings matching the requested scenarios.
 - Script exports JSON datasets and PNG plots under `experiments/output/`; optional CLI overrides control sweep counts and parameter ranges.
 - Added regression tests (`tests/test_experiments.py`) ensuring the script produces outputs with minimal sweeps and uses `Agg` backend for headless environments.
+
+## Stage 9 – Sampler Improvements (2025-10-19)
+- Simulation now initializes worldlines in the zero-temperature Fermi sea (`initial_state='fermi_sea'`) and keeps them constant along imaginary time.
+- Introduced configurable FFT modes (`fft_mode='complex'` or `'real'`) so that `W_{l,σ}(q)` can retain full phases or only its cosine component.
+- Validation for new configuration flags lives in `config.load_parameters`; auxiliary-field cache stores the selected mode for downstream inspection.
+
+## Stage 10 – Logging & CLI Upgrades (2025-10-19)
+- `simulation.run_simulation` writes per-sweep diagnostics (JSONL) when `log_path` is provided; CLI auto-generates a log next to the output JSON unless overridden.
+- README expanded with module-to-formula mapping, configuration options (`fft_mode`, `initial_state`, `log_path`), and updated experiment description focusing on `Re S`.
+
+## Stage 11 – Updated Experiments (2025-10-19)
+- `experiments/run_average_sign.py` now defaults to small lattices (`L=12, β=12` for U sweeps; `L, β ∈ {4,6,8,12}` for the second scenario) and plots `Re S`.
+- Script logs each run under `logs_u/` and `logs_beta_l/` and exposes `--fft-mode` to compare complex vs real FFT weightings.
+- New experimental outputs generated for both FFT modes (`experiments/output/` and `experiments/output_real/`) with sweeps=64, thermalization=16.

@@ -29,6 +29,11 @@ def build_parser() -> argparse.ArgumentParser:
         help="Optional path to write simulation results as JSON.",
     )
     parser.add_argument(
+        "--log",
+        type=Path,
+        help="Optional path to write per-sweep diagnostics (JSON lines).",
+    )
+    parser.add_argument(
         "--sweeps",
         type=int,
         help="Override the number of measurement sweeps (after thermalization).",
@@ -80,6 +85,14 @@ def main(argv: Sequence[str] | None = None) -> int:
         params = replace(params, permutation_moves_per_slice=args.permutation_moves)
     if args.output is not None:
         params = replace(params, output_path=args.output)
+
+    log_path = args.log
+    if log_path is None and (params.output_path or args.output):
+        output_path = params.output_path or args.output
+        if output_path is not None:
+            log_path = output_path.with_name(output_path.name + ".log.jsonl")
+    if log_path is not None:
+        params = replace(params, log_path=log_path)
 
     aux_field = auxiliary.generate_auxiliary_field(params)
     schedule = None  # Allow simulation.run_simulation to resolve default moves.

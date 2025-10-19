@@ -54,3 +54,12 @@ def test_auxiliary_seed_reproducibility() -> None:
     slice_b = field_b.slices[0].spatial_field
 
     assert np.array_equal(slice_a, slice_b)
+
+
+def test_auxiliary_real_fft_mode_produces_real_weights() -> None:
+    params = _make_params(interaction=2.0, fft_mode="real")
+    aux_field = auxiliary.generate_auxiliary_field(params, seed=5)
+
+    assert aux_field.fft_mode == "real"
+    w = aux_field.w(0, "up")
+    assert np.allclose(np.imag(w), 0.0, atol=1e-12)

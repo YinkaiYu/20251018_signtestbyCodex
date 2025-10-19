@@ -34,6 +34,9 @@ class SimulationParameters:
     worldline_moves_per_slice: int = 0
     permutation_moves_per_slice: int = 0
     output_path: Optional[Path] = None
+    log_path: Optional[Path] = None
+    fft_mode: str = "complex"
+    initial_state: str = "fermi_sea"
     extra: MutableMapping[str, Any] = field(default_factory=dict)
 
     @property
@@ -183,17 +186,16 @@ def _coerce_int(value: Any, field_name: str) -> Optional[int]:
 def _normalize_output_path(kwargs: dict[str, Any]) -> None:
     """Convert output_path strings into Path objects."""
 
-    if "output_path" not in kwargs or kwargs["output_path"] is None:
-        return
-    output_value = kwargs["output_path"]
-    if isinstance(output_value, Path):
-        return
-    if isinstance(output_value, str):
-        kwargs["output_path"] = Path(output_value)
-        return
-
-    msg = "output_path must be a string or pathlib.Path if provided."
-    raise ValueError(msg)
+    for key in ("output_path", "log_path"):
+        if key not in kwargs or kwargs[key] is None:
+            continue
+        value = kwargs[key]
+        if isinstance(value, Path):
+            continue
+        if isinstance(value, str):
+            kwargs[key] = Path(value)
+            continue
+        raise ValueError(f"{key} must be a string or pathlib.Path if provided.")
 
 
 def _validate_parameters(params: SimulationParameters) -> None:
@@ -229,3 +231,9 @@ def _validate_parameters(params: SimulationParameters) -> None:
             f"Lattice size {params.lattice_size} is incompatible."
         )
         raise ValueError(msg)
+
+    if params.fft_mode not in {"complex", "real"}:
+        raise ValueError("fft_mode must be 'complex' or 'real'.")
+
+    if params.initial_state not in {"fermi_sea", "random"}:
+        raise ValueError("initial_state must be 'fermi_sea' or 'random'.")

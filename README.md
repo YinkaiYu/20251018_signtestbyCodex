@@ -15,7 +15,7 @@ Development follows the staged plan recorded in `AGENTS.md`. Each stage has a co
 | `worldline_qmc/transitions.py` | Evaluates `M_{l,σ}(k' ← k) = exp[-Δτ(ε_{k'}+ε_k)/2] W_{l,σ}(k-k')/V`. | Equation defining the transfer matrix elements `M_{l,σ}` |
 | `worldline_qmc/updates.py` | Implements Metropolis updates using `𝓡_k`, `𝓡_p` ratios and phase increments `ΔΦ`. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
 | `worldline_qmc/measurement.py` | Accumulates the complex phase observable `S(X)` as defined in `note.md`. | Definition of `S(X)` and accumulation of `Φ(X)` |
-| `worldline_qmc/simulation.py` | Orchestrates initialization, sweeps, measurement logging, returns diagnostics. | Product representation of `w(X)` and boundary links through `P_σ` |
+| `worldline_qmc/simulation.py` | Orchestrates initialization (Fermi-sea default), sweeps, measurement logging, returns diagnostics. | Product representation of `w(X)` and boundary links through `P_σ` |
 | `worldline_qmc/cli.py` | Provides a CLI driver that loads configs, runs simulations, and writes JSON output. | Automates the workflow implied throughout `note.md` |
 
 For further detail reference the staged notes (`docs/plan_stage*.md`) which include expectations, design sketches, and test strategies for each milestone.
@@ -37,13 +37,15 @@ For further detail reference the staged notes (`docs/plan_stage*.md`) which incl
 }
 ```
 
+需要测试“无相位”情形时，可以在配置中加入 `"fft_mode": "real"`（同时也可设置 `"initial_state": "random"` 以恢复旧的随机初态）。
+
 2. 运行模拟并输出结果：
 
 ```bash
 uv run python -m worldline_qmc.cli --config config.json --output result.json --verbose
 ```
 
-结果将写入 `result.json`，并在终端显示测量摘要。
+结果将写入 `result.json`，并在终端显示测量摘要。若未指定 `--log`，CLI 会默认生成 `result.json.log.jsonl` 记录逐 sweep 诊断。
 
 ## Configuration Fields
 
@@ -56,6 +58,9 @@ uv run python -m worldline_qmc.cli --config config.json --output result.json --v
 - `worldline_moves_per_slice`, `permutation_moves_per_slice` – optional overrides for scheduling; default heuristics follow the number of particles per spin and time slices.
 - `seed` – RNG seed controlling auxiliary field sampling and Metropolis proposals.
 - `output_path` – optional JSON path for CLI output.
+- `log_path` – optional JSON-lines diagnostics file；CLI 默认基于输出路径命名。
+- `fft_mode` – `"complex"`（保留 FFT 相位）或 `"real"`（仅使用实部、无相位），方便比较符号表现。
+- `initial_state` – `"fermi_sea"`（零温费米海，随虚时保持不变）或 `"random"`。
 
 `config.load_parameters` accepts a JSON file or dictionary. Unknown fields go into `SimulationParameters.extra` for downstream analysis metadata.
 
@@ -91,7 +96,7 @@ The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 
 ## Experiments & Visualization
 
-The helper script `experiments/run_average_sign.py` reproduces the parameter studies described in the project request. By default it saves JSON data and Matplotlib PNG plots into `experiments/output/`:
+The helper script `experiments/run_average_sign.py` reproduces the parameter studies described in the project request（默认绘制 `Re S`），并把 JSON/PNG/日志写入 `experiments/output/`：
 
 ```bash
 uv run python experiments/run_average_sign.py --verbose
@@ -99,10 +104,10 @@ uv run python experiments/run_average_sign.py --verbose
 
 Key scenarios implemented:
 
-1. Fixed `L=32`, `β=32`, varying `U` (plot `average_sign_vs_U.png`).
-2. Fixed `U=20`, varying `β` and `L` (plot `average_sign_vs_beta_L.png`).
+1. Fixed `L=12`, `β=12`, varying `U` (plot `average_sign_vs_U.png`).
+2. Fixed `U=20`, varying `β` 与 `L ∈ {4,6,8,12}`（plot `average_sign_vs_beta_L.png`）。
 
-Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, and `--seed` to customise workloads. Figures are generated with Matplotlib (English labels only per requirement).
+Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, and `--seed` to customise workloads；脚本还会在 `logs_u/`、`logs_beta_l/` 中生成 JSONL 诊断（Matplotlib 使用 Agg backend，标签保持英文）。
 
 ## Tests
 
