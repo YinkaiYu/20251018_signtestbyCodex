@@ -1,4 +1,4 @@
-# Momentum-Space Worldline QMC
+# Fermionic Worldline QMC
 
 This repository implements the momentum-space worldline QMC algorithm described in `note.md`. The code keeps the auxiliary Hubbard-Stratonovich field fixed and samples fermionic worldlines (`K_σ`) together with permutations (`P_σ`) to estimate the average sign
 
