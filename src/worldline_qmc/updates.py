@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 
 import numpy as np
 
@@ -36,7 +36,9 @@ def metropolis_sweep(
     auxiliary: AuxiliaryField,
     mc_state: MonteCarloState,
     schedule: UpdateSchedule,
-) -> Dict[str, float]:
+    *,
+    measurement_interval: int,
+) -> Tuple[Dict[str, float], List[complex]]:
     r"""Execute one Metropolis sweep of worldline and permutation updates.
 
     The acceptance ratios and phase increments follow the formulas collected in
@@ -56,6 +58,14 @@ def metropolis_sweep(
     spins = tuple(sorted(config.worldlines.keys()))
     time_slices = params.time_slices
     volume = params.volume
+    phase_samples: List[complex] = []
+    interval = measurement_interval if measurement_interval > 0 else 0
+    attempt_counter = 0
+
+    def maybe_record_phase() -> None:
+        nonlocal attempt_counter
+        if interval > 0 and attempt_counter % interval == 0:
+            phase_samples.append(mc_state.phase)
 
     for _ in range(schedule.worldline_moves):
         diagnostics["momentum_attempts"] += 1
@@ -77,6 +87,8 @@ def metropolis_sweep(
             new_k,
         ):
             diagnostics["momentum_accepts"] += 1
+        attempt_counter += 1
+        maybe_record_phase()
 
     for _ in range(schedule.permutation_moves):
         diagnostics["permutation_attempts"] += 1
@@ -105,6 +117,8 @@ def metropolis_sweep(
             b,
         ):
             diagnostics["permutation_accepts"] += 1
+        attempt_counter += 1
+        maybe_record_phase()
 
     diagnostics["momentum_acceptance"] = _ratio(
         diagnostics["momentum_accepts"], diagnostics["momentum_attempts"]
@@ -112,7 +126,7 @@ def metropolis_sweep(
     diagnostics["permutation_acceptance"] = _ratio(
         diagnostics["permutation_accepts"], diagnostics["permutation_attempts"]
     )
-    return diagnostics
+    return diagnostics, phase_samples
 
 
 def _attempt_momentum_update(

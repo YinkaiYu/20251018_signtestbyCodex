@@ -59,6 +59,21 @@ def build_parser() -> argparse.ArgumentParser:
         help="Override RNG seed used for auxiliary field and updates.",
     )
     parser.add_argument(
+        "--fft-mode",
+        choices=["complex", "real"],
+        help="Override FFT mode (complex phases vs real cosine component).",
+    )
+    parser.add_argument(
+        "--initial-state",
+        choices=["fermi_sea", "random"],
+        help="Override initial worldline configuration strategy.",
+    )
+    parser.add_argument(
+        "--measurement-interval",
+        type=int,
+        help="Record S(X) every N Metropolis attempts (default: once per sweep).",
+    )
+    parser.add_argument(
         "--verbose",
         action="store_true",
         help="Print a summary of measurements and diagnostics to stdout.",
@@ -83,6 +98,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         params = replace(params, worldline_moves_per_slice=args.worldline_moves)
     if args.permutation_moves is not None:
         params = replace(params, permutation_moves_per_slice=args.permutation_moves)
+    if args.fft_mode is not None:
+        params = replace(params, fft_mode=args.fft_mode)
+    if args.initial_state is not None:
+        params = replace(params, initial_state=args.initial_state)
+    if args.measurement_interval is not None:
+        params = replace(params, measurement_interval=args.measurement_interval)
     if args.output is not None:
         params = replace(params, output_path=args.output)
 

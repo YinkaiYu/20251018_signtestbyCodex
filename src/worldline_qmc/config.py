@@ -37,6 +37,7 @@ class SimulationParameters:
     log_path: Optional[Path] = None
     fft_mode: str = "complex"
     initial_state: str = "fermi_sea"
+    measurement_interval: int = 0
     extra: MutableMapping[str, Any] = field(default_factory=dict)
 
     @property
@@ -157,6 +158,7 @@ def _coerce_integer_fields(kwargs: dict[str, Any]) -> None:
         "thermalization_sweeps",
         "worldline_moves_per_slice",
         "permutation_moves_per_slice",
+        "measurement_interval",
     }
 
     for field_name in integer_fields:
@@ -237,3 +239,6 @@ def _validate_parameters(params: SimulationParameters) -> None:
 
     if params.initial_state not in {"fermi_sea", "random"}:
         raise ValueError("initial_state must be 'fermi_sea' or 'random'.")
+
+    if params.measurement_interval < 0:
+        raise ValueError("measurement_interval must be non-negative.")

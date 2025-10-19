@@ -24,7 +24,7 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   },
   {
     "lattice_size": 12,
@@ -32,13 +32,13 @@
     "interaction": 4.0,
     "seed": 1,
     "measurements": {
-      "re": -0.15625,
-      "im": 4.3205156371795977e-14,
+      "re": 0.006946449191685912,
+      "im": -3.612805279733859e-15,
       "abs": 1.0
     },
     "variances": {
-      "re": 0.9910714285714286,
-      "im": 1.2063365669876014e-25,
+      "re": 0.9999607678522865,
+      "im": 1.1720446418985028e-25,
       "abs": 0.0
     },
     "diagnostics": {
@@ -51,7 +51,7 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   },
   {
     "lattice_size": 12,
@@ -59,13 +59,13 @@
     "interaction": 6.0,
     "seed": 2,
     "measurements": {
-      "re": -0.03125,
-      "im": 5.217952119680001e-14,
+      "re": -0.008768764434180138,
+      "im": 9.522882809421178e-15,
       "abs": 1.0
     },
     "variances": {
-      "re": 1.0148809523809523,
-      "im": 3.145431753083854e-25,
+      "re": 0.9999321295206003,
+      "im": 3.0290430106306422e-25,
       "abs": 0.0
     },
     "diagnostics": {
@@ -78,7 +78,7 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   },
   {
     "lattice_size": 12,
@@ -86,13 +86,13 @@
     "interaction": 8.0,
     "seed": 3,
     "measurements": {
-      "re": -0.03125,
-      "im": 2.6639894902705585e-14,
+      "re": -0.0004149826789838337,
+      "im": -2.007254967454875e-15,
       "abs": 1.0
     },
     "variances": {
-      "re": 1.0148809523809523,
-      "im": 4.894568681749959e-25,
+      "re": 1.000008849231795,
+      "im": 4.678577521000474e-25,
       "abs": 0.0
     },
     "diagnostics": {
@@ -105,7 +105,7 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   },
   {
     "lattice_size": 12,
@@ -113,13 +113,13 @@
     "interaction": 10.0,
     "seed": 4,
     "measurements": {
-      "re": -0.1875,
-      "im": 2.6257575480097233e-13,
+      "re": 0.01008588337182448,
+      "im": -3.957617242603162e-15,
       "abs": 1.0
     },
     "variances": {
-      "re": 0.9801587301587301,
-      "im": 7.67951294785959e-25,
+      "re": 0.9999072954828756,
+      "im": 8.001011207950392e-25,
       "abs": 0.0
     },
     "diagnostics": {
@@ -132,7 +132,7 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   },
   {
     "lattice_size": 12,
@@ -140,13 +140,13 @@
     "interaction": 12.0,
     "seed": 5,
     "measurements": {
-      "re": 0.1875,
-      "im": -4.572907688441772e-14,
+      "re": 0.009418302540415705,
+      "im": -6.314727577082861e-15,
       "abs": 1.0
     },
     "variances": {
-      "re": 0.9801587301587301,
-      "im": 1.09036281395807e-24,
+      "re": 0.9999203162209875,
+      "im": 1.0413648074147426e-24,
       "abs": 0.0
     },
     "diagnostics": {
@@ -159,6 +159,6 @@
       "total_sweeps": 80.0,
       "measurement_sweeps": 64.0
     },
-    "samples": 64
+    "samples": 110848
   }
 ]

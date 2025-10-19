@@ -136,6 +136,6 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - README expanded with module-to-formula mapping, configuration options (`fft_mode`, `initial_state`, `log_path`), and updated experiment description focusing on `Re S`.
 
 ## Stage 11 – Updated Experiments (2025-10-19)
-- `experiments/run_average_sign.py` now defaults to small lattices (`L=12, β=12` for U sweeps; `L, β ∈ {4,6,8,12}` for the second scenario) and plots `Re S`.
-- Script logs each run under `logs_u/` and `logs_beta_l/` and exposes `--fft-mode` to compare complex vs real FFT weightings.
-- New experimental outputs generated for both FFT modes (`experiments/output/` and `experiments/output_real/`) with sweeps=64, thermalization=16.
+- `experiments/run_average_sign.py` now defaults to small lattices (`L=12, β=12` for U sweeps; `L, β ∈ {4,6,8,12}` for the second scenario), plots `Re S` with standard-error bars, and samples `S(X)` multiple times per sweep (`measurement_interval` configurable).
+- Script logs each run under `logs_u/` / `logs_beta_l/` using descriptive filenames (`L{L}_beta{β}_U{U}.jsonl`), and exposes both `--fft-mode` and `--measurement-interval`.
+- Fresh experimental outputs generated for complex and real FFT modes (64 sweeps, 16 thermalization sweeps) stored in `experiments/results/{complex,real}/` along with JSONL diagnostics.

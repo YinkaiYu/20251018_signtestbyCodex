@@ -72,20 +72,37 @@ def run_simulation(
         params.log_path.parent.mkdir(parents=True, exist_ok=True)
         log_handle = params.log_path.open("w", encoding="utf-8")
 
+    attempts_per_sweep = (
+        resolved_schedule.worldline_moves + resolved_schedule.permutation_moves
+    )
+    measurement_interval = params.measurement_interval
+    if measurement_interval <= 0:
+        measurement_interval = max(1, attempts_per_sweep)
+
     total_sweeps = params.thermalization_sweeps + params.sweeps
     try:
         for sweep_index in range(total_sweeps):
-            diagnostics = metropolis_sweep(params, auxiliary, mc_state, resolved_schedule)
+            diagnostics, phase_samples = metropolis_sweep(
+                params,
+                auxiliary,
+                mc_state,
+                resolved_schedule,
+                measurement_interval=measurement_interval,
+            )
             total_momentum_attempts += diagnostics.get("momentum_attempts", 0)
             total_momentum_accepts += diagnostics.get("momentum_accepts", 0)
             total_permutation_attempts += diagnostics.get("permutation_attempts", 0)
             total_permutation_accepts += diagnostics.get("permutation_accepts", 0)
 
             is_measurement = sweep_index >= params.thermalization_sweeps
+            samples_for_logging = phase_samples if phase_samples else [mc_state.phase]
             if is_measurement:
-                accumulator.push(mc_state.phase)
+                for phase_value in samples_for_logging:
+                    accumulator.push(phase_value)
 
             if log_handle is not None:
+                phase_array = np.asarray(samples_for_logging, dtype=complex)
+                phase_mean = phase_array.mean() if phase_array.size else mc_state.phase
                 log_entry = {
                     "sweep": sweep_index,
                     "is_measurement": is_measurement,
@@ -93,9 +110,10 @@ def run_simulation(
                     "momentum_accepts": diagnostics.get("momentum_accepts", 0),
                     "permutation_attempts": diagnostics.get("permutation_attempts", 0),
                     "permutation_accepts": diagnostics.get("permutation_accepts", 0),
-                    "phase_re": float(np.real(mc_state.phase)),
-                    "phase_im": float(np.imag(mc_state.phase)),
-                    "phase_abs": float(np.abs(mc_state.phase)),
+                    "phase_sample_count": len(samples_for_logging),
+                    "phase_mean_re": float(np.real(phase_mean)),
+                    "phase_mean_im": float(np.imag(phase_mean)),
+                    "phase_mean_abs": float(np.abs(phase_mean)),
                 }
                 log_handle.write(json.dumps(log_entry))
                 log_handle.write("\n")

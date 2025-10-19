@@ -76,11 +76,12 @@ def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
     rng = DummyRNG(integers_seq=[0, 1, 0, 2], random_seq=[0.1])
     state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
 
-    diagnostics = updates.metropolis_sweep(
+    diagnostics, samples = updates.metropolis_sweep(
         params,
         auxiliary=None,
         mc_state=state,
         schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        measurement_interval=1,
     )
 
     assert wl.trajectories[1, 0] == 2
@@ -89,6 +90,7 @@ def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
     assert np.isclose(state.log_weight, np.log(0.5) + np.log(0.6))
     assert diagnostics["momentum_accepts"] == 1
     assert diagnostics["momentum_attempts"] == 1
+    assert len(samples) == 1
 
 
 def test_permutation_swap_updates_phase(monkeypatch) -> None:
@@ -112,11 +114,12 @@ def test_permutation_swap_updates_phase(monkeypatch) -> None:
     rng = DummyRNG(integers_seq=[0, 0, 1], random_seq=[0.1])
     state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
 
-    diagnostics = updates.metropolis_sweep(
+    diagnostics, samples = updates.metropolis_sweep(
         params,
         auxiliary=None,
         mc_state=state,
         schedule=updates.UpdateSchedule(worldline_moves=0, permutation_moves=1),
+        measurement_interval=1,
     )
 
     assert np.array_equal(cfg.permutations["up"].values, np.array([1, 0]))
@@ -125,6 +128,7 @@ def test_permutation_swap_updates_phase(monkeypatch) -> None:
     assert np.isclose(state.log_weight, np.log(0.8) + np.log(0.9))
     assert diagnostics["permutation_accepts"] == 1
     assert diagnostics["permutation_attempts"] == 1
+    assert len(samples) == 1
 
 
 def test_momentum_update_rejects_pauli(monkeypatch) -> None:
@@ -138,11 +142,12 @@ def test_momentum_update_rejects_pauli(monkeypatch) -> None:
     rng = DummyRNG(integers_seq=[0, 0, 0, 1], random_seq=[0.0])
     state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
 
-    diagnostics = updates.metropolis_sweep(
+    diagnostics, samples = updates.metropolis_sweep(
         params,
         auxiliary=None,
         mc_state=state,
         schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        measurement_interval=1,
     )
 
     assert wl.trajectories[0, 0] == 0
@@ -150,3 +155,4 @@ def test_momentum_update_rejects_pauli(monkeypatch) -> None:
     assert diagnostics["momentum_attempts"] == 1
     assert np.isclose(state.phase, 1.0 + 0.0j)
     assert np.isclose(state.log_weight, 0.0)
+    assert len(samples) == 1

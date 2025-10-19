@@ -27,6 +27,7 @@ DEFAULT_SWEEPS = 16
 DEFAULT_THERMALIZATION = 4
 DEFAULT_HOPPING = 1.0
 DEFAULT_FFT_MODE = "complex"
+DEFAULT_MEASUREMENT_INTERVAL = 32
 
 
 @dataclass
@@ -43,6 +44,7 @@ def build_parameters(
     thermalization: int,
     *,
     fft_mode: str,
+    measurement_interval: int,
 ) -> config.SimulationParameters:
     payload = {
         "lattice_size": spec.lattice_size,
@@ -54,6 +56,7 @@ def build_parameters(
         "thermalization_sweeps": thermalization,
         "seed": spec.seed,
         "fft_mode": fft_mode,
+        "measurement_interval": measurement_interval,
     }
     return config.load_parameters(payload)
 
@@ -64,15 +67,23 @@ def run_experiment(
     thermalization: int,
     log_dir: Path | None = None,
     fft_mode: str = DEFAULT_FFT_MODE,
+    measurement_interval: int = DEFAULT_MEASUREMENT_INTERVAL,
 ) -> List[dict]:
     results: List[dict] = []
     if log_dir is not None:
         log_dir.mkdir(parents=True, exist_ok=True)
 
     for idx, spec in enumerate(specs):
-        params = build_parameters(spec, sweeps, thermalization, fft_mode=fft_mode)
+        params = build_parameters(
+            spec,
+            sweeps,
+            thermalization,
+            fft_mode=fft_mode,
+            measurement_interval=measurement_interval,
+        )
         if log_dir is not None:
-            log_path = log_dir / f"run_{idx:03d}.jsonl"
+            tag = f"L{spec.lattice_size}_beta{spec.beta}_U{spec.interaction}"
+            log_path = log_dir / f"{idx:03d}_{tag}.jsonl"
             params = replace(params, log_path=log_path)
         aux_field = auxiliary.generate_auxiliary_field(params)
         result = simulation.run_simulation(params, aux_field)
@@ -94,8 +105,14 @@ def run_experiment(
 def plot_u_sweep(data: List[dict], output_path: Path) -> None:
     interactions = [entry["interaction"] for entry in data]
     avg_sign = [entry["measurements"]["re"] for entry in data]
+    errors = []
+    for entry in data:
+        var = entry["variances"]["re"]
+        samples = entry.get("samples", 0)
+        err = np.sqrt(var / samples) if samples > 0 else 0.0
+        errors.append(err)
     plt.figure(figsize=(6, 4))
-    plt.plot(interactions, avg_sign, marker="o")
+    plt.errorbar(interactions, avg_sign, yerr=errors, marker="o", capsize=4)
     plt.xlabel("Interaction U")
     plt.ylabel("Re S")
     plt.title("Re S vs U (L=32, beta=32)")
@@ -117,17 +134,34 @@ def plot_u_sweep(data: List[dict], output_path: Path) -> None:
 
 
 def plot_beta_l_sweep(data: List[dict], output_path: Path) -> None:
-    # Group by lattice size and plot |S| vs beta for each L.
+    # Group by lattice size and plot Re S vs beta for each L.
     grouped: dict[int, list[tuple[float, float]]] = {}
+    entry_lookup: dict[tuple[int, float], dict] = {}
     for entry in data:
         grouped.setdefault(entry["lattice_size"], []).append(
-            (entry["beta"], entry["measurements"]["abs"])
+            (entry["beta"], entry["measurements"]["re"])
         )
+        entry_lookup[(entry["lattice_size"], entry["beta"])] = entry
     plt.figure(figsize=(6, 4))
     for lattice_size, values in sorted(grouped.items()):
-        values.sort(key=lambda pair: pair[0])
-        betas, avg_sign = zip(*values)
-        plt.plot(betas, avg_sign, marker="o", label=f"L={lattice_size}")
+        values.sort(key=lambda item: item[0])
+        betas, avg_sign_vals, errors = [], [], []
+        for beta_val, avg_val in values:
+            entry = entry_lookup[(lattice_size, beta_val)]
+            betas.append(beta_val)
+            avg_sign_vals.append(avg_val)
+            var = entry["variances"]["re"]
+            samples = entry.get("samples", 0)
+            err = np.sqrt(var / samples) if samples > 0 else 0.0
+            errors.append(err)
+        plt.errorbar(
+            betas,
+            avg_sign_vals,
+            yerr=errors,
+            marker="o",
+            capsize=4,
+            label=f"L={lattice_size}",
+        )
     plt.xlabel("Beta")
     plt.ylabel("Re S")
     plt.title("Re S vs Beta and L (U=20)")
@@ -183,6 +217,12 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         default=DEFAULT_FFT_MODE,
         help="Select complex FFT (with phases) or real part only.",
     )
+    parser.add_argument(
+        "--measurement-interval",
+        type=int,
+        default=DEFAULT_MEASUREMENT_INTERVAL,
+        help="Record S after this many Metropolis attempts (per run).",
+    )
     return parser.parse_args(argv)
 
 
@@ -202,6 +242,7 @@ def main(argv: list[str] | None = None) -> int:
         args.thermalization,
         log_dir=output_dir / "logs_u",
         fft_mode=args.fft_mode,
+        measurement_interval=args.measurement_interval,
     )
     u_json_path = output_dir / "average_sign_vs_U.json"
     u_json_path.write_text(json.dumps(u_results, indent=2), encoding="utf-8")
@@ -225,6 +266,7 @@ def main(argv: list[str] | None = None) -> int:
         args.thermalization,
         log_dir=output_dir / "logs_beta_l",
         fft_mode=args.fft_mode,
+        measurement_interval=args.measurement_interval,
     )
     beta_l_json_path = output_dir / "average_sign_vs_beta_L.json"
     beta_l_json_path.write_text(json.dumps(beta_l_results, indent=2), encoding="utf-8")
