@@ -140,3 +140,8 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Each run logs to `logs_u/` / `logs_beta_l/` using descriptive filenames (`L{L}_beta{β}_U{U}.jsonl`) and exposes `--fft-mode`, `--measurement-interval`, et al.
 - Fresh experimental outputs generated for complex and real FFT modes (64 sweeps, 16 thermalization sweeps) stored in `experiments/results/{complex,real}/` accompanied by JSONL diagnostics.
 - Plotting is handled by `plot_sign_vs_U.py` / `plot_sign_vs_beta_L.py`, enabling visualization tweaks without rerunning simulations.
+
+## Stage 12 – Low-U Refinement Sweep (2025-10-20)
+- Updated experiment expectations to cover finer interaction resolution near `U=0`. Target list: `U = [0, 0.05, 0.10, 0.15, 0.20, 0.40, 0.60, 0.80, 1.00]`.
+- Increased sampler effort for production-quality runs: `--sweeps 64`, `--thermalization 16`, `--measurement-interval 8`, retaining `Δτ = 1/32` and `L = β ∈ {4, 6, 8, 10}`.
+- Noted in README’s experiment section so future reruns use the same command presets for both FFT modes (complex / real).

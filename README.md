@@ -118,6 +118,21 @@ uv run python experiments/run_sign_vs_beta_L.py \
 
 Customize sampling points with `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, `--measurement-interval`, and `--seed`. Logs land in `logs_u/` and `logs_beta_l/`.
 
+Recent production sweeps focus on low-interaction resolution with higher statistics:
+
+```bash
+uv run python experiments/run_sign_vs_U.py \
+    --output-dir experiments/output \
+    --sweeps 64 --thermalization 16 \
+    --measurement-interval 8 \
+    --u-values 0 0.05 0.1 0.15 0.2 0.4 0.6 0.8 1.0 \
+    --lattice-sizes 4 6 8 10 \
+    --beta-values 4 6 8 10 \
+    --fft-mode complex
+```
+
+Run the same command with `--fft-mode real` and a different `--output-dir` (e.g., `experiments/output_real`) to compare cosine-only FFT data.
+
 Plots are produced with standalone scripts:
 
 ```bash
