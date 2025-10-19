@@ -2,6 +2,8 @@
 
 This repository implements the momentum-space worldline QMC algorithm described in `note.md`. The code keeps the auxiliary Hubbard-Stratonovich field fixed and samples fermionic worldlines (`K_σ`) together with permutations (`P_σ`) to estimate the average sign
 
+Coordination note: day-to-day conversations are handled in Mandarin, while documentation (including this README) is maintained in English according to the workflow guidelines in `AGENTS.md`.
+
 Development follows the staged plan recorded in `AGENTS.md`. Each stage has a companion planning note in `docs/plan_stage*.md`. Below is a breakdown of the modules and their connection to the formulas in `note.md`.
 
 ## Module Overview & Formula Mapping
@@ -22,7 +24,7 @@ For further detail reference the staged notes (`docs/plan_stage*.md`) which incl
 
 ## Quick Start
 
-1. 准备配置文件（JSON），包含 `note.md` 中列出的物理参数，例如（`experiments/config_samples/quick_config.json` 提供了一个模板）：
+1. Prepare a JSON configuration with the physical parameters listed in `note.md`. The template at `experiments/config_samples/quick_config.json` offers a minimal starting point:
 
 ```json
 {
@@ -37,15 +39,15 @@ For further detail reference the staged notes (`docs/plan_stage*.md`) which incl
 }
 ```
 
-需要测试“无相位”情形时，可以在配置中加入 `"fft_mode": "real"`（同时也可设置 `"initial_state": "random"` 以恢复旧的随机初态）。
+To probe a phase-less setup, add `"fft_mode": "real"` to the configuration. You can also set `"initial_state": "random"` if you prefer the legacy random initial worldlines.
 
-2. 运行模拟并输出结果：
+2. Run the simulation and write out the results:
 
 ```bash
 uv run python -m worldline_qmc.cli --config config.json --output result.json --verbose
 ```
 
-结果将写入 `result.json`，并在终端显示测量摘要。若未指定 `--log`，CLI 会默认生成 `result.json.log.jsonl` 记录逐 sweep 诊断。
+The CLI writes the diagnostics and measurements to `result.json` and echoes a short summary to the terminal. When `--log` is omitted, a JSONL diagnostics log named `result.json.log.jsonl` is created automatically.
 
 ## Configuration Fields
 
@@ -58,9 +60,9 @@ uv run python -m worldline_qmc.cli --config config.json --output result.json --v
 - `worldline_moves_per_slice`, `permutation_moves_per_slice` – optional overrides for scheduling; default heuristics follow the number of particles per spin and time slices.
 - `seed` – RNG seed controlling auxiliary field sampling and Metropolis proposals.
 - `output_path` – optional JSON path for CLI output.
-- `log_path` – optional JSON-lines diagnostics file；CLI 默认基于输出路径命名。
-- `fft_mode` – `"complex"`（保留 FFT 相位）或 `"real"`（仅使用实部、无相位），方便比较符号表现。
-- `initial_state` – `"fermi_sea"`（零温费米海，随虚时保持不变）或 `"random"`。
+- `log_path` – optional JSON-lines diagnostics file; the CLI derives a name from the output path when not provided.
+- `fft_mode` – `"complex"` retains the full FFT phase, `"real"` keeps only the cosine component to ease sign comparisons.
+- `initial_state` – `"fermi_sea"` keeps a zero-temperature Fermi sea fixed along imaginary time, `"random"` reproduces the legacy random initial state.
 
 `config.load_parameters` accepts a JSON file or dictionary. Unknown fields go into `SimulationParameters.extra` for downstream analysis metadata.
 
@@ -96,9 +98,9 @@ The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 
 ## Experiments & Visualization
 
-`experiments/run_average_sign.py` reproduces the parameter studies described in the project request（默认输出 `Re S` 数据与日志，**不直接绘图**）：
+`experiments/run_average_sign.py` reproduces the parameter studies described in the project request (it emits `Re S` data and logs by default, and does **not** plot directly).
 
-数据生成拆分为两个脚本：
+Data generation is split into two scripts:
 
 ```bash
 # L=12, β=12, varying U
@@ -107,16 +109,16 @@ uv run python experiments/run_sign_vs_U.py \
     --sweeps 64 --thermalization 16 \
     --fft-mode complex --measurement-interval 32
 
-# U=20, varying β 与 L
+# U=20, varying β and L
 uv run python experiments/run_sign_vs_beta_L.py \
     --output-dir experiments/output_beta_L \
     --sweeps 64 --thermalization 16 \
     --fft-mode complex --measurement-interval 32
 ```
 
-`--u-values`、`--beta-values`、`--l-values`、`--fft-mode`、`--measurement-interval`、`--seed` 可定制采样点；日志存放于 `logs_u/`、`logs_beta_l/`。
+Customize sampling points with `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, `--measurement-interval`, and `--seed`. Logs land in `logs_u/` and `logs_beta_l/`.
 
-绘图使用独立脚本：
+Plots are produced with standalone scripts:
 
 ```bash
 uv run python experiments/plot_sign_vs_U.py \
@@ -128,7 +130,7 @@ uv run python experiments/plot_sign_vs_beta_L.py \
     --output experiments/output_beta_L/average_sign_vs_beta_L.png
 ```
 
-图像展示 `Re S` 与标准误差（来自方差/有效样本数），y 轴按数据最小/最大值自动设置并留出 10% 余量。可使用 `--title` 覆盖默认标题。
+Plots show `Re S` together with standard errors derived from the variance and effective sample count. The y-axis is padded by 10% beyond the data range, and `--title` can override the default caption.
 
 ## Tests
 

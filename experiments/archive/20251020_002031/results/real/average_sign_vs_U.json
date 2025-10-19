@@ -1,0 +1,164 @@
+[
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 0.0,
+    "seed": 0,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  },
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 4.0,
+    "seed": 1,
+    "measurements": {
+      "re": 0.006946449191685912,
+      "im": -3.612805279733859e-15,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.9999607678522865,
+      "im": 1.1720446418985028e-25,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 5379.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 18.0,
+      "momentum_acceptance": 0.0012159559461805555,
+      "permutation_acceptance": 0.0015845070422535212,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  },
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 6.0,
+    "seed": 2,
+    "measurements": {
+      "re": -0.008768764434180138,
+      "im": 9.522882809421178e-15,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.9999321295206003,
+      "im": 3.0290430106306422e-25,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 8934.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 36.0,
+      "momentum_acceptance": 0.002019585503472222,
+      "permutation_acceptance": 0.0031690140845070424,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  },
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 8.0,
+    "seed": 3,
+    "measurements": {
+      "re": -0.0004149826789838337,
+      "im": -2.007254967454875e-15,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 1.000008849231795,
+      "im": 4.678577521000474e-25,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 11014.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 113.0,
+      "momentum_acceptance": 0.0024897822627314814,
+      "permutation_acceptance": 0.00994718309859155,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  },
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 10.0,
+    "seed": 4,
+    "measurements": {
+      "re": 0.01008588337182448,
+      "im": -3.957617242603162e-15,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.9999072954828756,
+      "im": 8.001011207950392e-25,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 14653.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 117.0,
+      "momentum_acceptance": 0.003312400535300926,
+      "permutation_acceptance": 0.010299295774647887,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  },
+  {
+    "lattice_size": 12,
+    "beta": 12.0,
+    "interaction": 12.0,
+    "seed": 5,
+    "measurements": {
+      "re": 0.009418302540415705,
+      "im": -6.314727577082861e-15,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.9999203162209875,
+      "im": 1.0413648074147426e-24,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 4423680.0,
+      "momentum_accepts": 16607.0,
+      "permutation_attempts": 11360.0,
+      "permutation_accepts": 330.0,
+      "momentum_acceptance": 0.0037541142216435184,
+      "permutation_acceptance": 0.029049295774647887,
+      "total_sweeps": 80.0,
+      "measurement_sweeps": 64.0
+    },
+    "samples": 110848
+  }
+]

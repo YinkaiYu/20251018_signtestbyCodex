@@ -1,5 +1,7 @@
 """Generate average-sign data for varying interaction U.
 
+Supports sweeping multiple lattice sizes and beta values.
+
 Outputs:
   - average_sign_vs_U.json
   - logs_u/L{L}_beta{beta}_U{U}.jsonl per parameter point
@@ -100,6 +102,23 @@ def run_experiment(
     return results
 
 
+def _expand_lattice_beta_pairs(
+    lattice_sizes: List[int],
+    beta_values: List[float],
+) -> List[tuple[int, float]]:
+    if len(lattice_sizes) == len(beta_values):
+        return list(zip(lattice_sizes, beta_values))
+
+    if len(lattice_sizes) == 1:
+        return [(lattice_sizes[0], beta) for beta in beta_values]
+
+    if len(beta_values) == 1:
+        return [(l, beta_values[0]) for l in lattice_sizes]
+
+    # Fall back to full cross product when lengths differ.
+    return [(l, beta) for l in lattice_sizes for beta in beta_values]
+
+
 def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Average sign vs U data generator")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -113,8 +132,22 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
         default=[0.0, 4.0, 6.0, 8.0, 10.0, 12.0],
         help="Interaction values to sample",
     )
-    parser.add_argument("--lattice-size", type=int, default=DEFAULT_LATTICE_SIZE)
-    parser.add_argument("--beta", type=float, default=DEFAULT_BETA)
+    parser.add_argument(
+        "--lattice-sizes",
+        "--lattice-size",
+        type=int,
+        nargs="+",
+        default=[DEFAULT_LATTICE_SIZE],
+        help="Lattice size values to sample (combine with beta values).",
+    )
+    parser.add_argument(
+        "--beta-values",
+        "--beta",
+        type=float,
+        nargs="+",
+        default=[DEFAULT_BETA],
+        help="Beta values to sample (combine with lattice sizes).",
+    )
     parser.add_argument(
         "--fft-mode",
         choices=["complex", "real"],
@@ -135,15 +168,23 @@ def main(argv: List[str] | None = None) -> int:
     output_dir = args.output_dir
     output_dir.mkdir(parents=True, exist_ok=True)
 
-    specs = [
-        RunSpec(
-            lattice_size=args.lattice_size,
-            beta=args.beta,
-            interaction=u_value,
-            seed=args.seed + idx,
-        )
-        for idx, u_value in enumerate(args.u_values)
-    ]
+    lattice_beta_pairs = _expand_lattice_beta_pairs(
+        args.lattice_sizes,
+        args.beta_values,
+    )
+
+    specs: List[RunSpec] = []
+    for pair_idx, (lattice_size, beta_value) in enumerate(lattice_beta_pairs):
+        for u_idx, u_value in enumerate(args.u_values):
+            seed_offset = pair_idx * len(args.u_values) + u_idx
+            specs.append(
+                RunSpec(
+                    lattice_size=lattice_size,
+                    beta=beta_value,
+                    interaction=u_value,
+                    seed=args.seed + seed_offset,
+                )
+            )
 
     results = run_experiment(
         specs,
