@@ -1,10 +1,11 @@
-"""Average sign parameter studies and visualization.
+"""Average sign parameter sweeps (data generation only).
 
-This script runs the simulation for two scenarios:
+This script runs simulations for two scenarios:
 1. Fixed L=12, beta=12 while scanning the interaction strength U.
 2. Fixed U=20 while scanning beta and lattice size L (defaults: L∈{4,6,8,12}).
 
-Results (JSON + plots) are stored under ``experiments/output`` by default.
+It produces JSON data (and per-run logs) in the chosen output directory. Plotting
+is handled separately by ``plot_average_sign.py``.
 """
 
 from __future__ import annotations
@@ -15,7 +16,6 @@ from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable, List
 
-import matplotlib.pyplot as plt
 import numpy as np
 
 from worldline_qmc import auxiliary, config, simulation
@@ -102,88 +102,6 @@ def run_experiment(
     return results
 
 
-def plot_u_sweep(data: List[dict], output_path: Path) -> None:
-    interactions = [entry["interaction"] for entry in data]
-    avg_sign = [entry["measurements"]["re"] for entry in data]
-    errors = []
-    for entry in data:
-        var = entry["variances"]["re"]
-        samples = entry.get("samples", 0)
-        err = np.sqrt(var / samples) if samples > 0 else 0.0
-        errors.append(err)
-    plt.figure(figsize=(6, 4))
-    plt.errorbar(interactions, avg_sign, yerr=errors, marker="o", capsize=4)
-    plt.xlabel("Interaction U")
-    plt.ylabel("Re S")
-    plt.title("Re S vs U (L=32, beta=32)")
-    if avg_sign:
-        y_min = min(avg_sign)
-        y_max = max(avg_sign)
-        if y_max == y_min:
-            margin = max(0.05 * abs(y_max), 0.05)
-            plt.ylim(y_min - margin, y_max + margin)
-        else:
-            span = y_max - y_min
-            margin = span * 0.1
-            plt.ylim(y_min - margin, y_max + margin)
-    plt.grid(True)
-    plt.tight_layout()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=150)
-    plt.close()
-
-
-def plot_beta_l_sweep(data: List[dict], output_path: Path) -> None:
-    # Group by lattice size and plot Re S vs beta for each L.
-    grouped: dict[int, list[tuple[float, float]]] = {}
-    entry_lookup: dict[tuple[int, float], dict] = {}
-    for entry in data:
-        grouped.setdefault(entry["lattice_size"], []).append(
-            (entry["beta"], entry["measurements"]["re"])
-        )
-        entry_lookup[(entry["lattice_size"], entry["beta"])] = entry
-    plt.figure(figsize=(6, 4))
-    for lattice_size, values in sorted(grouped.items()):
-        values.sort(key=lambda item: item[0])
-        betas, avg_sign_vals, errors = [], [], []
-        for beta_val, avg_val in values:
-            entry = entry_lookup[(lattice_size, beta_val)]
-            betas.append(beta_val)
-            avg_sign_vals.append(avg_val)
-            var = entry["variances"]["re"]
-            samples = entry.get("samples", 0)
-            err = np.sqrt(var / samples) if samples > 0 else 0.0
-            errors.append(err)
-        plt.errorbar(
-            betas,
-            avg_sign_vals,
-            yerr=errors,
-            marker="o",
-            capsize=4,
-            label=f"L={lattice_size}",
-        )
-    plt.xlabel("Beta")
-    plt.ylabel("Re S")
-    plt.title("Re S vs Beta and L (U=20)")
-    if grouped:
-        all_values = [value for values in grouped.values() for _, value in values]
-        y_min = min(all_values)
-        y_max = max(all_values)
-        if y_max == y_min:
-            margin = max(0.05 * abs(y_max), 0.05)
-            plt.ylim(y_min - margin, y_max + margin)
-        else:
-            span = y_max - y_min
-            margin = span * 0.1
-            plt.ylim(y_min - margin, y_max + margin)
-    plt.legend()
-    plt.grid(True)
-    plt.tight_layout()
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-    plt.savefig(output_path, dpi=150)
-    plt.close()
-
-
 def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Average sign studies")
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
@@ -246,7 +164,6 @@ def main(argv: list[str] | None = None) -> int:
     )
     u_json_path = output_dir / "average_sign_vs_U.json"
     u_json_path.write_text(json.dumps(u_results, indent=2), encoding="utf-8")
-    plot_u_sweep(u_results, output_dir / "average_sign_vs_U.png")
 
     # Scenario 2: vary beta and L at fixed U.
     beta_l_specs: List[RunSpec] = []
@@ -270,7 +187,6 @@ def main(argv: list[str] | None = None) -> int:
     )
     beta_l_json_path = output_dir / "average_sign_vs_beta_L.json"
     beta_l_json_path.write_text(json.dumps(beta_l_results, indent=2), encoding="utf-8")
-    plot_beta_l_sweep(beta_l_results, output_dir / "average_sign_vs_beta_L.png")
 
     return 0
 

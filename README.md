@@ -96,7 +96,7 @@ The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 
 ## Experiments & Visualization
 
-The helper script `experiments/run_average_sign.py` reproduces the parameter studies described in the project request（默认绘制 `Re S`），并把 JSON/PNG/日志写入 `experiments/output/`：
+`experiments/run_average_sign.py` reproduces the parameter studies described in the project request（默认输出 `Re S` 数据与日志，**不直接绘图**）：
 
 ```bash
 uv run python experiments/run_average_sign.py --verbose
@@ -104,10 +104,24 @@ uv run python experiments/run_average_sign.py --verbose
 
 Key scenarios implemented:
 
-1. Fixed `L=12`, `β=12`, varying `U` (plot `average_sign_vs_U.png`).
-2. Fixed `U=20`, varying `β` 与 `L ∈ {4,6,8,12}`（plot `average_sign_vs_beta_L.png`）。
+1. Fixed `L=12`, `β=12`, varying `U`（生成 `average_sign_vs_U.json` 与对应日志）。
+2. Fixed `U=20`, varying `β` 与 `L ∈ {4,6,8,12}`（生成 `average_sign_vs_beta_L.json` 与对应日志）。
 
-Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, and `--seed` to customise workloads；脚本还会在 `logs_u/`、`logs_beta_l/` 中生成 JSONL 诊断（Matplotlib 使用 Agg backend，标签保持英文）。
+Use `--sweeps`, `--thermalization`, `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, `--measurement-interval`, and `--seed` to customise workloads；脚本还会在 `logs_u/`、`logs_beta_l/` 中生成 JSONL 诊断。
+
+绘图使用单独脚本：
+
+```bash
+uv run python experiments/plot_sign_vs_U.py \
+    --data experiments/output/average_sign_vs_U.json \
+    --output experiments/output/average_sign_vs_U.png
+
+uv run python experiments/plot_sign_vs_beta_L.py \
+    --data experiments/output/average_sign_vs_beta_L.json \
+    --output experiments/output/average_sign_vs_beta_L.png
+```
+
+图像默认展示 `Re S` 及其标准误差（来自方差/有效样本数），y 轴会根据数据自动聚焦在 0 周围。若需要自定义标题，可使用 `--title` 参数。
 
 ## Tests
 

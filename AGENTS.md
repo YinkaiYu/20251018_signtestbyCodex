@@ -139,3 +139,4 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - `experiments/run_average_sign.py` now defaults to small lattices (`L=12, β=12` for U sweeps; `L, β ∈ {4,6,8,12}` for the second scenario), plots `Re S` with standard-error bars, and samples `S(X)` multiple times per sweep (`measurement_interval` configurable).
 - Script logs each run under `logs_u/` / `logs_beta_l/` using descriptive filenames (`L{L}_beta{β}_U{U}.jsonl`), and exposes both `--fft-mode` and `--measurement-interval`.
 - Fresh experimental outputs generated for complex and real FFT modes (64 sweeps, 16 thermalization sweeps) stored in `experiments/results/{complex,real}/` along with JSONL diagnostics.
+- Plotting is decoupled into `plot_sign_vs_U.py` / `plot_sign_vs_beta_L.py`, avoiding costly reruns when tweaking visualization parameters.
