@@ -95,9 +95,11 @@ def generate_auxiliary_field(
 
     slices = []
     for l in range(time_slices):
-        spatial_field = rng.choice(
-            (-1, 1), size=(lattice_size, lattice_size)
-        ).astype(np.int8)
+        spatial_field = _sample_spatial_field(
+            lattice_size,
+            rng,
+            mode=params.auxiliary_mode,
+        )
 
         spatial_float = spatial_field.astype(float)
         exp_up = np.exp(coupling * spatial_float)
@@ -119,6 +121,32 @@ def generate_auxiliary_field(
         auxiliary_coupling=coupling,
         fft_mode=fft_mode,
     )
+
+
+def _sample_spatial_field(
+    lattice_size: int,
+    rng: np.random.Generator,
+    *,
+    mode: str,
+) -> np.ndarray:
+    """
+    Generate a spatial auxiliary configuration according to the requested mode.
+    """
+
+    if mode == "random":
+        return rng.choice(
+            (-1, 1),
+            size=(lattice_size, lattice_size),
+        ).astype(np.int8)
+    if mode == "uniform_plus":
+        return np.ones((lattice_size, lattice_size), dtype=np.int8)
+    if mode == "checkerboard":
+        indices = np.indices((lattice_size, lattice_size)).sum(axis=0)
+        pattern = np.where(indices % 2 == 0, 1, -1)
+        return pattern.astype(np.int8)
+
+    msg = f"Unsupported auxiliary_mode: {mode}"
+    raise ValueError(msg)
 
 
 def _fourier_sum(field: np.ndarray, mode: str) -> np.ndarray:

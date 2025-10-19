@@ -26,6 +26,7 @@ DEFAULT_FFT_MODE = "complex"
 DEFAULT_MEASUREMENT_INTERVAL = 32
 DEFAULT_LATTICE_SIZE = 12
 DEFAULT_BETA = 12.0
+DEFAULT_AUXILIARY_MODE = "random"
 
 
 @dataclass
@@ -43,6 +44,7 @@ def build_parameters(
     *,
     fft_mode: str,
     measurement_interval: int,
+    auxiliary_mode: str,
 ) -> config.SimulationParameters:
     payload = {
         "lattice_size": spec.lattice_size,
@@ -55,6 +57,7 @@ def build_parameters(
         "seed": spec.seed,
         "fft_mode": fft_mode,
         "measurement_interval": measurement_interval,
+        "auxiliary_mode": auxiliary_mode,
     }
     return config.load_parameters(payload)
 
@@ -67,6 +70,7 @@ def run_experiment(
     *,
     fft_mode: str,
     measurement_interval: int,
+    auxiliary_mode: str,
 ) -> List[dict]:
     results: List[dict] = []
     log_dir = output_dir / "logs_u"
@@ -79,6 +83,7 @@ def run_experiment(
             thermalization,
             fft_mode=fft_mode,
             measurement_interval=measurement_interval,
+            auxiliary_mode=auxiliary_mode,
         )
         tag = f"L{spec.lattice_size}_beta{spec.beta}_U{spec.interaction}"
         log_path = log_dir / f"{idx:03d}_{tag}.jsonl"
@@ -155,6 +160,15 @@ def parse_args(argv: List[str] | None = None) -> argparse.Namespace:
         help="Choose complex FFT (with phases) or real cosine component.",
     )
     parser.add_argument(
+        "--auxiliary-mode",
+        choices=["random", "uniform_plus", "checkerboard"],
+        default=DEFAULT_AUXILIARY_MODE,
+        help=(
+            "Select auxiliary field sampling: random ±1, uniform +1, "
+            "or checkerboard staggered ±1."
+        ),
+    )
+    parser.add_argument(
         "--measurement-interval",
         type=int,
         default=DEFAULT_MEASUREMENT_INTERVAL,
@@ -193,6 +207,7 @@ def main(argv: List[str] | None = None) -> int:
         output_dir,
         fft_mode=args.fft_mode,
         measurement_interval=args.measurement_interval,
+        auxiliary_mode=args.auxiliary_mode,
     )
 
     (output_dir / "average_sign_vs_U.json").write_text(

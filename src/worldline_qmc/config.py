@@ -36,6 +36,7 @@ class SimulationParameters:
     output_path: Optional[Path] = None
     log_path: Optional[Path] = None
     fft_mode: str = "complex"
+    auxiliary_mode: str = "random"
     initial_state: str = "fermi_sea"
     measurement_interval: int = 0
     extra: MutableMapping[str, Any] = field(default_factory=dict)
@@ -236,6 +237,11 @@ def _validate_parameters(params: SimulationParameters) -> None:
 
     if params.fft_mode not in {"complex", "real"}:
         raise ValueError("fft_mode must be 'complex' or 'real'.")
+
+    if params.auxiliary_mode not in {"random", "uniform_plus", "checkerboard"}:
+        raise ValueError(
+            "auxiliary_mode must be 'random', 'uniform_plus', or 'checkerboard'."
+        )
 
     if params.initial_state not in {"fermi_sea", "random"}:
         raise ValueError("initial_state must be 'fermi_sea' or 'random'.")

@@ -63,3 +63,45 @@ def test_auxiliary_real_fft_mode_produces_real_weights() -> None:
     assert aux_field.fft_mode == "real"
     w = aux_field.w(0, "up")
     assert np.allclose(np.imag(w), 0.0, atol=1e-12)
+
+
+def test_uniform_plus_auxiliary_field_is_deterministic() -> None:
+    params = _make_params(interaction=4.0, auxiliary_mode="uniform_plus", beta=1.0, delta_tau=0.25)
+    aux_field = auxiliary.generate_auxiliary_field(params, seed=11)
+
+    for slice_cache in aux_field.slices:
+        assert np.all(slice_cache.spatial_field == 1)
+
+    volume = params.volume
+    coupling = params.auxiliary_coupling
+
+    w_up = aux_field.w(0, "up")
+    w_down = aux_field.w(0, "down")
+
+    assert np.isclose(w_up[0, 0], volume * np.exp(coupling))
+    assert np.isclose(w_down[0, 0], volume * np.exp(-coupling))
+    assert np.allclose(w_up.flat[1:], 0.0, atol=1e-12)
+    assert np.allclose(w_down.flat[1:], 0.0, atol=1e-12)
+
+
+def test_checkerboard_auxiliary_field_patterns() -> None:
+    params = _make_params(
+        lattice_size=4,
+        auxiliary_mode="checkerboard",
+        interaction=2.0,
+        beta=1.0,
+        delta_tau=0.25,
+    )
+    aux_field = auxiliary.generate_auxiliary_field(params, seed=0)
+
+    expected = np.array(
+        [
+            [1, -1, 1, -1],
+            [-1, 1, -1, 1],
+            [1, -1, 1, -1],
+            [-1, 1, -1, 1],
+        ],
+        dtype=np.int8,
+    )
+    for slice_cache in aux_field.slices:
+        assert np.array_equal(slice_cache.spatial_field, expected)

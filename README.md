@@ -62,6 +62,7 @@ The CLI writes the diagnostics and measurements to `result.json` and echoes a sh
 - `output_path` – optional JSON path for CLI output.
 - `log_path` – optional JSON-lines diagnostics file; the CLI derives a name from the output path when not provided.
 - `fft_mode` – `"complex"` retains the full FFT phase, `"real"` keeps only the cosine component to ease sign comparisons.
+- `auxiliary_mode` – `"random"` samples independent ±1 fields, `"uniform_plus"` fixes `s_{i,l}=+1`, and `"checkerboard"` enforces an alternating ±1 pattern on the spatial lattice.
 - `initial_state` – `"fermi_sea"` keeps a zero-temperature Fermi sea fixed along imaginary time, `"random"` reproduces the legacy random initial state.
 
 `config.load_parameters` accepts a JSON file or dictionary. Unknown fields go into `SimulationParameters.extra` for downstream analysis metadata.
@@ -132,6 +133,8 @@ uv run python experiments/run_sign_vs_U.py \
 ```
 
 Run the same command with `--fft-mode real` and a different `--output-dir` (e.g., `experiments/output_real`) to compare cosine-only FFT data.
+
+To study deterministic auxiliary fields, append `--auxiliary-mode uniform_plus` (all +1) or `--auxiliary-mode checkerboard` (staggered ±1) and direct the output to dedicated directories (for example `experiments/output_uniform` or `experiments/output_checkerboard`).
 
 Plots are produced with standalone scripts:
 

@@ -11,6 +11,10 @@ __pycache__/
 # Experiment artifacts
 experiments/output/
 experiments/output_real/
+experiments/output_uniform/
+experiments/output_uniform_real/
+experiments/output_checkerboard/
+experiments/output_checkerboard_real/
 experiments/archive/
 
 # OS files

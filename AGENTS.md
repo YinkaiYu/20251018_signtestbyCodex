@@ -145,3 +145,8 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Updated experiment expectations to cover finer interaction resolution near `U=0`. Target list: `U = [0, 0.05, 0.10, 0.15, 0.20, 0.40, 0.60, 0.80, 1.00]`.
 - Increased sampler effort for production-quality runs: `--sweeps 64`, `--thermalization 16`, `--measurement-interval 8`, retaining `Δτ = 1/32` and `L = β ∈ {4, 6, 8, 10}`.
 - Noted in README’s experiment section so future reruns use the same command presets for both FFT modes (complex / real).
+
+## Stage 13 – Auxiliary Field Modes (2025-10-20)
+- Added `auxiliary_mode` configuration with `"random"` (default), `"uniform_plus"` (deterministic +1), and `"checkerboard"` (staggered ±1) options to probe auxiliary-field dependence.
+- `generate_auxiliary_field` now routes through `_sample_spatial_field`, supporting deterministic slices without touching RNG state.
+- Experiment scripts accept `--auxiliary-mode`; README documents how to run uniform or checkerboard sweeps alongside the standard random-field runs.
