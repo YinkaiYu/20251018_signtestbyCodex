@@ -15,6 +15,7 @@ experiments/output_uniform/
 experiments/output_uniform_real/
 experiments/output_checkerboard/
 experiments/output_checkerboard_real/
+experiments/slurm_runs/
 experiments/archive/
 
 # OS files
