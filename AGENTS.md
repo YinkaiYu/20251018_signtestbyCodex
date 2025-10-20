@@ -170,3 +170,13 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Momentum Metropolis updates now draw proposals via these tables and add the `\log P_l(q_{\text{old}}) - \log P_l(q_{\text{new}})` correction to maintain detailed balance while keeping the stored log-weight purely physical.
 - Added regression coverage (`tests/test_updates.py::test_momentum_update_weighted_proposal`) validating the selective cancellation of `|W|` factors and phase preservation.
 - README and `note.md` refreshed to document the new proposal mode and acceptance-ratio bookkeeping.
+
+## Cluster Workflow Reference (updated 2025-10-20)
+- **Sync the repo** – On the server run `git clone` (or `git pull`) so that source files stay aligned with the local workspace. Use `rsync` only for large data folders that are intentionally excluded from version control.
+- **Prepare the environment** – Create and activate the micromamba environment `qmc311` (Python 3.11 with numpy/scipy/matplotlib), then install the project with `pip install -e .[dev]`. Verify once with `pytest`. Every job or interactive run starts with `micromamba activate qmc311`.
+- **Job scaffold** – Keep `jobs/configs/` for parameter tables (`L beta U seed` rows), `jobs/scripts/` for Slurm submission scripts, and `jobs/logs/` for stdout/stderr. This structure lets `sed -n` read the right row per array index.
+- **Slurm script template** – Load micromamba (`eval "$(micromamba shell hook --shell=bash)"`), activate the environment, `cd` into the repo, and read the parameter table. Write outputs to `experiments/slurm_runs/${SLURM_JOB_ID}/L{L}_beta{beta}` and logs to `jobs/logs/`. Use job names such as `yyk_worldlineQMC` on partition `fat6348`.
+- **Submit and monitor** – Submit with `sbatch jobs/scripts/run_*.sbatch`. Track progress via `squeue -u $USER` and `tail -f jobs/logs/<file>`. When sweeping many points, use `--array` to iterate over parameter rows.
+- **Collect results** – After completion, copy back the entire job directory with `rsync -avP master01:.../experiments/slurm_runs/<jobid>/ experiments/slurm_runs/<jobid>/`. Preserve the hierarchy so plotting/aggregation scripts (e.g., `experiments/plot_sign_vs_U.py`) can consume the data unchanged.
+- **Version control** – `experiments/slurm_runs/` is ignored in `.gitignore`; only curated aggregates (e.g., `experiments/output_checkerboard_complex_highsweep/`) are checked in. Confirm the repo is clean before committing summarised outputs.
+- **Remote repository** – Canonical upstream lives at `https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git`. Keep both local and server clones pointing to this origin so code and documentation stay synchronized.
