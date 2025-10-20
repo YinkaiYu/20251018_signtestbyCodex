@@ -150,3 +150,11 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Added `auxiliary_mode` configuration with `"random"` (default), `"uniform_plus"` (deterministic +1), and `"checkerboard"` (staggered ±1) options to probe auxiliary-field dependence.
 - `generate_auxiliary_field` now routes through `_sample_spatial_field`, supporting deterministic slices without touching RNG state.
 - Experiment scripts accept `--auxiliary-mode`; README documents how to run uniform or checkerboard sweeps alongside the standard random-field runs.
+
+## Experiment Workflow Reference (updated 2025-10-20)
+- **Plan & communicate** – Confirm desired parameter grids (U, β, L, FFT/auxiliary modes, measurement settings) with the user; record changes immediately in README and this guide to keep future runs reproducible.
+- **Archive before reruns** – Move any existing `experiments/output*` directories into a timestamped folder under `experiments/archive/` so new artifacts stay isolated and history remains inspectable.
+- **Run generation scripts** – Invoke `uv run python experiments/run_sign_vs_U.py` (or other drivers) with the agreed `--sweeps`, `--thermalization`, `--measurement-interval`, `--fft-mode`, and `--auxiliary-mode`, customizing `--output-dir` per scenario (complex/real, uniform/checkerboard, etc.). Use deterministic seeds when comparing modes.
+- **Plot immediately** – Regenerate figures with `experiments/plot_sign_vs_U.py`, saving PNGs alongside their JSON sources for quick visual review.
+- **Validate outputs** – Spot-check JSON/diagnostics (sample counts, acceptance ratios) and summarize notable metrics; add pytest coverage when new configuration branches appear.
+- **Document & commit** – Update README/AGENTS with new procedures or findings, run `uv run pytest`, then commit the code and documentation changes together with a concise message. Generated data directories remain ignored unless explicitly versioned.
