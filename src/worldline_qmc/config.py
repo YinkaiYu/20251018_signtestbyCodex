@@ -37,6 +37,7 @@ class SimulationParameters:
     log_path: Optional[Path] = None
     fft_mode: str = "complex"
     auxiliary_mode: str = "random"
+    momentum_proposal: str = "w_magnitude"
     initial_state: str = "fermi_sea"
     measurement_interval: int = 0
     extra: MutableMapping[str, Any] = field(default_factory=dict)
@@ -237,6 +238,9 @@ def _validate_parameters(params: SimulationParameters) -> None:
 
     if params.fft_mode not in {"complex", "real"}:
         raise ValueError("fft_mode must be 'complex' or 'real'.")
+
+    if params.momentum_proposal not in {"uniform", "w_magnitude"}:
+        raise ValueError("momentum_proposal must be 'uniform' or 'w_magnitude'.")
 
     if params.auxiliary_mode not in {"random", "uniform_plus", "checkerboard"}:
         raise ValueError(

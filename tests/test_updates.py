@@ -197,3 +197,53 @@ def test_momentum_update_rejects_pauli(monkeypatch) -> None:
     assert np.isclose(state.phase, 1.0 + 0.0j)
     assert np.isclose(state.log_weight, 0.0)
     assert len(samples) == 1
+
+
+def test_momentum_update_weighted_proposal(monkeypatch) -> None:
+    params, cfg = _base_configuration(time_slices=2)
+    wl = cfg.worldlines["up"]
+    wl.trajectories[:, 0] = np.array([0, 1])
+    wl.trajectories[:, 1] = np.array([2, 3])
+
+    amplitude_table = {
+        ("up", 0, 0, 1): 2.0,
+        ("up", 0, 3, 1): 4.0,
+        ("up", 1, 1, 0): 3.0,
+        ("up", 1, 1, 3): 6.0,
+    }
+
+    def log_components_stub(_params, _aux, spin, time_slice, k_from, k_to):
+        amplitude = amplitude_table.get((spin, time_slice, k_from, k_to), 1.0)
+        magnitude = abs(amplitude)
+        if magnitude == 0.0:
+            return float("-inf"), 0.0
+        return float(np.log(magnitude)), float(np.angle(amplitude))
+
+    monkeypatch.setattr(updates, "transition_log_components", log_components_stub)
+
+    rng = DummyRNG(integers_seq=[0, 0, 0], random_seq=[0.9])
+    magnitude = np.array([[0.0, 1.0], [2.0, 0.0]])
+    table = updates.MomentumProposalTable.from_magnitude(magnitude)
+    momentum_tables = {"up": (table, table)}
+
+    state = updates.MonteCarloState(
+        configuration=cfg,
+        phase=1.0 + 0.0j,
+        log_weight=0.0,
+        rng=rng,
+        occupancy_masks=_build_occupancy_masks(params, cfg),
+        momentum_tables=momentum_tables,
+    )
+
+    diagnostics, _ = updates.metropolis_sweep(
+        params,
+        auxiliary=None,
+        mc_state=state,
+        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        measurement_interval=1,
+    )
+
+    assert wl.trajectories[0, 0] == 3
+    assert np.isclose(state.log_weight, np.log(4.0))
+    assert np.isclose(state.phase, 1.0 + 0.0j)
+    assert diagnostics["momentum_accepts"] == 1

@@ -13,7 +13,12 @@ from .config import SimulationParameters
 from .measurement import MeasurementAccumulator
 from .rng import make_generator
 from .transitions import transition_amplitude
-from .updates import MonteCarloState, UpdateSchedule, metropolis_sweep
+from .updates import (
+    MonteCarloState,
+    UpdateSchedule,
+    build_momentum_tables,
+    metropolis_sweep,
+)
 from .worldline import PermutationState, Worldline, WorldlineConfiguration
 from . import lattice
 
@@ -187,12 +192,20 @@ def _initialize_mc_state(
 ) -> MonteCarloState:
     log_weight, phase = _compute_weight_and_phase(params, auxiliary, configuration)
     occupancy_masks = _build_occupancy_masks(params, configuration)
+    momentum_tables = None
+    if params.momentum_proposal == "w_magnitude":
+        momentum_tables = build_momentum_tables(
+            params,
+            auxiliary,
+            spins=configuration.worldlines.keys(),
+        )
     return MonteCarloState(
         configuration=configuration,
         phase=phase,
         log_weight=log_weight,
         rng=rng,
         occupancy_masks=occupancy_masks,
+        momentum_tables=momentum_tables,
     )
 
 

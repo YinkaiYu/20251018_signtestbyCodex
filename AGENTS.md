@@ -164,3 +164,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Momentum updates cache log-magnitude/phase pairs from transition matrix elements and use sweep-level occupancy masks for O(1) Pauli checks.
 - Permutation moves include swaps, short cycles, and small shuffles with parity tracking, improving configuration mixing.
 - Acceptance tests rely on log-ratio comparisons, reducing redundant `np.exp` evaluations; README and unit tests updated accordingly.
+
+## Stage 15 – |W|-Weighted Momentum Proposals (2025-10-20)
+- Introduced `momentum_proposal` configuration flag (`"w_magnitude"` default, `"uniform"` fallback) and precomputed per-slice proposal tables built from `|W_{l,σ}(q)|`.
+- Momentum Metropolis updates now draw proposals via these tables and add the `\log P_l(q_{\text{old}}) - \log P_l(q_{\text{new}})` correction to maintain detailed balance while keeping the stored log-weight purely physical.
+- Added regression coverage (`tests/test_updates.py::test_momentum_update_weighted_proposal`) validating the selective cancellation of `|W|` factors and phase preservation.
+- README and `note.md` refreshed to document the new proposal mode and acceptance-ratio bookkeeping.

@@ -15,7 +15,7 @@ Development follows the staged plan recorded in `AGENTS.md`. Each stage has a co
 | `worldline_qmc/auxiliary.py` | Generates auxiliary field `s_{i,l} = ±1` and computes `W_{l,σ}(q)` via FFT. | Definitions of `W_{l,σ}(q)` and λ = arccosh(exp(Δτ U / 2)) |
 | `worldline_qmc/worldline.py` | Encodes worldlines and permutations, enforces Pauli exclusion. | Discrete worldline representation and `k_{l,σ}^{(n)}` permutations |
 | `worldline_qmc/transitions.py` | Evaluates `M_{l,σ}(k' ← k) = exp[-Δτ(ε_{k'}+ε_k)/2] W_{l,σ}(k-k')/V`. | Equation defining the transfer matrix elements `M_{l,σ}` |
-| `worldline_qmc/updates.py` | Implements log-ratio Metropolis updates with occupancy-aware momentum moves and swap/cycle/shuffle permutation proposals. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
+| `worldline_qmc/updates.py` | Implements log-ratio Metropolis updates with occupancy-aware momentum moves (including optional `|W|`-weighted proposals) and swap/cycle/shuffle permutation proposals. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
 | `worldline_qmc/measurement.py` | Accumulates the complex phase observable `S(X)` with sweep-level binning for error estimates. | Definition of `S(X)` and accumulation of `Φ(X)` |
 | `worldline_qmc/simulation.py` | Orchestrates initialization (Fermi-sea default), sweeps, measurement logging, returns diagnostics. | Product representation of `w(X)` and boundary links through `P_σ` |
 | `worldline_qmc/cli.py` | Provides a CLI driver that loads configs, runs simulations, and writes JSON output. | Automates the workflow implied throughout `note.md` |
@@ -63,6 +63,7 @@ The CLI writes the diagnostics and measurements to `result.json` and echoes a sh
 - `log_path` – optional JSON-lines diagnostics file; the CLI derives a name from the output path when not provided.
 - `fft_mode` – `"complex"` retains the full FFT phase, `"real"` keeps only the cosine component to ease sign comparisons.
 - `auxiliary_mode` – `"random"` samples independent ±1 fields, `"uniform_plus"` fixes `s_{i,l}=+1`, and `"checkerboard"` enforces an alternating ±1 pattern on the spatial lattice.
+- `momentum_proposal` – `"w_magnitude"` (default) draws momentum differences from the normalized $|W_{l,σ}(q)|$ table with the corresponding proposal-ratio correction; `"uniform"` reverts to the baseline uniform proposal for debugging.
 - `initial_state` – `"fermi_sea"` keeps a zero-temperature Fermi sea fixed along imaginary time, `"random"` reproduces the legacy random initial state.
 
 `config.load_parameters` accepts a JSON file or dictionary. Unknown fields go into `SimulationParameters.extra` for downstream analysis metadata.

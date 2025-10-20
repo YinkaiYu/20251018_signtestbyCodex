@@ -173,4 +173,14 @@ Pauli 不相容原理：对每个切片 $l$ 和自旋 $\sigma$，单粒子动量
 - 观测量：记录 $S(X)=w/|w|=\text{sgn}(P_{\uparrow})\text{sgn}(P_{\downarrow})\exp[i\sum\arg W]$，并计算其样本平均与误差（可分开记录实部、虚部和模长）。
 
 备注：若选择按 $|W_{l,\sigma}(q)|$ 的分布来提议 $q$，配合对称的“反向提议”权重，接受率中的 $|W|$ 因子可部分抵消，从而显著提高接受率；不过为保持程序最简，均匀提议亦可先行验证思路。
+
+实现细节（已在代码中采用）：
+- 对每个时间片与自旋，预先将 $|W_{l,\sigma}(q)|$ 归一化得到 $P_{l,\sigma}(q)=|W_{l,\sigma}(q)|/\sum_{q'}|W_{l,\sigma}(q')|$。若某片的 $|W|$ 全部为零，则退回到均匀分布避免失效。
+- 在更新 $k_{l,\sigma}^{(n)}$ 时，先按 $P_{l,\sigma}$ 抽样 $q_{\text{new}}$，再令 $k_{l,\sigma}^{\prime (n)} = k_{l+1,\sigma}^{(n)} + q_{\text{new}}$（各分量模 $L$）。反向提议的概率为 $P_{l,\sigma}(q_{\text{old}})$，其中 $q_{\text{old}} = k_{l,\sigma}^{(n)} - k_{l+1,\sigma}^{(n)}$。
+- Metropolis 指数使用
+  \[
+  \log \mathcal{R}_k = \log\frac{|w(X')|}{|w(X)|} + \log P_{l,\sigma}(q_{\text{old}}) - \log P_{l,\sigma}(q_{\text{new}})
+  \]
+  从而消去了前向链路上 $\frac{|W_{l,\sigma}(q_{\text{new}})|}{|W_{l,\sigma}(q_{\text{old}})|}$ 的部分。日志式接受判断只使用 $\log \mathcal{R}_k$，而用于测量的 $\log|w|$ 累计量仍仅记录 $\log\frac{|w(X')|}{|w(X)|}$ 的物理部分。
+- 若配置项 `momentum_proposal` 设为 `"uniform"`，代码会跳过上述权重，退回到均匀提议以便做对照测试。
  
