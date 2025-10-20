@@ -1,66 +1,53 @@
-# Codex Implementation Guide
+# Codex Collaboration Guide
 
-## Project Overview
-- Objective: Implement the momentum-space worldline QMC Monte Carlo described in `note.md`, focusing on sampling the fermionic world lines and permutations while keeping the auxiliary field fixed.
-- Primary references: Keep `note.md` authoritative for physics formulas, update it (and this guide) whenever new clarifications arise.
-- Programming language: Python (version ≥ 3.10 recommended for typing and dataclasses).
+## Purpose
+- Serve as the working agreement for collaboration, coordination, and ongoing maintenance of the Fermionic Worldline QMC project.
+- Capture the state of the repository, preferred workflows, and experiment practices so future work can resume without additional context.
+
+## Communication & Language
+- Day-to-day discussion may be in Mandarin; official documentation (README, AGENTS, notebooks, commit messages) remains in English.
+- When clarification is needed, pause implementation, raise the question explicitly, and record the resolution here if it affects future work.
+
+## Repository Snapshot
+- Canonical upstream: <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>
+- Primary goal: simulate the momentum-space worldline QMC formulation at half filling with fixed auxiliary fields, focusing on average-sign measurements.
+- Current data products: high-statistics checkerboard/FFT=complex sweep stored under `experiments/output_checkerboard_complex_highsweep/`.
 
 ## Development Workflow
-- Work in clearly scoped stages; finish, review, and test each stage before moving on.
-- After every completed stage: run targeted checks/tests, confirm results with the user if needed, then create a dedicated Git commit.
-- Open questions or ambiguities should pause implementation until clarified by the user.
-- Maintain self-contained, readable code and documentation so the project can be resumed without prior context.
+1. **Sync & branch** – Ensure local and server clones track the upstream `master`. Create topic branches as needed; keep history linear (rebase preferred).
+2. **Environment** – Use Python ≥3.10. Default tooling is `uv`; when building wheels fails, switch to micromamba/conda (`qmc311` environment on the cluster).
+3. **Implementation** – Add concise comments only where non-obvious. Follow modular design in `src/worldline_qmc/`. Maintain ASCII unless physics notation requires otherwise.
+4. **Testing** – Run `pytest` before committing. For major changes, add or update targeted tests (unit or experiment scripts).
+5. **Documentation** – Update README, AGENTS, and `note.md` whenever behavior, workflow, or physics formulas change. Record new datasets or scripts in the Experiments section.
+6. **Commit & review** – Commit logically grouped changes with descriptive messages. Avoid bundling generated data unless curated (e.g., aggregated results).
 
-## Environment Setup
-1. Use `uv` to manage dependencies and virtual environment (fallback to `mamba` only if Python packages require compiled extensions that `uv` cannot handle).
-2. Minimum tooling:
-   - Python ≥ 3.10
-   - `numpy`, `scipy` (for FFT if needed), and any utility libraries identified during planning.
-3. Document exact setup commands inside this repository (e.g., `uv venv`, `uv pip install numpy`).
+## Experiment Workflow (Local)
+- Use `experiments/run_sign_vs_U.py` or related scripts for quick sweeps; archive previous outputs to `experiments/archive/<timestamp>/` before rerunning.
+- Maintain derived datasets (plots/JSON) under `experiments/output_*`. Only version-control curated results (e.g., `..._highsweep`); keep raw runs ignored.
+- When new datasets are produced, document parameters, acceptance stats, and locations in README + AGENTS.
 
-## Phased Implementation Plan
-1. **Stage 0 – Planning & Scaffolding**
-   - Confirm requirements from `note.md`, list data structures, modules, and required inputs/outputs.
-   - Draft initial Python package layout (modules, placeholder functions, TODOs).
-   - Deliverables: project skeleton, updated plans, Git commit.
-2. **Stage 1 – Configuration & Auxiliary Field Handling**
-   - Implement configuration parsing (lattice size, β, Δτ, interaction strength, etc.).
-   - Implement auxiliary field generation and precomputation of `W_{l,σ}(q)` and related data, matching `note.md`.
-   - Include unit tests or scripted checks for FFT outputs.
-   - Git commit on completion.
-3. **Stage 2 – Worldline Representation**
-   - Encode fermion worldlines `K_σ` and permutations `P_σ`, including Pauli constraints.
-   - Provide helpers for checking occupancy, computing transition matrix elements `M_{l,σ}`.
-   - Tests: deterministic small-lattice consistency checks.
-   - Git commit on completion.
-4. **Stage 3 – Monte Carlo Updates**
-   - Implement Metropolis updates for `K_σ` (local momentum updates) and permutation swaps, using acceptance rules from `note.md`.
-   - Ensure incremental phase tracking for `S(X)` and maintainability.
-   - Develop diagnostic logging for acceptance ratios.
-   - Tests: short MC runs on toy parameters; verify invariants (Pauli compliance, normalization) via assertions.
-   - Git commit on completion.
-5. **Stage 4 – Measurement & Output**
-   - Implement averaging of the sign/phase observable `S(X)` and any additional statistics.
-   - Provide serialization (e.g., JSON or CSV) for sampling results.
-   - Add unit or integration tests validating measurement accumulation on controlled inputs.
-   - Git commit on completion.
-6. **Stage 5 – CLI / Run Script**
-   - Build a command-line interface or script for executing simulations with configurable parameters.
-   - Ensure documentation for invoking main entry points and interpreting results.
-   - Final verification run, review, and Git commit.
+## Cluster Workflow Summary
+- **Sync the repo** – Clone/pull from upstream. Use `rsync` only for large data folders.
+- **Environment** – `micromamba activate qmc311`; install project with `pip install -e .[dev]`.
+- **Job scaffold** – Keep parameter tables in `jobs/configs/`, Slurm scripts in `jobs/scripts/`, stdout/err logs in `jobs/logs/`.
+- **Slurm template** – Load micromamba, activate environment, `cd` into repo, read parameters via `sed`. Write outputs to `experiments/slurm_runs/${SLURM_JOB_ID}/L{L}_beta{beta}`.
+- **Submit/monitor** – `sbatch jobs/scripts/run_*.sbatch`, watch with `squeue -u $USER` and `tail -f jobs/logs/*.out`. Use `--array` for large sweeps.
+- **Collect results** – After completion, `rsync` the job directory back to the workstation, preserving hierarchy for plotting/aggregation.
+- **Version control** – `experiments/slurm_runs/` is ignored; only aggregate folders (e.g., `experiments/output_checkerboard_complex_highsweep/`) are committed.
 
-## Testing & Validation
-- Prefer `pytest` for unit/integration tests; document how to run them (`uv run pytest`).
-- For stochastic components, include deterministic seeds or sanity-check statistics (mean acceptance, sign estimates) on small systems.
-- Keep TODOs or follow-up tasks documented if statistical validation requires longer runs outside quick tests.
+## Documentation Maintenance
+- README: external-facing overview, installation, usage, data products. Update whenever functionality or datasets change.
+- AGENTS: collaboration notes, workflows, and cluster instructions. Keep current; append major decisions or workflow changes.
+- note.md: theoretical formulas and acceptance rules. Sync with any algorithmic changes.
+- Commit documentation updates alongside code/data changes; log them in the “Documentation Maintenance” subsection above.
 
-## Documentation
-- Update `note.md` whenever implementation details affect the theoretical description or vice versa.
-- Maintain this `AGENTS.md` alongside development to reflect any plan adjustments, newly added stages, or environment changes.
+## Testing & QA
+- `pytest` is mandatory before merge/push. For stochastic updates, hold seeds fixed in tests and ensure acceptance logic matches `note.md`.
+- Track performance or acceptance regressions via the JSONL diagnostics (especially for high-U sweeps).
 
-## Communication Guidance
-- If uncertainties arise, halt and contact the user with specific questions.
-- Summaries and code comments should assume no prior conversation history, enabling future contributors to continue seamlessly.
+## Historical Reference
+- Detailed stage-by-stage notes from the initial implementation are retained below (Stage 0–15). See `docs/plan_stage*.md` for the original planning artifacts.
+- Use this log to trace past decisions or locate planning documents; new milestones should follow the updated workflow described above.
 
 ---
 

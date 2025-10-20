@@ -1,74 +1,60 @@
 # Fermionic Worldline QMC
 
-This repository implements the momentum-space worldline QMC algorithm described in `note.md`. The code keeps the auxiliary Hubbard-Stratonovich field fixed and samples fermionic worldlines (`K_σ`) together with permutations (`P_σ`) to estimate the average sign
+Fermionic Worldline QMC simulates the momentum-space worldline formulation of the half-filled Hubbard model with a fixed auxiliary Hubbard–Stratonovich field.  The implementation follows the derivations collected in `note.md`, samples fermionic worldlines and permutations, and measures the complex average sign/phase.
 
-Coordination note: day-to-day conversations are handled in Mandarin, while documentation (including this README) is maintained in English according to the workflow guidelines in `AGENTS.md`.
+The canonical upstream lives at <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>.  Issues, feature requests, and data contributions should reference this repository.
 
-Development follows the staged plan recorded in `AGENTS.md`. Each stage has a companion planning note in `docs/plan_stage*.md`. Below is a breakdown of the modules and their connection to the formulas in `note.md`.
+## Highlights
 
-## Module Overview & Formula Mapping
+- Momentum-space worldline Monte Carlo with explicit permutation sampling.
+- Auxiliary field precomputation (`W_{l,σ}(q)`) via FFT, including optional checkerboard/uniform modes.
+- Log-domain Metropolis updates with optional `|W|`-weighted momentum proposals.
+- Incremental complex phase accumulation and sweep-level binning for error bars.
+- Experiment scripts for parameter sweeps and plotting utilities for quick diagnostics.
 
-| Module | Description | Key references to `note.md` |
-| --- | --- | --- |
-| `worldline_qmc/config.py` | Parses simulation parameters into a `SimulationParameters` dataclass, checks `L`, `β`, `Δτ`, etc. | Parameter definitions preceding Eq. for `L_τ = β / Δτ` |
-| `worldline_qmc/lattice.py` | Provides momentum grid (`np.fft.fftfreq`) and dispersion `ε_k = -2t( cos k_x + cos k_y )`. | Free-fermion dispersion expressions in the opening section |
-| `worldline_qmc/auxiliary.py` | Generates auxiliary field `s_{i,l} = ±1` and computes `W_{l,σ}(q)` via FFT. | Definitions of `W_{l,σ}(q)` and λ = arccosh(exp(Δτ U / 2)) |
-| `worldline_qmc/worldline.py` | Encodes worldlines and permutations, enforces Pauli exclusion. | Discrete worldline representation and `k_{l,σ}^{(n)}` permutations |
-| `worldline_qmc/transitions.py` | Evaluates `M_{l,σ}(k' ← k) = exp[-Δτ(ε_{k'}+ε_k)/2] W_{l,σ}(k-k')/V`. | Equation defining the transfer matrix elements `M_{l,σ}` |
-| `worldline_qmc/updates.py` | Implements log-ratio Metropolis updates with occupancy-aware momentum moves (including optional `|W|`-weighted proposals) and swap/cycle/shuffle permutation proposals. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
-| `worldline_qmc/measurement.py` | Accumulates the complex phase observable `S(X)` with sweep-level binning for error estimates. | Definition of `S(X)` and accumulation of `Φ(X)` |
-| `worldline_qmc/simulation.py` | Orchestrates initialization (Fermi-sea default), sweeps, measurement logging, returns diagnostics. | Product representation of `w(X)` and boundary links through `P_σ` |
-| `worldline_qmc/cli.py` | Provides a CLI driver that loads configs, runs simulations, and writes JSON output. | Automates the workflow implied throughout `note.md` |
+## Installation
 
-For further detail reference the staged notes (`docs/plan_stage*.md`) which include expectations, design sketches, and test strategies for each milestone.
-
-## Quick Start
-
-1. Prepare a JSON configuration with the physical parameters listed in `note.md`. The template at `experiments/config_samples/quick_config.json` offers a minimal starting point:
-
-```json
-{
-  "lattice_size": 2,
-  "beta": 1.0,
-  "delta_tau": 0.5,
-  "hopping": 1.0,
-  "interaction": 0.0,
-  "sweeps": 10,
-  "thermalization_sweeps": 5,
-  "seed": 42
-}
-```
-
-To probe a phase-less setup, add `"fft_mode": "real"` to the configuration. You can also set `"initial_state": "random"` if you prefer the legacy random initial worldlines.
-
-2. Run the simulation and write out the results:
+### Using `uv` (local workstation)
 
 ```bash
-uv run python -m worldline_qmc.cli --config config.json --output result.json --verbose
+uv venv --python 3.11
+source .venv/bin/activate
+uv pip install -e .[dev]
 ```
 
-The CLI writes the diagnostics and measurements to `result.json` and echoes a short summary to the terminal. When `--log` is omitted, a JSONL diagnostics log named `result.json.log.jsonl` is created automatically.
+### Using micromamba / conda (cluster-friendly)
 
-## Configuration Fields
+```bash
+micromamba create -n qmc311 -c conda-forge python=3.11 numpy scipy matplotlib pip
+micromamba activate qmc311
+pip install -e .[dev]
+```
 
-`SimulationParameters` accepts the following keys:
+After activation, `pytest` should report `36 passed`, confirming the environment.
 
-- `lattice_size` (`L`) – square lattice linear dimension.
-- `beta` (`β`), `delta_tau` (`Δτ`) – define `L_τ = β / Δτ`; validation enforces integral slice count.
-- `hopping` (`t`), `interaction` (`U`) – Hubbard model parameters. `λ = arccosh(exp(Δτ U / 2))` appears in auxiliary-field generation.
-- `sweeps`, `thermalization_sweeps` – number of measurement and warm-up sweeps.
-- `worldline_moves_per_slice`, `permutation_moves_per_slice` – optional overrides for scheduling; default heuristics follow the number of particles per spin and time slices.
-- `seed` – RNG seed controlling auxiliary field sampling and Metropolis proposals.
-- `output_path` – optional JSON path for CLI output.
-- `log_path` – optional JSON-lines diagnostics file; the CLI derives a name from the output path when not provided.
-- `fft_mode` – `"complex"` retains the full FFT phase, `"real"` keeps only the cosine component to ease sign comparisons.
-- `auxiliary_mode` – `"random"` samples independent ±1 fields, `"uniform_plus"` fixes `s_{i,l}=+1`, and `"checkerboard"` enforces an alternating ±1 pattern on the spatial lattice.
-- `momentum_proposal` – `"w_magnitude"` (default) draws momentum differences from the normalized $|W_{l,σ}(q)|$ table with the corresponding proposal-ratio correction; `"uniform"` reverts to the baseline uniform proposal for debugging.
-- `initial_state` – `"fermi_sea"` keeps a zero-temperature Fermi sea fixed along imaginary time, `"random"` reproduces the legacy random initial state.
+## Repository Layout
 
-`config.load_parameters` accepts a JSON file or dictionary. Unknown fields go into `SimulationParameters.extra` for downstream analysis metadata.
+| Path | Purpose |
+| --- | --- |
+| `src/worldline_qmc/` | Core sampler, measurement, and CLI modules. |
+| `experiments/` | Parameter sweep scripts, plotting utilities, sample configs. |
+| `experiments/output_checkerboard_complex_highsweep/` | Aggregated high-statistics dataset (`sweeps=1024`, FFT=complex, auxiliary checkerboard). |
+| `experiments/slurm_runs/` | (Ignored) scratch space for per-job outputs from cluster runs. |
+| `docs/plan_stage*.md` | Historical planning notes for earlier development stages. |
+| `note.md` | Physics derivations and acceptance rules referenced by the code. |
 
-## Running Programmatically
+## Quick Start (CLI)
+
+1. Create a configuration JSON (see `experiments/config_samples/quick_config.json` for a template).
+2. Run the CLI:
+
+   ```bash
+   python -m worldline_qmc.cli --config config.json --output result.json --log result.jsonl
+   ```
+
+The CLI writes measurements/diagnostics to `result.json`, spill per-sweep diagnostics to `result.jsonl`, and echoes summary statistics to stdout.
+
+## Programmatic Usage
 
 ```python
 from worldline_qmc import auxiliary, config, simulation
@@ -89,75 +75,67 @@ result = simulation.run_simulation(params, aux_field)
 print(result.to_dict())
 ```
 
-## Output Structure
+## Configuration Reference
 
-The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
+`SimulationParameters` accepts the following keys:
 
-- `measurements`: averages of `S(X)` components (`re`, `im`, `abs`).
-- `variances`: sample variances computed from sweep-sized bins (first-order autocorrelation mitigation) for diagnostics.
-- `diagnostics`: counts/acceptance ratios for momentum & permutation moves, plus sweep totals.
-- `samples`: number of measurement samples accumulated (`sweeps`).
+- `lattice_size` (`L`) – Linear size of the square lattice (`V = L²`).
+- `beta` (`β`), `delta_tau` (`Δτ`) – Imaginary-time extent and slice length (`L_τ = β/Δτ`, enforced integer).
+- `hopping` (`t`), `interaction` (`U`) – Hubbard model couplings (`λ = arccosh(exp(Δτ U / 2))`).
+- `sweeps`, `thermalization_sweeps` – Measurement and warm-up sweep counts.
+- `worldline_moves_per_slice`, `permutation_moves_per_slice` – Override default proposal budgets (defaults scale with particle count).
+- `momentum_proposal` – `"w_magnitude"` (importance sampling using `|W|`, default) or `"uniform"`.
+- `fft_mode` – `"complex"` (retain phases) or `"real"` (cosine component only).
+- `auxiliary_mode` – `"random"`, `"uniform_plus"`, or `"checkerboard"`.
+- `initial_state` – `"fermi_sea"` or `"random"`.
+- `measurement_interval` – Attempts between phase samples (defaults to one full sweep).
+- `seed`, `output_path`, `log_path` – RNG seed and optional file outputs.
 
-## Experiments & Visualization
+Unknown config keys are preserved in `SimulationParameters.extra` for downstream metadata.
 
-`experiments/run_average_sign.py` reproduces the parameter studies described in the project request (it emits `Re S` data and logs by default, and does **not** plot directly).
+## Experiments
 
-Data generation is split into two scripts:
+The `experiments/` directory provides ready-made scripts:
 
-```bash
-# L=12, β=12, varying U
-uv run python experiments/run_sign_vs_U.py \
-    --output-dir experiments/output_u \
-    --sweeps 64 --thermalization 16 \
-    --fft-mode complex --measurement-interval 32
+- `run_sign_vs_U.py` – Sweep interaction strength for one or more `(L, β)` pairs.
+- `run_sign_vs_beta_L.py` – Sweep lattice size / β for fixed U.
+- `plot_sign_vs_U.py`, `plot_sign_vs_beta_L.py` – Visualize JSON results.
 
-# U=20, varying β and L
-uv run python experiments/run_sign_vs_beta_L.py \
-    --output-dir experiments/output_beta_L \
-    --sweeps 64 --thermalization 16 \
-    --fft-mode complex --measurement-interval 32
-```
-
-Customize sampling points with `--u-values`, `--beta-values`, `--l-values`, `--fft-mode`, `--measurement-interval`, and `--seed`. Logs land in `logs_u/` and `logs_beta_l/`.
-
-Recent production sweeps focus on low-interaction resolution with higher statistics:
+Example high-statistics sweep (checkerboard auxiliary, FFT=complex):
 
 ```bash
-uv run python experiments/run_sign_vs_U.py \
-    --output-dir experiments/output \
-    --sweeps 64 --thermalization 16 \
-    --measurement-interval 8 \
-    --u-values 0 0.05 0.1 0.15 0.2 0.4 0.6 0.8 1.0 \
-    --lattice-sizes 4 6 8 10 \
-    --beta-values 4 6 8 10 \
-    --fft-mode complex
+python experiments/run_sign_vs_U.py \
+  --output-dir experiments/slurm_runs/${SLURM_JOB_ID}/L${L}_beta${BETA} \
+  --sweeps 1024 --thermalization 64 \
+  --measurement-interval 8 \
+  --fft-mode complex \
+  --auxiliary-mode checkerboard \
+  --u-values 0 1 2 5 10 15 20 25 30 \
+  --lattice-sizes 4 6 8 10 \
+  --beta-values 4 6 8 10
 ```
 
-Run the same command with `--fft-mode real` and a different `--output-dir` (e.g., `experiments/output_real`) to compare cosine-only FFT data.
+Cluster workflows, including micromamba environment setup and `sbatch` templates, are detailed in `AGENTS.md` (“Cluster Workflow Reference”).
 
-To study deterministic auxiliary fields, append `--auxiliary-mode uniform_plus` (all +1) or `--auxiliary-mode checkerboard` (staggered ±1) and direct the output to dedicated directories (for example `experiments/output_uniform` or `experiments/output_checkerboard`).
+## Data Products
 
-Plots are produced with standalone scripts:
+- `experiments/output_checkerboard_complex_highsweep/average_sign_vs_U.json` – Combined dataset from `1024`-sweep checkerboard/complex runs (36 parameter points).
+- `experiments/output_checkerboard_complex_highsweep/average_sign_vs_U.png` – Plot showing `Re ⟨S⟩` with standard-error bars; generated via `plot_sign_vs_U.py`.
+
+Per-job raw outputs (JSON + JSONL) are stored under `experiments/slurm_runs/<jobid>/L{L}_beta{β}/` and should be archived or aggregated before committing.
+
+## Testing
+
+Continuous validation uses `pytest`:
 
 ```bash
-uv run python experiments/plot_sign_vs_U.py \
-    --data experiments/output_u/average_sign_vs_U.json \
-    --output experiments/output_u/average_sign_vs_U.png
-
-uv run python experiments/plot_sign_vs_beta_L.py \
-    --data experiments/output_beta_L/average_sign_vs_beta_L.json \
-    --output experiments/output_beta_L/average_sign_vs_beta_L.png
+pytest            # in any configured environment
 ```
 
-Plots show `Re S` together with standard errors derived from the variance and effective sample count. The y-axis is padded by 10% beyond the data range, and `--title` can override the default caption.
+The suite covers parameter validation, auxiliary-field FFTs, transition amplitudes, momentum/permutation updates, measurement accumulation, simulation orchestration, CLI behavior, and experiment helpers.
 
-## Tests
+## Further Reading
 
-Test suite is managed with `pytest`. Install dependencies with `uv` and run:
-
-```bash
-uv pip install -e .[dev]
-uv run pytest
-```
-
-Tests cover configuration parsing, auxiliary-field FFTs, worldline/permutation constraints, transition amplitudes, Metropolis updates, measurement accumulation, simulation orchestration, and CLI behavior. Stage-specific plans detail targeted test intentions.
+- `note.md` – Physics background, acceptance ratios, and phase-update formulas.
+- `AGENTS.md` – Collaboration/workflow guide (language policy, development routines, cluster instructions).
+- `docs/plan_stage*.md` – Historical notes from the initial staged implementation.
