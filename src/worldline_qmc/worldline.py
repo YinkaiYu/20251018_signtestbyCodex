@@ -131,16 +131,28 @@ class Worldline:
         self._ensure_time_slice(time_slice)
         return self.trajectories[time_slice].copy()
 
-    def update_momentum(self, time_slice: int, particle: int, new_k: int) -> None:
-        """Apply a momentum update while enforcing Pauli exclusion."""
+    def update_momentum(
+        self,
+        time_slice: int,
+        particle: int,
+        new_k: int,
+        *,
+        enforce_pauli: bool = True,
+    ) -> None:
+        """Apply a momentum update while optionally enforcing Pauli exclusion."""
 
         self._ensure_time_slice(time_slice)
         self._ensure_particle_index(particle)
         slice_data = self.trajectories[time_slice]
-        if new_k in slice_data and new_k != slice_data[particle]:
+        if (
+            enforce_pauli
+            and new_k != slice_data[particle]
+            and np.any(slice_data == new_k)
+        ):
             raise ValueError("Proposed momentum already occupied at this slice.")
         slice_data[particle] = int(new_k)
-        self._validate_slice(slice_data)
+        if enforce_pauli:
+            self._validate_slice(slice_data)
 
     def _validate_pauli_all_slices(self) -> None:
         for slice_data in self.trajectories:

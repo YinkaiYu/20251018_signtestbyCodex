@@ -97,8 +97,7 @@ def run_simulation(
             is_measurement = sweep_index >= params.thermalization_sweeps
             samples_for_logging = phase_samples if phase_samples else [mc_state.phase]
             if is_measurement:
-                for phase_value in samples_for_logging:
-                    accumulator.push(phase_value)
+                accumulator.push_bin(samples_for_logging)
 
             if log_handle is not None:
                 phase_array = np.asarray(samples_for_logging, dtype=complex)
@@ -187,11 +186,13 @@ def _initialize_mc_state(
     rng: np.random.Generator,
 ) -> MonteCarloState:
     log_weight, phase = _compute_weight_and_phase(params, auxiliary, configuration)
+    occupancy_masks = _build_occupancy_masks(params, configuration)
     return MonteCarloState(
         configuration=configuration,
         phase=phase,
         log_weight=log_weight,
         rng=rng,
+        occupancy_masks=occupancy_masks,
     )
 
 
@@ -280,3 +281,19 @@ def _resolve_schedule(
         worldline_moves=worldline_moves,
         permutation_moves=permutation_moves,
     )
+
+
+def _build_occupancy_masks(
+    params: SimulationParameters, configuration: WorldlineConfiguration
+) -> Dict[Spin, np.ndarray]:
+    """Construct boolean occupancy masks for fast Pauli checks."""
+
+    time_slices = params.time_slices
+    volume = params.volume
+    masks: Dict[Spin, np.ndarray] = {}
+    for spin, worldline in configuration.worldlines.items():
+        mask = np.zeros((time_slices, volume), dtype=bool)
+        for l in range(time_slices):
+            mask[l, worldline.trajectories[l]] = True
+        masks[spin] = mask
+    return masks

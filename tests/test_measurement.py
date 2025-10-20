@@ -31,3 +31,19 @@ def test_measurement_accumulator_empty() -> None:
     acc = measurement.MeasurementAccumulator()
     assert acc.averages() == {"re": 0.0, "im": 0.0, "abs": 0.0}
     assert acc.variances() == {"re": 0.0, "im": 0.0, "abs": 0.0}
+
+
+def test_measurement_accumulator_push_bin() -> None:
+    acc = measurement.MeasurementAccumulator()
+    acc.push_bin([1.0 + 0.0j, -1.0 + 0.0j])
+    acc.push_bin([0.0 + 1.0j])
+
+    averages = acc.averages()
+    assert pytest.approx(averages["re"]) == 0.0
+    assert pytest.approx(averages["im"]) == 0.5
+
+
+def test_measurement_accumulator_push_bin_requires_values() -> None:
+    acc = measurement.MeasurementAccumulator()
+    with pytest.raises(ValueError):
+        acc.push_bin([])

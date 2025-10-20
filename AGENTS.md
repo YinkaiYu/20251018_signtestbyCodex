@@ -158,3 +158,9 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - **Plot immediately** – Regenerate figures with `experiments/plot_sign_vs_U.py`, saving PNGs alongside their JSON sources for quick visual review.
 - **Validate outputs** – Spot-check JSON/diagnostics (sample counts, acceptance ratios) and summarize notable metrics; add pytest coverage when new configuration branches appear.
 - **Document & commit** – Update README/AGENTS with new procedures or findings, run `uv run pytest`, then commit the code and documentation changes together with a concise message. Generated data directories remain ignored unless explicitly versioned.
+
+## Stage 14 – Enhanced Sampler Efficiency (2025-10-20)
+- Measurement accumulator now bins samples per sweep via `push_bin`, yielding error bars that better respect autocorrelation.
+- Momentum updates cache log-magnitude/phase pairs from transition matrix elements and use sweep-level occupancy masks for O(1) Pauli checks.
+- Permutation moves include swaps, short cycles, and small shuffles with parity tracking, improving configuration mixing.
+- Acceptance tests rely on log-ratio comparisons, reducing redundant `np.exp` evaluations; README and unit tests updated accordingly.

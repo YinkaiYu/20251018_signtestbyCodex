@@ -32,6 +32,24 @@ def transition_amplitude(
         \frac{W_{l,\sigma}(k - k')}{V}.
     """
 
+    log_mag, phase = transition_log_components(
+        params, auxiliary, spin, time_slice, k_from, k_to
+    )
+    if np.isneginf(log_mag):
+        return 0.0 + 0.0j
+    return np.exp(log_mag + 1j * phase)
+
+
+def transition_log_components(
+    params: SimulationParameters,
+    auxiliary: AuxiliaryField,
+    spin: Spin,
+    time_slice: int,
+    k_from: int,
+    k_to: int,
+) -> Tuple[float, float]:
+    """Return (log |M|, arg M) without constructing the complex amplitude."""
+
     _validate_indices(params, auxiliary, time_slice, k_from, k_to)
 
     lattice_size = params.lattice_size
@@ -41,10 +59,16 @@ def transition_amplitude(
 
     w_array = auxiliary.w(time_slice, spin)
     qx, qy = _momentum_difference(k_from, k_to, lattice_size)
-    w_factor = w_array[qx, qy] / params.volume
+    w_value = w_array[qx, qy]
+    magnitude = abs(w_value)
+    if magnitude <= 0.0:
+        return float("-inf"), 0.0
 
     exponent = -0.5 * params.delta_tau * (eps_from + eps_to)
-    return np.exp(exponent) * w_factor
+    log_volume = float(np.log(params.volume))
+    log_mag = exponent + float(np.log(magnitude)) - log_volume
+    phase = float(np.angle(w_value))
+    return log_mag, phase
 
 
 def transition_ratio(

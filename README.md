@@ -15,8 +15,8 @@ Development follows the staged plan recorded in `AGENTS.md`. Each stage has a co
 | `worldline_qmc/auxiliary.py` | Generates auxiliary field `s_{i,l} = ±1` and computes `W_{l,σ}(q)` via FFT. | Definitions of `W_{l,σ}(q)` and λ = arccosh(exp(Δτ U / 2)) |
 | `worldline_qmc/worldline.py` | Encodes worldlines and permutations, enforces Pauli exclusion. | Discrete worldline representation and `k_{l,σ}^{(n)}` permutations |
 | `worldline_qmc/transitions.py` | Evaluates `M_{l,σ}(k' ← k) = exp[-Δτ(ε_{k'}+ε_k)/2] W_{l,σ}(k-k')/V`. | Equation defining the transfer matrix elements `M_{l,σ}` |
-| `worldline_qmc/updates.py` | Implements Metropolis updates using `𝓡_k`, `𝓡_p` ratios and phase increments `ΔΦ`. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
-| `worldline_qmc/measurement.py` | Accumulates the complex phase observable `S(X)` as defined in `note.md`. | Definition of `S(X)` and accumulation of `Φ(X)` |
+| `worldline_qmc/updates.py` | Implements log-ratio Metropolis updates with occupancy-aware momentum moves and swap/cycle/shuffle permutation proposals. | Acceptance ratios and phase increment formulas (Section on Monte Carlo updates) |
+| `worldline_qmc/measurement.py` | Accumulates the complex phase observable `S(X)` with sweep-level binning for error estimates. | Definition of `S(X)` and accumulation of `Φ(X)` |
 | `worldline_qmc/simulation.py` | Orchestrates initialization (Fermi-sea default), sweeps, measurement logging, returns diagnostics. | Product representation of `w(X)` and boundary links through `P_σ` |
 | `worldline_qmc/cli.py` | Provides a CLI driver that loads configs, runs simulations, and writes JSON output. | Automates the workflow implied throughout `note.md` |
 
@@ -93,7 +93,7 @@ print(result.to_dict())
 The JSON produced by the CLI or `SimulationResult.to_dict()` includes:
 
 - `measurements`: averages of `S(X)` components (`re`, `im`, `abs`).
-- `variances`: sample variances (no autocorrelation correction) for diagnostics.
+- `variances`: sample variances computed from sweep-sized bins (first-order autocorrelation mitigation) for diagnostics.
 - `diagnostics`: counts/acceptance ratios for momentum & permutation moves, plus sweep totals.
 - `samples`: number of measurement samples accumulated (`sweeps`).
 

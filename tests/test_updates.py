@@ -56,6 +56,17 @@ def _base_configuration(lattice_size: int = 2, time_slices: int = 3):
     return params, cfg
 
 
+def _build_occupancy_masks(params, cfg):
+    masks = {}
+    volume = params.volume
+    for spin, wl in cfg.worldlines.items():
+        mask = np.zeros((params.time_slices, volume), dtype=bool)
+        for l in range(params.time_slices):
+            mask[l, wl.trajectories[l]] = True
+        masks[spin] = mask
+    return masks
+
+
 def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
     params, cfg = _base_configuration(time_slices=3)
     wl = cfg.worldlines["up"]
@@ -68,13 +79,23 @@ def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
         ("up", 0, 0, 2): 0.6 * np.exp(0.2j),
     }
 
-    def amplitude_stub(_params, _aux, spin, time_slice, k_from, k_to):
-        return amplitude_table.get((spin, time_slice, k_from, k_to), 1.0)
+    def log_components_stub(_params, _aux, spin, time_slice, k_from, k_to):
+        amplitude = amplitude_table.get((spin, time_slice, k_from, k_to), 1.0)
+        magnitude = abs(amplitude)
+        if magnitude == 0.0:
+            return float("-inf"), 0.0
+        return float(np.log(magnitude)), float(np.angle(amplitude))
 
-    monkeypatch.setattr(updates, "transition_amplitude", amplitude_stub)
+    monkeypatch.setattr(updates, "transition_log_components", log_components_stub)
 
     rng = DummyRNG(integers_seq=[0, 1, 0, 2], random_seq=[0.1])
-    state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
+    state = updates.MonteCarloState(
+        configuration=cfg,
+        phase=1.0 + 0.0j,
+        log_weight=0.0,
+        rng=rng,
+        occupancy_masks=_build_occupancy_masks(params, cfg),
+    )
 
     diagnostics, samples = updates.metropolis_sweep(
         params,
@@ -106,13 +127,23 @@ def test_permutation_swap_updates_phase(monkeypatch) -> None:
         ("up", params.time_slices - 1, 1, 0): 0.9 * np.exp(0.2j),
     }
 
-    def amplitude_stub(_params, _aux, spin, time_slice, k_from, k_to):
-        return amplitude_table.get((spin, time_slice, k_from, k_to), 1.0)
+    def log_components_stub(_params, _aux, spin, time_slice, k_from, k_to):
+        amplitude = amplitude_table.get((spin, time_slice, k_from, k_to), 1.0)
+        magnitude = abs(amplitude)
+        if magnitude == 0.0:
+            return float("-inf"), 0.0
+        return float(np.log(magnitude)), float(np.angle(amplitude))
 
-    monkeypatch.setattr(updates, "transition_amplitude", amplitude_stub)
+    monkeypatch.setattr(updates, "transition_log_components", log_components_stub)
 
-    rng = DummyRNG(integers_seq=[0, 0, 1], random_seq=[0.1])
-    state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
+    rng = DummyRNG(integers_seq=[0, 0, 1], random_seq=[0.1, 0.1])
+    state = updates.MonteCarloState(
+        configuration=cfg,
+        phase=1.0 + 0.0j,
+        log_weight=0.0,
+        rng=rng,
+        occupancy_masks=_build_occupancy_masks(params, cfg),
+    )
 
     diagnostics, samples = updates.metropolis_sweep(
         params,
@@ -137,10 +168,20 @@ def test_momentum_update_rejects_pauli(monkeypatch) -> None:
     wl.trajectories[:, 0] = np.array([0, 0])
     wl.trajectories[:, 1] = np.array([1, 1])
 
-    monkeypatch.setattr(updates, "transition_amplitude", lambda *args, **kwargs: 1.0)
+    monkeypatch.setattr(
+        updates,
+        "transition_log_components",
+        lambda *args, **kwargs: (0.0, 0.0),
+    )
 
     rng = DummyRNG(integers_seq=[0, 0, 0, 1], random_seq=[0.0])
-    state = updates.MonteCarloState(configuration=cfg, phase=1.0 + 0.0j, log_weight=0.0, rng=rng)
+    state = updates.MonteCarloState(
+        configuration=cfg,
+        phase=1.0 + 0.0j,
+        log_weight=0.0,
+        rng=rng,
+        occupancy_masks=_build_occupancy_masks(params, cfg),
+    )
 
     diagnostics, samples = updates.metropolis_sweep(
         params,

@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict, Tuple, List
+from typing import Dict, Tuple, List, Optional
 
 import numpy as np
 
 from .auxiliary import AuxiliaryField, Spin
 from .config import SimulationParameters
-from .transitions import transition_amplitude
+from .transitions import transition_log_components
 from .worldline import PermutationState, Worldline, WorldlineConfiguration
 
 
@@ -29,6 +29,7 @@ class MonteCarloState:
     phase: complex
     log_weight: float
     rng: np.random.Generator
+    occupancy_masks: Dict[Spin, np.ndarray]
 
 
 def metropolis_sweep(
@@ -95,26 +96,19 @@ def metropolis_sweep(
         spin = spins[int(rng.integers(len(spins)))]
         wl = config.worldlines[spin]
         perm = config.permutations[spin]
-        num_particles = wl.particles
-        if num_particles < 2:
+        move = _propose_permutation_move(perm, rng)
+        if move is None:
             continue
-        a = int(rng.integers(num_particles))
-        b = int(rng.integers(num_particles))
-        retries = 0
-        while a == b and retries < 5:
-            b = int(rng.integers(num_particles))
-            retries += 1
-        if a == b:
-            continue
-        if _attempt_permutation_swap(
+        indices, new_targets = move
+        if _attempt_permutation_move(
             params,
             auxiliary,
             mc_state,
             spin,
             wl,
             perm,
-            a,
-            b,
+            indices,
+            new_targets,
         ):
             diagnostics["permutation_accepts"] += 1
         attempt_counter += 1
@@ -148,8 +142,8 @@ def _attempt_momentum_update(
     if new_k == old_k:
         return False
 
-    slice_data = wl.trajectories[l]
-    if new_k in slice_data:
+    occupancy_mask = mc_state.occupancy_masks[spin]
+    if occupancy_mask[l, new_k]:
         return False
 
     forward_ts, forward_target = _forward_link_info(wl, perm, l, n, params.time_slices)
@@ -157,91 +151,203 @@ def _attempt_momentum_update(
         wl, perm, l, n, params.time_slices
     )
 
-    old_forward = transition_amplitude(
+    old_forward_log, old_forward_phase = transition_log_components(
         params, auxiliary, spin, forward_ts, old_k, forward_target
     )
-    old_backward = transition_amplitude(
+    old_backward_log, old_backward_phase = transition_log_components(
         params, auxiliary, spin, backward_ts, backward_source, old_k
     )
-    new_forward = transition_amplitude(
+    new_forward_log, new_forward_phase = transition_log_components(
         params, auxiliary, spin, forward_ts, new_k, forward_target
     )
-    new_backward = transition_amplitude(
+    new_backward_log, new_backward_phase = transition_log_components(
         params, auxiliary, spin, backward_ts, backward_source, new_k
     )
 
-    # note.md: 使用 \mathcal{R}_k 接受率，依赖相邻两条传输矩阵元的模长比值。
-    mag_ratio = _safe_mag_ratio(new_forward, old_forward) * _safe_mag_ratio(
-        new_backward, old_backward
-    )
-    if mag_ratio <= 0.0:
+    if np.isneginf(new_forward_log) or np.isneginf(new_backward_log):
         return False
 
-    accept_prob = min(1.0, mag_ratio)
-    if mc_state.rng.random() >= accept_prob:
+    total_log_ratio = (new_forward_log - old_forward_log) + (
+        new_backward_log - old_backward_log
+    )
+    if total_log_ratio < 0.0 and np.log(mc_state.rng.random()) >= total_log_ratio:
         return False
 
-    # note.md: ΔΦ_k 增量由更新前后矩阵元相位之差组成。
-    delta_phi = _phase_difference(new_forward, old_forward) + _phase_difference(
-        new_backward, old_backward
+    delta_phi = (new_forward_phase - old_forward_phase) + (
+        new_backward_phase - old_backward_phase
     )
 
-    wl.update_momentum(l, n, new_k)
+    occupancy_mask[l, old_k] = False
+    occupancy_mask[l, new_k] = True
+    wl.update_momentum(l, n, new_k, enforce_pauli=False)
 
     mc_state.phase *= np.exp(1j * delta_phi)
-    mc_state.log_weight += _log_ratio(new_forward, old_forward)
-    mc_state.log_weight += _log_ratio(new_backward, old_backward)
+    mc_state.log_weight += total_log_ratio
     return True
 
 
-def _attempt_permutation_swap(
+def _attempt_permutation_move(
     params: SimulationParameters,
     auxiliary: AuxiliaryField,
     mc_state: MonteCarloState,
     spin: Spin,
     wl: Worldline,
     perm: PermutationState,
-    a: int,
-    b: int,
+    indices: np.ndarray,
+    new_targets: np.ndarray,
 ) -> bool:
+    if indices.size == 0:
+        return False
+
     l_boundary = params.time_slices - 1
-    k_last_a = int(wl.trajectories[l_boundary, a])
-    k_last_b = int(wl.trajectories[l_boundary, b])
-
-    target_a = int(perm.values[a])
-    target_b = int(perm.values[b])
-    k0_target_a = int(wl.trajectories[0, target_a])
-    k0_target_b = int(wl.trajectories[0, target_b])
-
-    old_a = transition_amplitude(
-        params, auxiliary, spin, l_boundary, k_last_a, k0_target_a
-    )
-    old_b = transition_amplitude(
-        params, auxiliary, spin, l_boundary, k_last_b, k0_target_b
-    )
-    new_a = transition_amplitude(
-        params, auxiliary, spin, l_boundary, k_last_a, k0_target_b
-    )
-    new_b = transition_amplitude(
-        params, auxiliary, spin, l_boundary, k_last_b, k0_target_a
-    )
-
-    mag_ratio = _safe_mag_ratio(new_a, old_a) * _safe_mag_ratio(new_b, old_b)
-    if mag_ratio <= 0.0:
+    old_targets = perm.values[indices].copy()
+    if np.array_equal(old_targets, new_targets):
         return False
 
-    accept_prob = min(1.0, mag_ratio)
-    if mc_state.rng.random() >= accept_prob:
+    log_ratio = 0.0
+    delta_phi = 0.0
+    for idx, old_target, new_target in zip(indices, old_targets, new_targets):
+        k_last = int(wl.trajectories[l_boundary, idx])
+        k0_old = int(wl.trajectories[0, old_target])
+        k0_new = int(wl.trajectories[0, new_target])
+
+        old_log, old_phase = transition_log_components(
+            params, auxiliary, spin, l_boundary, k_last, k0_old
+        )
+        new_log, new_phase = transition_log_components(
+            params, auxiliary, spin, l_boundary, k_last, k0_new
+        )
+
+        if np.isneginf(new_log):
+            return False
+
+        log_ratio += new_log - old_log
+        delta_phi += new_phase - old_phase
+
+    if log_ratio < 0.0 and np.log(mc_state.rng.random()) >= log_ratio:
         return False
 
-    # note.md: ΔΦ_perm 相位增量及 permutation 奇偶变化导致额外的 -1 因子。
-    delta_phi = _phase_difference(new_a, old_a) + _phase_difference(new_b, old_b)
+    parity_change = _permutation_parity_change(old_targets, new_targets)
 
-    perm.swap(a, b)
-    mc_state.phase *= -np.exp(1j * delta_phi)
-    mc_state.log_weight += _log_ratio(new_a, old_a)
-    mc_state.log_weight += _log_ratio(new_b, old_b)
+    perm.values[indices] = new_targets
+    mc_state.phase *= parity_change * np.exp(1j * delta_phi)
+    mc_state.log_weight += log_ratio
     return True
+
+
+def _propose_permutation_move(
+    perm: PermutationState, rng: np.random.Generator
+) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    size = perm.size
+    if size < 2:
+        return None
+    if size < 3:
+        return _swap_move(perm, rng)
+
+    selector = rng.random()
+    if selector < 0.5:
+        return _swap_move(perm, rng)
+    if selector < 0.8:
+        return _cycle_move(perm, rng)
+    return _shuffle_move(perm, rng)
+
+
+def _swap_move(
+    perm: PermutationState, rng: np.random.Generator
+) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    size = perm.size
+    a = int(rng.integers(size))
+    b = int(rng.integers(size))
+    retries = 0
+    while a == b and retries < 8:
+        b = int(rng.integers(size))
+        retries += 1
+    if a == b:
+        return None
+    indices = np.array([a, b], dtype=np.int64)
+    old_targets = perm.values[indices]
+    new_targets = old_targets[::-1].copy()
+    return indices, new_targets
+
+
+def _cycle_move(
+    perm: PermutationState, rng: np.random.Generator
+) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    size = perm.size
+    max_len = min(size, 5)
+    cycle_len = int(rng.integers(3, max_len + 1))
+    indices = _sample_unique_indices(size, cycle_len, rng)
+    if indices is None:
+        return None
+    old_targets = perm.values[indices]
+    shift = int(rng.integers(cycle_len))
+    new_targets = np.roll(old_targets, -((shift % cycle_len) + 1))
+    return indices, new_targets
+
+
+def _shuffle_move(
+    perm: PermutationState, rng: np.random.Generator
+) -> Optional[Tuple[np.ndarray, np.ndarray]]:
+    size = perm.size
+    max_len = min(size, 6)
+    subset_len = int(rng.integers(3, max_len + 1))
+    indices = _sample_unique_indices(size, subset_len, rng)
+    if indices is None:
+        return None
+    old_targets = perm.values[indices]
+    new_targets = _random_permutation(old_targets, rng)
+    if np.array_equal(new_targets, old_targets):
+        new_targets = np.roll(old_targets, -1)
+        if np.array_equal(new_targets, old_targets):
+            return None
+    return indices, new_targets
+
+
+def _sample_unique_indices(
+    size: int, count: int, rng: np.random.Generator
+) -> Optional[np.ndarray]:
+    if count > size:
+        return None
+    selected: List[int] = []
+    attempts = 0
+    max_attempts = max(10, count * 5)
+    while len(selected) < count and attempts < max_attempts:
+        candidate = int(rng.integers(size))
+        if candidate not in selected:
+            selected.append(candidate)
+        attempts += 1
+    if len(selected) < count:
+        return None
+    return np.array(selected, dtype=np.int64)
+
+
+def _random_permutation(values: np.ndarray, rng: np.random.Generator) -> np.ndarray:
+    permuted = values.copy()
+    for i in range(permuted.size - 1, 0, -1):
+        j = int(rng.integers(i + 1))
+        permuted[i], permuted[j] = permuted[j], permuted[i]
+    return permuted
+
+
+def _permutation_parity_change(
+    old_targets: np.ndarray, new_targets: np.ndarray
+) -> int:
+    mapping = {int(value): idx for idx, value in enumerate(old_targets)}
+    sigma = [mapping[int(value)] for value in new_targets]
+    visited = [False] * len(sigma)
+    sign = 1
+    for start in range(len(sigma)):
+        if visited[start]:
+            continue
+        cycle_len = 0
+        idx = start
+        while not visited[idx]:
+            visited[idx] = True
+            idx = sigma[idx]
+            cycle_len += 1
+        if cycle_len > 0 and cycle_len % 2 == 0:
+            sign *= -1
+    return sign
 
 
 def _forward_link_info(
@@ -262,31 +368,11 @@ def _backward_link_info(
         raise ValueError("time_slices must be positive.")
     if l > 0:
         return l - 1, int(wl.trajectories[l - 1, n])
+    # For l = 0 we must locate which particle at the previous slice maps to n.
+    # The permutation maps slice L_τ-1 → 0, so we consult P^{-1}(n).
     inverse = perm.inverse()
     prev_particle = int(inverse[n])
     return time_slices - 1, int(wl.trajectories[time_slices - 1, prev_particle])
-
-
-def _safe_mag_ratio(new: complex, old: complex) -> float:
-    new_mag = abs(new)
-    old_mag = abs(old)
-    if new_mag <= 0.0 or old_mag <= 0.0:
-        return 0.0
-    return new_mag / old_mag
-
-
-def _phase_difference(new: complex, old: complex) -> float:
-    if abs(new) == 0.0 or abs(old) == 0.0:
-        return 0.0
-    return float(np.angle(new / old))
-
-
-def _log_ratio(new: complex, old: complex) -> float:
-    new_mag = abs(new)
-    old_mag = abs(old)
-    if new_mag <= 0.0 or old_mag <= 0.0:
-        return 0.0
-    return float(np.log(new_mag) - np.log(old_mag))
 
 
 def _ratio(numerator: int, denominator: int) -> float:
