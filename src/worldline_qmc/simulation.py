@@ -71,6 +71,8 @@ def run_simulation(
     total_momentum_accepts = 0
     total_permutation_attempts = 0
     total_permutation_accepts = 0
+    total_aux_attempts = 0
+    total_aux_accepts = 0
 
     log_handle = None
     if params.log_path is not None:
@@ -79,6 +81,7 @@ def run_simulation(
 
     attempts_per_sweep = (
         resolved_schedule.worldline_moves + resolved_schedule.permutation_moves
+        + resolved_schedule.auxiliary_moves
     )
     measurement_interval = params.measurement_interval
     if measurement_interval <= 0:
@@ -98,6 +101,8 @@ def run_simulation(
             total_momentum_accepts += diagnostics.get("momentum_accepts", 0)
             total_permutation_attempts += diagnostics.get("permutation_attempts", 0)
             total_permutation_accepts += diagnostics.get("permutation_accepts", 0)
+            total_aux_attempts += diagnostics.get("auxiliary_attempts", 0)
+            total_aux_accepts += diagnostics.get("auxiliary_accepts", 0)
 
             is_measurement = sweep_index >= params.thermalization_sweeps
             samples_for_logging = phase_samples if phase_samples else [mc_state.phase]
@@ -114,6 +119,8 @@ def run_simulation(
                     "momentum_accepts": diagnostics.get("momentum_accepts", 0),
                     "permutation_attempts": diagnostics.get("permutation_attempts", 0),
                     "permutation_accepts": diagnostics.get("permutation_accepts", 0),
+                    "auxiliary_attempts": diagnostics.get("auxiliary_attempts", 0),
+                    "auxiliary_accepts": diagnostics.get("auxiliary_accepts", 0),
                     "phase_sample_count": len(samples_for_logging),
                     "phase_mean_re": float(np.real(phase_mean)),
                     "phase_mean_im": float(np.imag(phase_mean)),
@@ -136,14 +143,20 @@ def run_simulation(
         if total_permutation_attempts
         else 0.0
     )
+    auxiliary_acceptance = (
+        total_aux_accepts / total_aux_attempts if total_aux_attempts else 0.0
+    )
 
     diagnostics_result = {
         "momentum_attempts": float(total_momentum_attempts),
         "momentum_accepts": float(total_momentum_accepts),
         "permutation_attempts": float(total_permutation_attempts),
         "permutation_accepts": float(total_permutation_accepts),
+        "auxiliary_attempts": float(total_aux_attempts),
+        "auxiliary_accepts": float(total_aux_accepts),
         "momentum_acceptance": momentum_acceptance,
         "permutation_acceptance": permutation_acceptance,
+        "auxiliary_acceptance": auxiliary_acceptance,
         "total_sweeps": float(total_sweeps),
         "measurement_sweeps": float(params.sweeps),
     }
@@ -278,21 +291,29 @@ def _resolve_schedule(
     num_spins = len(configuration.worldlines)
     particles = next(iter(configuration.worldlines.values())).particles
 
-    worldline_moves_per_slice = (
-        params.worldline_moves_per_slice if params.worldline_moves_per_slice > 0 else particles
-    )
-    permutation_moves_per_slice = (
-        params.permutation_moves_per_slice
-        if params.permutation_moves_per_slice > 0
-        else max(particles - 1, 1)
-    )
+    if params.worldline_moves_per_slice > 0:
+        worldline_moves_per_slice = params.worldline_moves_per_slice
+    else:
+        worldline_moves_per_slice = particles
+
+    if params.permutation_moves_per_slice > 0:
+        permutation_moves_per_slice = params.permutation_moves_per_slice
+    else:
+        permutation_moves_per_slice = max(particles - 1, 1)
 
     worldline_moves = worldline_moves_per_slice * time_slices * num_spins
     permutation_moves = permutation_moves_per_slice * num_spins
+    aux_moves_per_slice = (
+        params.auxiliary_moves_per_slice
+        if params.auxiliary_moves_per_slice > 0
+        else params.volume
+    )
+    auxiliary_moves = aux_moves_per_slice * time_slices
 
     return UpdateSchedule(
         worldline_moves=worldline_moves,
         permutation_moves=permutation_moves,
+        auxiliary_moves=auxiliary_moves,
     )
 
 

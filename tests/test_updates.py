@@ -1,6 +1,6 @@
 import numpy as np
 
-from worldline_qmc import config, updates, worldline
+from worldline_qmc import auxiliary, config, simulation, updates, worldline
 
 
 class DummyRNG:
@@ -67,6 +67,56 @@ def _build_occupancy_masks(params, cfg):
     return masks
 
 
+def test_auxiliary_flip_updates_state() -> None:
+    params = config.load_parameters(
+        {
+            "lattice_size": 2,
+            "beta": 2.0,
+            "delta_tau": 1.0,
+            "hopping": 1.0,
+            "interaction": 4.0,
+        }
+    )
+
+    aux_field = auxiliary.generate_auxiliary_field(params, seed=5)
+    particles = params.particles_per_spin
+    trajectories = np.tile(np.arange(particles, dtype=np.int64), (params.time_slices, 1))
+    worldlines = {spin: worldline.Worldline(trajectories.copy()) for spin in ("up", "down")}
+    permutations = {spin: worldline.PermutationState.identity(particles) for spin in ("up", "down")}
+    cfg = worldline.WorldlineConfiguration(worldlines=worldlines, permutations=permutations)
+
+    log_w, phase = simulation._compute_weight_and_phase(params, aux_field, cfg)
+    momentum_tables = updates.build_momentum_tables(params, aux_field, spins=cfg.worldlines.keys())
+    rng = DummyRNG(integers_seq=[], random_seq=[0.0])
+    state = updates.MonteCarloState(
+        configuration=cfg,
+        phase=phase,
+        log_weight=log_w,
+        rng=rng,
+        occupancy_masks=_build_occupancy_masks(params, cfg),
+        momentum_tables=momentum_tables.copy(),
+    )
+
+    old_value = aux_field.site_value(0, 0)
+    old_table_reference = state.momentum_tables["up"][0]
+
+    accepted = updates._attempt_auxiliary_flip(
+        params,
+        aux_field,
+        state,
+        slice_index=0,
+        site_index=0,
+    )
+
+    assert accepted is True
+    assert aux_field.site_value(0, 0) == -old_value
+    assert state.momentum_tables["up"][0] is not old_table_reference
+
+    new_log_w, new_phase = simulation._compute_weight_and_phase(params, aux_field, cfg)
+    assert np.isclose(state.log_weight, new_log_w)
+    assert np.isclose(state.phase, new_phase)
+
+
 def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
     params, cfg = _base_configuration(time_slices=3)
     wl = cfg.worldlines["up"]
@@ -101,7 +151,7 @@ def test_momentum_update_accepts_and_updates(monkeypatch) -> None:
         params,
         auxiliary=None,
         mc_state=state,
-        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0, auxiliary_moves=0),
         measurement_interval=1,
     )
 
@@ -149,7 +199,7 @@ def test_permutation_swap_updates_phase(monkeypatch) -> None:
         params,
         auxiliary=None,
         mc_state=state,
-        schedule=updates.UpdateSchedule(worldline_moves=0, permutation_moves=1),
+        schedule=updates.UpdateSchedule(worldline_moves=0, permutation_moves=1, auxiliary_moves=0),
         measurement_interval=1,
     )
 
@@ -187,7 +237,7 @@ def test_momentum_update_rejects_pauli(monkeypatch) -> None:
         params,
         auxiliary=None,
         mc_state=state,
-        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0, auxiliary_moves=0),
         measurement_interval=1,
     )
 
@@ -239,7 +289,7 @@ def test_momentum_update_weighted_proposal(monkeypatch) -> None:
         params,
         auxiliary=None,
         mc_state=state,
-        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0),
+        schedule=updates.UpdateSchedule(worldline_moves=1, permutation_moves=0, auxiliary_moves=0),
         measurement_interval=1,
     )
 

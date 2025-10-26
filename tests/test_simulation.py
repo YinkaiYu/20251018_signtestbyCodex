@@ -63,3 +63,19 @@ def test_initialize_configuration_fermi_sea() -> None:
     ordering = np.argsort(energies)
     expected = ordering[: worldline.particles]
     assert np.array_equal(np.sort(first_slice), np.sort(expected))
+
+
+def test_run_simulation_with_auxiliary_updates() -> None:
+    params = make_params(
+        sweeps=1,
+        thermalization_sweeps=0,
+        interaction=4.0,
+        auxiliary_moves_per_slice=2,
+        seed=42,
+    )
+    aux_field = auxiliary.generate_auxiliary_field(params)
+    result = simulation.run_simulation(params, aux_field)
+
+    assert result.samples == 1
+    assert result.diagnostics["auxiliary_attempts"] > 0.0
+    assert result.diagnostics["auxiliary_acceptance"] >= 0.0

@@ -1,13 +1,14 @@
 # Fermionic Worldline QMC
 
-Fermionic Worldline QMC simulates the momentum-space worldline formulation of the half-filled Hubbard model with a fixed auxiliary Hubbard–Stratonovich field.  The implementation follows the derivations collected in `note.md`, samples fermionic worldlines and permutations, and measures the complex average sign/phase.
+Fermionic Worldline QMC simulates the momentum-space worldline formulation of the half-filled Hubbard model with a dynamical auxiliary Hubbard–Stratonovich field.  The implementation follows the derivations collected in `note.md`, samples fermionic worldlines, permutations, and auxiliary spins, and measures the complex average sign/phase.
 
 The canonical upstream lives at <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>.  Issues, feature requests, and data contributions should reference this repository.
 
 ## Highlights
 
 - Momentum-space worldline Monte Carlo with explicit permutation sampling.
-- Auxiliary field precomputation (`W_{l,σ}(q)`) via FFT, including optional checkerboard/uniform modes.
+- Auxiliary field precomputation (`W_{l,σ}(q)`) via FFT, including optional checkerboard/uniform initial patterns.
+- Metropolis sampling of the full space-time auxiliary field with incremental FFT updates and automatic refresh of momentum proposals.
 - Log-domain Metropolis updates with optional `|W|`-weighted momentum proposals.
 - Incremental complex phase accumulation and sweep-level binning for error bars.
 - Experiment scripts for parameter sweeps and plotting utilities for quick diagnostics.
@@ -30,7 +31,7 @@ micromamba activate qmc311
 pip install -e .[dev]
 ```
 
-After activation, `pytest` should report `36 passed`, confirming the environment.
+After activation, `pytest` should report a clean pass across the full suite, confirming the environment.
 
 ## Repository Layout
 
@@ -53,6 +54,7 @@ After activation, `pytest` should report `36 passed`, confirming the environment
    ```
 
 The CLI writes measurements/diagnostics to `result.json`, spill per-sweep diagnostics to `result.jsonl`, and echoes summary statistics to stdout.
+Use `--auxiliary-moves` when you want to explicitly set the number of auxiliary spin-flip proposals per slice (defaults to one per site when omitted).
 
 ## Programmatic Usage
 
@@ -86,7 +88,8 @@ print(result.to_dict())
 - `worldline_moves_per_slice`, `permutation_moves_per_slice` – Override default proposal budgets (defaults scale with particle count).
 - `momentum_proposal` – `"w_magnitude"` (importance sampling using `|W|`, default) or `"uniform"`.
 - `fft_mode` – `"complex"` (retain phases) or `"real"` (cosine component only).
-- `auxiliary_mode` – `"random"`, `"uniform_plus"`, or `"checkerboard"`.
+- `auxiliary_mode` – `"random"`, `"uniform_plus"`, or `"checkerboard"`; controls the initial auxiliary slice prior to sampling.
+- `auxiliary_moves_per_slice` – Overrides the number of auxiliary spin-flip proposals per imaginary-time slice (defaults to one attempt per site when unset).
 - `initial_state` – `"fermi_sea"` or `"random"`.
 - `measurement_interval` – Attempts between phase samples (defaults to one full sweep).
 - `seed`, `output_path`, `log_path` – RNG seed and optional file outputs.
@@ -99,6 +102,7 @@ The `experiments/` directory provides ready-made scripts:
 
 - `run_sign_vs_U.py` – Sweep interaction strength for one or more `(L, β)` pairs.
 - `run_sign_vs_beta_L.py` – Sweep lattice size / β for fixed U.
+- `run_auxiliary_plan.py` – Automate baseline checks, auxiliary-move scans, and small-U sanity sweeps for the dynamical auxiliary-field sampler.
 - `plot_sign_vs_U.py`, `plot_sign_vs_beta_L.py` – Visualize JSON results.
 
 Example high-statistics sweep (checkerboard auxiliary, FFT=complex):

@@ -15,7 +15,7 @@ def build_parser() -> argparse.ArgumentParser:
     """Create the CLI argument parser."""
 
     parser = argparse.ArgumentParser(
-        description="Run momentum-space worldline QMC with fixed auxiliary fields.",
+        description="Run momentum-space worldline QMC with dynamical auxiliary fields.",
     )
     parser.add_argument(
         "--config",
@@ -52,6 +52,11 @@ def build_parser() -> argparse.ArgumentParser:
         "--permutation-moves",
         type=int,
         help="Override permutation moves per slice for scheduling purposes.",
+    )
+    parser.add_argument(
+        "--auxiliary-moves",
+        type=int,
+        help="Override auxiliary spin-flip proposals per slice (default: lattice volume).",
     )
     parser.add_argument(
         "--seed",
@@ -98,6 +103,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         params = replace(params, worldline_moves_per_slice=args.worldline_moves)
     if args.permutation_moves is not None:
         params = replace(params, permutation_moves_per_slice=args.permutation_moves)
+    if args.auxiliary_moves is not None:
+        params = replace(params, auxiliary_moves_per_slice=args.auxiliary_moves)
     if args.fft_mode is not None:
         params = replace(params, fft_mode=args.fft_mode)
     if args.initial_state is not None:
@@ -133,7 +140,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             f"Samples={result.samples} | Re={measurements['re']:.6f} "
             f"Im={measurements['im']:.6f} | |S|={measurements['abs']:.6f} | "
             f"Acc_k={diag['momentum_acceptance']:.3f} "
-            f"Acc_p={diag['permutation_acceptance']:.3f}"
+            f"Acc_p={diag['permutation_acceptance']:.3f} "
+            f"Acc_aux={diag.get('auxiliary_acceptance', 0.0):.3f}"
         )
         print(summary)
 

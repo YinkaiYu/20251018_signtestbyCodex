@@ -72,7 +72,7 @@ w\left(K_{\uparrow},P_{\uparrow},K_{\downarrow},P_{\downarrow}\right)\propto
 \times \bra{k_{0,\sigma}^{(P_{\sigma}n)}}T_{L_\tau-1,\sigma}\ket{k_{L_\tau-1,\sigma}^{(n)}}
 $$
 
-蒙卡更新分别对 $K_{\sigma}$ 和 $P_{\sigma}$ 进行。注意：辅助场 $\{s_{il}\}$ 在模拟开始时一次性生成并固定，整个采样过程中不再更新（不采样辅助场），且全程不使用行列式；我们仅对动量空间世界线与 permutation 采样，观测量是本方法的平均符号/相位因子。
+蒙卡更新分别对 $K_{\sigma}$、$P_{\sigma}$ 与 $\{s_{il}\}$ 进行。辅助场在初始时刻按照指定的 `auxiliary_mode` 生成一次，但随后的采样过程中会通过局部翻转 $s_{il}\to -s_{il}$ 的 Metropolis 步骤被动态更新；`auxiliary_mode` 仅控制起点构型。观测量仍为平均符号/相位因子 $S(X)$，不引入行列式权重。
 
 为便于记号，定义单片上的转移矩阵元
 $$
@@ -102,6 +102,26 @@ $$
 {\big|M_{L_\tau-1,\sigma}(k_{0,\sigma}^{(P_{\sigma}a)}\leftarrow k_{L_\tau-1,\sigma}^{(a)})\big|\,\big|M_{L_\tau-1,\sigma}(k_{0,\sigma}^{(P_{\sigma}b)}\leftarrow k_{L_\tau-1,\sigma}^{(b)})\big|}.
 $$
 接受-拒绝准则为 $A=\min(1,\mathcal{R}_{\text{perm}})$。测量时符号需额外乘以 $-1$，因为换位 $\tau_{ab}$ 改变了 $\text{sgn}(P_{\sigma})$。
+
+对辅助场的局域翻转，令 $s_{il}$ 位于切片 $l$、格点 $i=(x_i,y_i)$。翻转仅影响该切片中出现的动量差集合 $\mathcal{Q}_{l}^{(\sigma)}=\{k_{l+1,\sigma}^{(n)}-k_{l,\sigma}^{(n)}\}_n$。由于
+$$
+W_{l,\sigma}(q)=\sum_i e^{iq r_i}e^{\sigma\lambda s_{il}},
+$$
+单次翻转会带来增量
+$$
+\Delta W_{l,\sigma}(q)=\big(e^{\sigma\lambda s'_{il}}-e^{\sigma\lambda s_{il}}\big)e^{iq r_i}.
+$$
+对应的接受率与相位增量为
+$$
+\mathcal{R}_{\text{aux}}=
+\prod_{\sigma}\prod_{n=1}^{N_\sigma}
+\frac{\big|W_{l,\sigma}(q_{l,\sigma}^{(n)})+\Delta W_{l,\sigma}(q_{l,\sigma}^{(n)})\big|}
+{\big|W_{l,\sigma}(q_{l,\sigma}^{(n)})\big|},
+\qquad
+\Delta\Phi_{\text{aux}}=\sum_{\sigma}\sum_{n=1}^{N_\sigma}
+\Big[\arg\big(W_{l,\sigma}'(q_{l,\sigma}^{(n)})\big)-\arg\big(W_{l,\sigma}(q_{l,\sigma}^{(n)})\big)\Big].
+$$
+接受-拒绝准则仍为 $A=\min(1,\mathcal{R}_{\text{aux}})$。实现上通过预先存储 $e^{iq r_i}$（一次 FFT，即“phase table”）即可在 $O(V)$ 复杂度内更新整片 $W_{l,\sigma}(q)$。
 
 更新 $K_{\sigma}$ 时，考虑最简单的单点局部更新：固定自旋 $\sigma$、粒子 $n$ 与虚时切片 $l$，提议
 $$
@@ -166,9 +186,9 @@ Pauli 不相容原理：对每个切片 $l$ 和自旋 $\sigma$，单粒子动量
   +\arg\frac{M_{L_\tau-1,\sigma}(k_{0}^{(P a)}\leftarrow k_{L_\tau-1}^{(b)})}{M_{L_\tau-1,\sigma}(k_{0}^{(P b)}\leftarrow k_{L_\tau-1}^{(b)})}.$$
 
 实现要点与建议：
-- 固定辅助场：在模拟开始生成 $s_{il}=\pm1$（独立同分布即可），并据此通过 FFT 预计算所有片的 $W_{l,\sigma}(q)$、其模 $|W|$ 与相位 $\arg W$；模拟过程中不再更新 $s_{il}$。
+- 辅助场：在模拟开始生成 $s_{il}=\pm1$ 并通过 FFT 得到初始 $W_{l,\sigma}(q)$；随后在每个 sweep 内按给定次数尝试 $s_{il}$ 的翻转。为了避免逐次 FFT，预先缓存 $e^{iq r_i}$（phase table），这样每次翻转只需把 $\Delta W_{l,\sigma}(q)$ 加到缓存上即可。
 - 初始化：可取 $P_{\sigma}=\text{id}$，并将 $k_{l,\sigma}^{(n)}$ 在 BZ 上均匀初始化，且对每个切片 $l$、自旋 $\sigma$ 确保不同粒子 $n$ 的动量互不相同（满足 Pauli 约束）。
-- 更新日程：一次 sweep 可包含若干次 $K$ 局部更新（遍历 $l,n,\sigma$ 或随机抽样若干对 $(l,n,\sigma)$），以及若干次 permutation 的二体换位尝试；必要时可加入“循环移动”或“洗牌”以改善遍历性。
+- 更新日程：一次 sweep 可包含若干次 $K$ 局部更新（遍历 $l,n,\sigma$ 或随机抽样若干对 $(l,n,\sigma)$）、若干次 permutation 的二体换位尝试，以及若干次辅助场翻转（默认每片尝试 $V=L^2$ 次）。必要时可加入“循环移动”或“洗牌”以改善遍历性。
 - 采样权重：Metropolis 接受率一律使用 $|w|$ 的比值；$\text{sgn}(P_{\uparrow})\text{sgn}(P_{\downarrow})$ 与 $\arg W$ 只进入观测量 $S(X)$。
 - 观测量：记录 $S(X)=w/|w|=\text{sgn}(P_{\uparrow})\text{sgn}(P_{\downarrow})\exp[i\sum\arg W]$，并计算其样本平均与误差（可分开记录实部、虚部和模长）。
 

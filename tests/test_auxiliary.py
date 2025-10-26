@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from worldline_qmc import auxiliary, config
 
@@ -105,3 +106,42 @@ def test_checkerboard_auxiliary_field_patterns() -> None:
     )
     for slice_cache in aux_field.slices:
         assert np.array_equal(slice_cache.spatial_field, expected)
+
+
+@pytest.mark.parametrize("fft_mode", ["complex", "real"])
+def test_apply_site_update_matches_fft(fft_mode: str) -> None:
+    params = _make_params(lattice_size=2, beta=1.0, delta_tau=0.5, interaction=4.0, fft_mode=fft_mode)
+    aux_field = auxiliary.generate_auxiliary_field(params, seed=3)
+
+    slice_index = 0
+    site_flat = 0
+    old_value = aux_field.site_value(slice_index, site_flat)
+    new_value = -old_value
+    phase_vector = aux_field.site_phase_vector(site_flat)
+    if fft_mode == "real":
+        phase_vector = phase_vector.real
+
+    coupling = aux_field.auxiliary_coupling
+    delta_up = float(np.exp(coupling * new_value) - np.exp(coupling * old_value))
+    delta_down = float(np.exp(-coupling * new_value) - np.exp(-coupling * old_value))
+
+    aux_field.apply_site_update(
+        slice_index,
+        site_flat,
+        new_value,
+        phase_vector,
+        delta_up,
+        delta_down,
+    )
+
+    spatial = aux_field.slices[slice_index].spatial_field.astype(float)
+    exp_up = np.exp(coupling * spatial)
+    exp_down = np.exp(-coupling * spatial)
+    w_up = np.fft.fftn(exp_up).conj()
+    w_down = np.fft.fftn(exp_down).conj()
+    if fft_mode == "real":
+        w_up = np.real(w_up)
+        w_down = np.real(w_down)
+
+    assert np.allclose(aux_field.w(slice_index, "up"), w_up)
+    assert np.allclose(aux_field.w(slice_index, "down"), w_down)

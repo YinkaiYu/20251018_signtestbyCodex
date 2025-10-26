@@ -10,7 +10,7 @@
 
 ## Repository Snapshot
 - Canonical upstream: <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>
-- Primary goal: simulate the momentum-space worldline QMC formulation at half filling with fixed auxiliary fields, focusing on average-sign measurements.
+- Primary goal: simulate the momentum-space worldline QMC formulation at half filling with dynamical auxiliary fields, focusing on average-sign measurements.
 - Current data products: high-statistics checkerboard/FFT=complex sweep stored under `experiments/output_checkerboard_complex_highsweep/`.
 
 ## Development Workflow
@@ -23,6 +23,7 @@
 
 ## Experiment Workflow (Local)
 - Use `experiments/run_sign_vs_U.py` or related scripts for quick sweeps; archive previous outputs to `experiments/archive/<timestamp>/` before rerunning.
+- Use `experiments/run_auxiliary_plan.py` to regenerate the baseline/auxiliary-intensity/interaction sanity suite whenever sampler parameters change.
 - Maintain derived datasets (plots/JSON) under `experiments/output_*`. Only version-control curated results (e.g., `..._highsweep`); keep raw runs ignored.
 - When new datasets are produced, document parameters, acceptance stats, and locations in README + AGENTS.
 
@@ -141,7 +142,7 @@ Future updates to this plan should timestamp new sections to preserve progress h
 ## Experiment Workflow Reference (updated 2025-10-20)
 - **Plan & communicate** – Confirm desired parameter grids (U, β, L, FFT/auxiliary modes, measurement settings) with the user; record changes immediately in README and this guide to keep future runs reproducible.
 - **Archive before reruns** – Move any existing `experiments/output*` directories into a timestamped folder under `experiments/archive/` so new artifacts stay isolated and history remains inspectable.
-- **Run generation scripts** – Invoke `uv run python experiments/run_sign_vs_U.py` (or other drivers) with the agreed `--sweeps`, `--thermalization`, `--measurement-interval`, `--fft-mode`, and `--auxiliary-mode`, customizing `--output-dir` per scenario (complex/real, uniform/checkerboard, etc.). Use deterministic seeds when comparing modes.
+- **Run generation scripts** – Invoke `uv run python experiments/run_sign_vs_U.py` (or other drivers) with the agreed `--sweeps`, `--thermalization`, `--measurement-interval`, `--fft-mode`, `--auxiliary-mode`, and (when needed) `--auxiliary-moves-per-slice`, customizing `--output-dir` per scenario (complex/real, uniform/checkerboard, etc.). Use deterministic seeds when comparing modes.
 - **Plot immediately** – Regenerate figures with `experiments/plot_sign_vs_U.py`, saving PNGs alongside their JSON sources for quick visual review.
 - **Validate outputs** – Spot-check JSON/diagnostics (sample counts, acceptance ratios) and summarize notable metrics; add pytest coverage when new configuration branches appear.
 - **Document & commit** – Update README/AGENTS with new procedures or findings, run `uv run pytest`, then commit the code and documentation changes together with a concise message. Generated data directories remain ignored unless explicitly versioned.
@@ -157,6 +158,12 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Momentum Metropolis updates now draw proposals via these tables and add the `\log P_l(q_{\text{old}}) - \log P_l(q_{\text{new}})` correction to maintain detailed balance while keeping the stored log-weight purely physical.
 - Added regression coverage (`tests/test_updates.py::test_momentum_update_weighted_proposal`) validating the selective cancellation of `|W|` factors and phase preservation.
 - README and `note.md` refreshed to document the new proposal mode and acceptance-ratio bookkeeping.
+
+## Stage 16 – Dynamical Auxiliary Field Sampling (2025-10-20)
+- Auxiliary spins `s_{il}` are now updated inside each sweep via a Metropolis kernel that recomputes the affected `W_{l,σ}(q)` entries incrementally. `auxiliary_mode` only seeds the initial slice; subsequent configurations are sampled.
+- Added `auxiliary_moves_per_slice` to `SimulationParameters`/CLI so the auxiliary update budget can be tuned independently of worldline/permutation moves (default: one attempt per lattice site).
+- Cached a global `phase_table` (`e^{iq·r}`) to enable `O(V)` updates of `W_{l,σ}` per accepted flip, and wired proposal-table refreshes so `|W|`-weighted momentum moves stay consistent with the latest auxiliary configuration.
+- Extended `tests/test_auxiliary.py`, `tests/test_updates.py`, and `tests/test_simulation.py` to cover FFT-consistent site updates, acceptance bookkeeping, and end-to-end runs with auxiliary dynamics. README, `note.md`, and this guide now describe the new workflow.
 
 ## Cluster Workflow Reference (updated 2025-10-20)
 - **Sync the repo** – On the server run `git clone` (or `git pull`) so that source files stay aligned with the local workspace. Use `rsync` only for large data folders that are intentionally excluded from version control.

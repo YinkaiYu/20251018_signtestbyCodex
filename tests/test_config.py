@@ -19,6 +19,7 @@ def test_load_parameters_from_mapping() -> None:
         "thermalization_sweeps": 2,
         "worldline_moves_per_slice": 5,
         "permutation_moves_per_slice": 3,
+        "auxiliary_moves_per_slice": 7,
         "output_path": "outputs/run.json",
         "log_path": "outputs/diag.jsonl",
         "fft_mode": "real",
@@ -39,6 +40,7 @@ def test_load_parameters_from_mapping() -> None:
     assert isinstance(params.log_path, Path)
     assert params.fft_mode == "real"
     assert params.initial_state == "random"
+    assert params.auxiliary_moves_per_slice == 7
 
 
 def test_load_parameters_from_json(tmp_path: Path) -> None:
@@ -88,6 +90,12 @@ def test_load_parameters_rejects_negative_moves() -> None:
         "interaction": 4.0,
         "worldline_moves_per_slice": -1,
     }
+
+    with pytest.raises(ValueError):
+        config.load_parameters(mapping)
+
+    mapping["worldline_moves_per_slice"] = 0
+    mapping["auxiliary_moves_per_slice"] = -2
 
     with pytest.raises(ValueError):
         config.load_parameters(mapping)

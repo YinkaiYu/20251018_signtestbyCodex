@@ -25,6 +25,7 @@ class UpdateSchedule:
 
     worldline_moves: int
     permutation_moves: int
+    auxiliary_moves: int
 
 
 @dataclass
@@ -140,6 +141,8 @@ def metropolis_sweep(
         "momentum_accepts": 0,
         "permutation_attempts": 0,
         "permutation_accepts": 0,
+        "auxiliary_attempts": 0,
+        "auxiliary_accepts": 0,
     }
 
     config = mc_state.configuration
@@ -196,6 +199,21 @@ def metropolis_sweep(
             new_targets,
         ):
             diagnostics["permutation_accepts"] += 1
+        attempt_counter += 1
+        maybe_record_phase()
+
+    for _ in range(schedule.auxiliary_moves):
+        diagnostics["auxiliary_attempts"] += 1
+        slice_index = int(rng.integers(time_slices))
+        site_index = int(rng.integers(params.volume))
+        if _attempt_auxiliary_flip(
+            params,
+            auxiliary,
+            mc_state,
+            slice_index,
+            site_index,
+        ):
+            diagnostics["auxiliary_accepts"] += 1
         attempt_counter += 1
         maybe_record_phase()
 
@@ -346,6 +364,90 @@ def _attempt_permutation_move(
     perm.values[indices] = new_targets
     mc_state.phase *= parity_change * np.exp(1j * delta_phi)
     mc_state.log_weight += log_ratio
+    return True
+
+
+def _attempt_auxiliary_flip(
+    params: SimulationParameters,
+    auxiliary: AuxiliaryField,
+    mc_state: MonteCarloState,
+    slice_index: int,
+    site_index: int,
+) -> bool:
+    coupling = auxiliary.auxiliary_coupling
+    old_value = auxiliary.site_value(slice_index, site_index)
+    new_value = -old_value
+    if new_value == old_value:
+        return False
+
+    phase_vector = np.asarray(auxiliary.site_phase_vector(site_index))
+    if auxiliary.fft_mode == "real":
+        phase_vector = phase_vector.real
+
+    exp_up_old = np.exp(coupling * old_value)
+    exp_up_new = np.exp(coupling * new_value)
+    exp_down_old = np.exp(-coupling * old_value)
+    exp_down_new = np.exp(-coupling * new_value)
+    delta_up = exp_up_new - exp_up_old
+    delta_down = exp_down_new - exp_down_old
+
+    if np.isclose(delta_up, 0.0) and np.isclose(delta_down, 0.0):
+        return False
+
+    lattice_size = params.lattice_size
+    time_slices = params.time_slices
+    log_ratio = 0.0
+    phase_delta = 0.0
+
+    for spin in mc_state.configuration.worldlines:
+        wl = mc_state.configuration.worldlines[spin]
+        perm = mc_state.configuration.permutations[spin]
+        w_array = auxiliary.w(slice_index, spin)
+        delta_factor = delta_up if spin == "up" else delta_down
+        if np.isclose(delta_factor, 0.0):
+            continue
+        for n in range(wl.particles):
+            k_from = int(wl.trajectories[slice_index, n])
+            if slice_index < time_slices - 1:
+                k_to = int(wl.trajectories[slice_index + 1, n])
+            else:
+                target = int(perm.values[n])
+                k_to = int(wl.trajectories[0, target])
+            q_flat = _momentum_difference_index(k_from, k_to, lattice_size)
+            old_w = w_array.flat[q_flat]
+            magnitude_old = abs(old_w)
+            if magnitude_old <= 0.0:
+                return False
+            delta = delta_factor * phase_vector[q_flat]
+            new_w = old_w + delta
+            magnitude_new = abs(new_w)
+            if magnitude_new <= 0.0:
+                return False
+            log_ratio += float(np.log(magnitude_new) - np.log(magnitude_old))
+            phase_delta += float(np.angle(new_w) - np.angle(old_w))
+
+    rng = mc_state.rng
+    if log_ratio < 0.0 and np.log(rng.random()) >= log_ratio:
+        return False
+
+    auxiliary.apply_site_update(
+        slice_index,
+        site_index,
+        new_value,
+        phase_vector,
+        float(delta_up),
+        float(delta_down),
+    )
+
+    if mc_state.momentum_tables is not None:
+        for spin in list(mc_state.momentum_tables.keys()):
+            current_tables = list(mc_state.momentum_tables[spin])
+            magnitude = auxiliary.magnitude(slice_index, spin)
+            current_tables[slice_index] = MomentumProposalTable.from_magnitude(magnitude)
+            mc_state.momentum_tables[spin] = tuple(current_tables)
+
+    mc_state.log_weight += log_ratio
+    mc_state.phase *= np.exp(1j * phase_delta)
     return True
 
 

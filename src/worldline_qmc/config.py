@@ -40,6 +40,7 @@ class SimulationParameters:
     momentum_proposal: str = "w_magnitude"
     initial_state: str = "fermi_sea"
     measurement_interval: int = 0
+    auxiliary_moves_per_slice: int = 0
     extra: MutableMapping[str, Any] = field(default_factory=dict)
 
     @property
@@ -161,6 +162,7 @@ def _coerce_integer_fields(kwargs: dict[str, Any]) -> None:
         "worldline_moves_per_slice",
         "permutation_moves_per_slice",
         "measurement_interval",
+        "auxiliary_moves_per_slice",
     }
 
     for field_name in integer_fields:
@@ -219,6 +221,8 @@ def _validate_parameters(params: SimulationParameters) -> None:
         raise ValueError("worldline_moves_per_slice must be non-negative.")
     if params.permutation_moves_per_slice < 0:
         raise ValueError("permutation_moves_per_slice must be non-negative.")
+    if params.auxiliary_moves_per_slice < 0:
+        raise ValueError("auxiliary_moves_per_slice must be non-negative.")
 
     slices = params.beta / params.delta_tau
     nearest = round(slices)

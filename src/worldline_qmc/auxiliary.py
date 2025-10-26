@@ -46,6 +46,7 @@ class AuxiliaryField:
     lattice_size: int
     auxiliary_coupling: float
     fft_mode: str
+    phase_table: np.ndarray  # shape: (V, V)
 
     def magnitude(self, slice_index: int, spin: Spin) -> np.ndarray:
         """Return |W_{l, sigma}(q)| for the requested slice and spin."""
@@ -65,6 +66,41 @@ class AuxiliaryField:
     @property
     def time_slices(self) -> int:
         return len(self.slices)
+
+    @property
+    def volume(self) -> int:
+        return self.lattice_size * self.lattice_size
+
+    def site_value(self, slice_index: int, site_flat: int) -> int:
+        spatial = self.slices[slice_index].spatial_field
+        return int(spatial.flat[site_flat])
+
+    def site_phase_vector(self, site_flat: int) -> np.ndarray:
+        """Return e^{iq·r_site} for all momentum differences q."""
+
+        return self.phase_table[:, site_flat]
+
+    def apply_site_update(
+        self,
+        slice_index: int,
+        site_flat: int,
+        new_value: int,
+        phase_vector: np.ndarray,
+        delta_up: float,
+        delta_down: float,
+    ) -> None:
+        """Apply the accepted flip to s_il and cached Fourier sums."""
+
+        slice_cache = self.slices[slice_index]
+        field = slice_cache.spatial_field.reshape(-1)
+        field[site_flat] = np.int8(new_value)
+
+        phase_matrix = phase_vector.reshape(self.lattice_size, self.lattice_size)
+        if self.fft_mode == "real":
+            phase_matrix = phase_matrix.real
+
+        slice_cache.w_fourier["up"] = slice_cache.w_fourier["up"] + delta_up * phase_matrix
+        slice_cache.w_fourier["down"] = slice_cache.w_fourier["down"] + delta_down * phase_matrix
 
 
 def generate_auxiliary_field(
@@ -115,11 +151,14 @@ def generate_auxiliary_field(
         )
         slices.append(slice_cache)
 
+    phase_table = _build_phase_table(lattice_size)
+
     return AuxiliaryField(
         slices=tuple(slices),
         lattice_size=lattice_size,
         auxiliary_coupling=coupling,
         fft_mode=fft_mode,
+        phase_table=phase_table,
     )
 
 
@@ -163,3 +202,21 @@ def _fourier_sum(field: np.ndarray, mode: str) -> np.ndarray:
         return np.real(fft)
     msg = f"Unsupported fft_mode: {mode}"
     raise ValueError(msg)
+
+
+def _build_phase_table(lattice_size: int) -> np.ndarray:
+    """Return e^{i q·r} for all momentum differences and sites."""
+
+    volume = lattice_size * lattice_size
+    qx, qy = np.indices((lattice_size, lattice_size))
+    rx, ry = np.indices((lattice_size, lattice_size))
+
+    qx_flat = qx.reshape(volume, 1)
+    qy_flat = qy.reshape(volume, 1)
+    rx_flat = rx.reshape(1, volume)
+    ry_flat = ry.reshape(1, volume)
+
+    phases = np.exp(
+        2j * np.pi * (qx_flat * rx_flat + qy_flat * ry_flat) / float(lattice_size)
+    )
+    return phases
