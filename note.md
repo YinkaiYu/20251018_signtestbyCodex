@@ -193,7 +193,7 @@ Pauli 不相容原理：对每个切片 $l$ 和自旋 $\sigma$，单粒子动量
 - 在当前实现中，每个 Monte Carlo sweep 末执行一次完整的辅助场 Gibbs 更新；未来若需要，可再将其穿插于动量或 permutation 更新之间。
 
 实现要点与建议：
-- 辅助场 Gibbs 更新：模拟开始仍会根据配置生成初始 $s_{il}$ 并预存 $W_{l,\sigma}(q)$；随后每个 sweep 末按热浴分布重采样所有 $s_{il}$，并同步刷新 $W$、动量提议分布以及对应的 $\log|w|/\Phi$ 增量。
+- 辅助场 Gibbs 更新：模拟开始仍会根据配置生成初始 $s_{il}$ 并预存 $W_{l,\sigma}(q)$；随后每个 sweep 末按热浴分布重采样所有 $s_{il}$，同步刷新 $W$、动量提议分布以及对应的 $\log|w|/\Phi$ 增量。若在单点 sweep 内需要回滚（例如遇到零幅度链接），保持原场即可继续后续时间片。
 - 初始化：可取 $P_{\sigma}=\text{id}$，并将 $k_{l,\sigma}^{(n)}$ 在 BZ 上均匀初始化，且对每个切片 $l$、自旋 $\sigma$ 确保不同粒子 $n$ 的动量互不相同（满足 Pauli 约束）。
 - 更新日程：一次 sweep 可包含若干次 $K$ 局部更新（遍历 $l,n,\sigma$ 或随机抽样若干对 $(l,n,\sigma)$），以及若干次 permutation 的二体换位尝试；必要时可加入“循环移动”或“洗牌”以改善遍历性。
 - 采样权重：Metropolis 接受率一律使用 $|w|$ 的比值；$\text{sgn}(P_{\uparrow})\text{sgn}(P_{\downarrow})$ 与 $\arg W$ 只进入观测量 $S(X)$。

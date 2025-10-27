@@ -78,6 +78,10 @@ print(result.to_dict())
 
 `run_simulation` mutates the supplied auxiliary field in place: each sweep performs a Gibbs refresh of all slices and updates the cached Fourier data so proposal tables and phase bookkeeping stay consistent with the worldline configuration.
 
+### Recent experiments
+
+- `experiments/analysis/sign_vs_U_checkerboard/` – consolidated outputs for the low-U sweep (checkerboard auxiliary seed) covering `L=β∈{4,6,8,10}` and `U∈{0,0.05,0.1,0.15,0.2,0.4,0.6,0.8,1.0}` under both FFT modes. See `plots/complex_re_vs_U.png` and `plots/real_re_vs_U.png` for the corresponding Re ⟨S⟩ curves.
+
 ## Configuration Reference
 
 `SimulationParameters` accepts the following keys:

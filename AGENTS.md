@@ -158,10 +158,14 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Added regression coverage (`tests/test_updates.py::test_momentum_update_weighted_proposal`) validating the selective cancellation of `|W|` factors and phase preservation.
 - README and `note.md` refreshed to document the new proposal mode and acceptance-ratio bookkeeping.
 
-## Stage 16 – Auxiliary Field Gibbs Sampling (2025-10-20)
 - Added once-per-sweep Gibbs updates of the auxiliary field using half-step wavefunctions to reconstruct the local magnetization and logistic heat-bath probabilities.
 - Auxiliary slices now refresh their cached Fourier transforms in place; momentum proposal tables are rebuilt slice-by-slice and the Monte Carlo state keeps incremental `\Delta\log|w|`/`\Delta\Phi` corrections in sync.
 - Expanded diagnostics with auxiliary slice/flip counters and introduced regression tests covering magnetization reconstruction, zero-magnetization heat baths, real-FFT phase conservation, and sweep-level weight/phase consistency; documentation (`note.md`, README, AGENTS) updated with the new workflow guidance.
+
+## Stage 17 – Low-U Sweep (2025-10-27)
+- Ran 72 single-point jobs sweeping `U ∈ {0, 0.05, 0.1, 0.15, 0.2, 0.4, 0.6, 0.8, 1.0}` for `L = β ∈ {4, 6, 8, 10}` with checkerboard initial auxiliary fields under both FFT modes (`complex`, `real`). Each job used `thermalization=128`, `sweeps=1024`, `measurement_interval=32`.
+- Aggregated per-point outputs into `experiments/analysis/sign_vs_U_checkerboard/{complex,real}_data.json`, consolidated tables (`summary.json` / `summary.csv`), and generated overview plots `plots/complex_re_vs_U.png` & `plots/real_re_vs_U.png` (multiple L curves per figure).
+- Archived raw Slurm results to `experiments/archive/sign_vs_U_checkerboard_20251027_215058/` and removed intermediate comparison plots to keep only the new deliverables.
 
 ## Cluster Workflow Reference (updated 2025-10-20)
 - **Sync the repo** – On the server run `git clone` (or `git pull`) so that source files stay aligned with the local workspace. Use `rsync` only for large data folders that are intentionally excluded from version control.
