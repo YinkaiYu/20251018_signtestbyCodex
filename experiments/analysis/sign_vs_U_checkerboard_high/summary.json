@@ -1,0 +1,2378 @@
+[
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 0.0,
+    "seed": 9000,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 133118.0,
+      "auxiliary_site_flips": 1064416.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079709/sign_vs_U_checkerboard_high/complex/L4_beta4/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 0.0,
+    "seed": 10000,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 133118.0,
+      "auxiliary_site_flips": 1064313.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079745/sign_vs_U_checkerboard_high/real/L4_beta4/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 1.0,
+    "seed": 9001,
+    "measurements": {
+      "re": 0.00021222266963518804,
+      "im": -0.0006934571826920854,
+      "abs": 0.10850547324280174
+    },
+    "variances": {
+      "re": 0.00832142856219969,
+      "im": 0.007107097678003656,
+      "abs": 0.0036441062152040545
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 143975.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 816.0,
+      "momentum_acceptance": 0.067596435546875,
+      "permutation_acceptance": 0.056043956043956046,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 103940.0,
+      "auxiliary_site_flips": 829970.0,
+      "auxiliary_log_delta": -24706.402794617847,
+      "auxiliary_phase_delta": -6944.377169719583
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079710/sign_vs_U_checkerboard_high/complex/L4_beta4/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 1.0,
+    "seed": 10001,
+    "measurements": {
+      "re": -0.0008967655642023361,
+      "im": 5.033482249991359e-17,
+      "abs": 0.15878070282101195
+    },
+    "variances": {
+      "re": 0.04003108757735716,
+      "im": 6.525020394638169e-30,
+      "abs": 0.01479593647525164
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 57595.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 269.0,
+      "momentum_acceptance": 0.027040921724759616,
+      "permutation_acceptance": 0.018475274725274726,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 91711.0,
+      "auxiliary_site_flips": 731957.0,
+      "auxiliary_log_delta": -7623.429500678065,
+      "auxiliary_phase_delta": -417.83182292744254
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079746/sign_vs_U_checkerboard_high/real/L4_beta4/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 2.0,
+    "seed": 9002,
+    "measurements": {
+      "re": 0.00044628630966098983,
+      "im": -0.0031748459669153095,
+      "abs": 0.08150464488021095
+    },
+    "variances": {
+      "re": 0.004134096181921288,
+      "im": 0.004507955175570066,
+      "abs": 0.0020028394334312997
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 255699.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 1292.0,
+      "momentum_acceptance": 0.12005098783052885,
+      "permutation_acceptance": 0.08873626373626374,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 94330.0,
+      "auxiliary_site_flips": 751813.0,
+      "auxiliary_log_delta": -45597.87008912063,
+      "auxiliary_phase_delta": -13606.912750732105
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079711/sign_vs_U_checkerboard_high/complex/L4_beta4/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 2.0,
+    "seed": 10002,
+    "measurements": {
+      "re": -0.0018011308365758747,
+      "im": 8.204083729392547e-17,
+      "abs": 0.09567272616731604
+    },
+    "variances": {
+      "re": 0.014616190113479907,
+      "im": 1.3198451666158033e-29,
+      "abs": 0.005457219346094107
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 149194.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 688.0,
+      "momentum_acceptance": 0.07004676231971153,
+      "permutation_acceptance": 0.04725274725274725,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 63272.0,
+      "auxiliary_site_flips": 503555.0,
+      "auxiliary_log_delta": -17509.817136318605,
+      "auxiliary_phase_delta": -4200.309377849554
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079747/sign_vs_U_checkerboard_high/real/L4_beta4/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 5.0,
+    "seed": 9003,
+    "measurements": {
+      "re": 0.0007522138681528219,
+      "im": 0.001692246986619144,
+      "abs": 0.06766660048032232
+    },
+    "variances": {
+      "re": 0.0030570268414164834,
+      "im": 0.002786289153483027,
+      "abs": 0.001263504227473983
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 399135.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 2442.0,
+      "momentum_acceptance": 0.18739436222956732,
+      "permutation_acceptance": 0.1677197802197802,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 94203.0,
+      "auxiliary_site_flips": 747832.0,
+      "auxiliary_log_delta": -260419.73329804227,
+      "auxiliary_phase_delta": -18492.465239228968
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079712/sign_vs_U_checkerboard_high/complex/L4_beta4/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 5.0,
+    "seed": 10003,
+    "measurements": {
+      "re": 0.0019835238326848283,
+      "im": -8.820614899960286e-17,
+      "abs": 0.06789579280155776
+    },
+    "variances": {
+      "re": 0.0074537792403768805,
+      "im": 1.9237634881006567e-29,
+      "abs": 0.00284337257676221
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 280708.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 1627.0,
+      "momentum_acceptance": 0.13179274338942307,
+      "permutation_acceptance": 0.1117445054945055,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 51229.0,
+      "auxiliary_site_flips": 405886.0,
+      "auxiliary_log_delta": -213235.284105415,
+      "auxiliary_phase_delta": -10901.326507956566
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079748/sign_vs_U_checkerboard_high/real/L4_beta4/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 10.0,
+    "seed": 9004,
+    "measurements": {
+      "re": 0.0004414292188849093,
+      "im": 0.0012621593957574378,
+      "abs": 0.06189327461528719
+    },
+    "variances": {
+      "re": 0.002265868791486234,
+      "im": 0.0025750290120640142,
+      "abs": 0.001008165364269747
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 500087.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 3376.0,
+      "momentum_acceptance": 0.23479144756610576,
+      "permutation_acceptance": 0.23186813186813188,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 84773.0,
+      "auxiliary_site_flips": 672114.0,
+      "auxiliary_log_delta": -99319.00401960731,
+      "auxiliary_phase_delta": -21691.623268818486
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079713/sign_vs_U_checkerboard_high/complex/L4_beta4/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 10.0,
+    "seed": 10004,
+    "measurements": {
+      "re": 0.000934764105058365,
+      "im": -5.237178602850162e-17,
+      "abs": 0.06239360408560468
+    },
+    "variances": {
+      "re": 0.006111829951180239,
+      "im": 2.386040337638096e-29,
+      "abs": 0.0022159373216751573
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 393822.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 2184.0,
+      "momentum_acceptance": 0.18489990234375,
+      "permutation_acceptance": 0.15,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 38603.0,
+      "auxiliary_site_flips": 305474.0,
+      "auxiliary_log_delta": -45412.65463204363,
+      "auxiliary_phase_delta": -12874.246694410975
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079749/sign_vs_U_checkerboard_high/real/L4_beta4/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 15.0,
+    "seed": 9005,
+    "measurements": {
+      "re": 0.00036028925344755425,
+      "im": -0.0027866383816481256,
+      "abs": 0.060321759552060844
+    },
+    "variances": {
+      "re": 0.0022287216151217508,
+      "im": 0.0023796159529364835,
+      "abs": 0.0009739688662324388
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 550232.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 4019.0,
+      "momentum_acceptance": 0.25833458533653847,
+      "permutation_acceptance": 0.2760302197802198,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 83050.0,
+      "auxiliary_site_flips": 655970.0,
+      "auxiliary_log_delta": -110120.58437499136,
+      "auxiliary_phase_delta": -29597.265278672316
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079714/sign_vs_U_checkerboard_high/complex/L4_beta4/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 15.0,
+    "seed": 10005,
+    "measurements": {
+      "re": 0.0022191147859922183,
+      "im": -9.674420225926795e-17,
+      "abs": 0.05965010943579915
+    },
+    "variances": {
+      "re": 0.005472919761413541,
+      "im": 1.33692973823345e-29,
+      "abs": 0.001916235351525104
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 452650.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 2803.0,
+      "momentum_acceptance": 0.21251971905048078,
+      "permutation_acceptance": 0.19251373626373627,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 36130.0,
+      "auxiliary_site_flips": 285429.0,
+      "auxiliary_log_delta": -49356.72351776997,
+      "auxiliary_phase_delta": -16816.945474666172
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079750/sign_vs_U_checkerboard_high/real/L4_beta4/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 20.0,
+    "seed": 9006,
+    "measurements": {
+      "re": 0.0004246348255461303,
+      "im": -0.0020683359676909306,
+      "abs": 0.058653244047757035
+    },
+    "variances": {
+      "re": 0.002303634474464736,
+      "im": 0.002161588210814458,
+      "abs": 0.0010261194771370597
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 579864.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 4543.0,
+      "momentum_acceptance": 0.2722468449519231,
+      "permutation_acceptance": 0.31201923076923077,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 90460.0,
+      "auxiliary_site_flips": 711033.0,
+      "auxiliary_log_delta": -445544.31508510053,
+      "auxiliary_phase_delta": -21382.011921416346
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079715/sign_vs_U_checkerboard_high/complex/L4_beta4/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 20.0,
+    "seed": 10006,
+    "measurements": {
+      "re": 0.00047118190661478773,
+      "im": -2.0599840670833505e-17,
+      "abs": 0.05604024805447609
+    },
+    "variances": {
+      "re": 0.0049634198736188025,
+      "im": 2.4670976434616483e-29,
+      "abs": 0.0018200627993578795
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 481059.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 3303.0,
+      "momentum_acceptance": 0.22585777869591347,
+      "permutation_acceptance": 0.2268543956043956,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 41342.0,
+      "auxiliary_site_flips": 325217.0,
+      "auxiliary_log_delta": -362536.2565563709,
+      "auxiliary_phase_delta": -19861.148755994695
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079751/sign_vs_U_checkerboard_high/real/L4_beta4/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 25.0,
+    "seed": 9007,
+    "measurements": {
+      "re": -0.0020013249980519393,
+      "im": -0.0009539154380111758,
+      "abs": 0.05859539029596646
+    },
+    "variances": {
+      "re": 0.0023036609537249353,
+      "im": 0.002085584986521605,
+      "abs": 0.0009573900109146096
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 601260.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 4952.0,
+      "momentum_acceptance": 0.2822922926682692,
+      "permutation_acceptance": 0.3401098901098901,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 81814.0,
+      "auxiliary_site_flips": 642975.0,
+      "auxiliary_log_delta": -121301.18756971018,
+      "auxiliary_phase_delta": -25458.444583095526
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079716/sign_vs_U_checkerboard_high/complex/L4_beta4/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 25.0,
+    "seed": 10007,
+    "measurements": {
+      "re": 0.00027358949416342527,
+      "im": -4.6261124790539723e-17,
+      "abs": 0.05631383754863958
+    },
+    "variances": {
+      "re": 0.004975288681599819,
+      "im": 1.570706771154143e-29,
+      "abs": 0.0018010153570630744
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 515532.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 3747.0,
+      "momentum_acceptance": 0.2420428936298077,
+      "permutation_acceptance": 0.2573489010989011,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 34003.0,
+      "auxiliary_site_flips": 267828.0,
+      "auxiliary_log_delta": -54213.965810454196,
+      "auxiliary_phase_delta": -19132.299260361808
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079752/sign_vs_U_checkerboard_high/real/L4_beta4/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 30.0,
+    "seed": 9008,
+    "measurements": {
+      "re": 0.00428623004258582,
+      "im": -0.003228245671225623,
+      "abs": 0.059813672185375456
+    },
+    "variances": {
+      "re": 0.0020945718620977503,
+      "im": 0.002397976173714204,
+      "abs": 0.000940196900698769
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 617130.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 4850.0,
+      "momentum_acceptance": 0.28974327674278844,
+      "permutation_acceptance": 0.3331043956043956,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 81529.0,
+      "auxiliary_site_flips": 639444.0,
+      "auxiliary_log_delta": -122201.19278701243,
+      "auxiliary_phase_delta": -20645.20687218939
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079717/sign_vs_U_checkerboard_high/complex/L4_beta4/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 4,
+    "beta": 4.0,
+    "interaction": 30.0,
+    "seed": 10008,
+    "measurements": {
+      "re": -3.0398832684827546e-05,
+      "im": 8.466563323840386e-17,
+      "abs": 0.0527723735408573
+    },
+    "variances": {
+      "re": 0.004331982407918446,
+      "im": 5.551514994677876e-30,
+      "abs": 0.0015443376135021523
+    },
+    "diagnostics": {
+      "momentum_attempts": 2129920.0,
+      "momentum_accepts": 534477.0,
+      "permutation_attempts": 14560.0,
+      "permutation_accepts": 3778.0,
+      "momentum_acceptance": 0.2509375939002404,
+      "permutation_acceptance": 0.259478021978022,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 133120.0,
+      "auxiliary_slice_changes": 33576.0,
+      "auxiliary_site_flips": 263550.0,
+      "auxiliary_log_delta": -53534.88494591353,
+      "auxiliary_phase_delta": -21268.582264802946
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079753/sign_vs_U_checkerboard_high/real/L4_beta4/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 0.0,
+    "seed": 9100,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 199680.0,
+      "auxiliary_site_flips": 3593875.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079718/sign_vs_U_checkerboard_high/complex/L6_beta6/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 0.0,
+    "seed": 10100,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 199680.0,
+      "auxiliary_site_flips": 3594605.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079754/sign_vs_U_checkerboard_high/real/L6_beta6/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 1.0,
+    "seed": 9101,
+    "measurements": {
+      "re": 0.0014327750311167588,
+      "im": 0.0004156332263290643,
+      "abs": 0.04606222560635262
+    },
+    "variances": {
+      "re": 0.0013461532237561166,
+      "im": 0.001434452413864942,
+      "abs": 0.0006590307546074565
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 781364.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 3633.0,
+      "momentum_acceptance": 0.10869669248575499,
+      "permutation_acceptance": 0.10274321266968325,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 182429.0,
+      "auxiliary_site_flips": 3278172.0,
+      "auxiliary_log_delta": -1069592.7759076033,
+      "auxiliary_phase_delta": -34474.1338573841
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079719/sign_vs_U_checkerboard_high/complex/L6_beta6/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 1.0,
+    "seed": 10101,
+    "measurements": {
+      "re": -0.004657798099078346,
+      "im": 3.0112177489911537e-16,
+      "abs": 0.06943494383640478
+    },
+    "variances": {
+      "re": 0.008280837263069545,
+      "im": 4.1932572352304224e-29,
+      "abs": 0.0034766293113087463
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 302689.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 3388.0,
+      "momentum_acceptance": 0.04210751090633903,
+      "permutation_acceptance": 0.09581447963800906,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 172396.0,
+      "auxiliary_site_flips": 3096359.0,
+      "auxiliary_log_delta": -877365.5330316625,
+      "auxiliary_phase_delta": -5409.822549481627
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079755/sign_vs_U_checkerboard_high/real/L6_beta6/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 2.0,
+    "seed": 9102,
+    "measurements": {
+      "re": 0.0012353456684990904,
+      "im": 0.001086433465999641,
+      "abs": 0.03927670027959473
+    },
+    "variances": {
+      "re": 0.0009980596580179241,
+      "im": 0.0009476136133496491,
+      "abs": 0.00040421517293693206
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1168509.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 4961.0,
+      "momentum_acceptance": 0.1625530014690171,
+      "permutation_acceptance": 0.1402997737556561,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 165166.0,
+      "auxiliary_site_flips": 2964747.0,
+      "auxiliary_log_delta": -1165769.5719428898,
+      "auxiliary_phase_delta": -60600.19884140277
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079720/sign_vs_U_checkerboard_high/complex/L6_beta6/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 2.0,
+    "seed": 10102,
+    "measurements": {
+      "re": -0.0021218858006912438,
+      "im": 1.0557258661748472e-16,
+      "abs": 0.04612570204493033
+    },
+    "variances": {
+      "re": 0.003498349326806904,
+      "im": 2.7545124984049145e-29,
+      "abs": 0.001373195991966834
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 666746.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 3281.0,
+      "momentum_acceptance": 0.09275201433404559,
+      "permutation_acceptance": 0.09278846153846154,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 135259.0,
+      "auxiliary_site_flips": 2425342.0,
+      "auxiliary_log_delta": -1141344.159296838,
+      "auxiliary_phase_delta": -12220.795422464287
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079756/sign_vs_U_checkerboard_high/real/L6_beta6/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 5.0,
+    "seed": 9103,
+    "measurements": {
+      "re": -0.0007168430781409577,
+      "im": 0.0007747662732821098,
+      "abs": 0.03535825639727895
+    },
+    "variances": {
+      "re": 0.0007983140744181783,
+      "im": 0.0007801333434986591,
+      "abs": 0.00032813424027547085
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1621864.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 7929.0,
+      "momentum_acceptance": 0.2256198806980057,
+      "permutation_acceptance": 0.22423642533936652,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 164105.0,
+      "auxiliary_site_flips": 2937875.0,
+      "auxiliary_log_delta": -1828529.716647582,
+      "auxiliary_phase_delta": -59061.63886519594
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079721/sign_vs_U_checkerboard_high/complex/L6_beta6/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 5.0,
+    "seed": 10103,
+    "measurements": {
+      "re": 0.001347836261520739,
+      "im": -1.6920166772071082e-16,
+      "abs": 0.03678760440668163
+    },
+    "variances": {
+      "re": 0.002077867940708634,
+      "im": 3.488408798645999e-27,
+      "abs": 0.0007250356400203622
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1101655.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 5070.0,
+      "momentum_acceptance": 0.15325284343839032,
+      "permutation_acceptance": 0.14338235294117646,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 127976.0,
+      "auxiliary_site_flips": 2290179.0,
+      "auxiliary_log_delta": -2124817.341433381,
+      "auxiliary_phase_delta": -26587.298627330474
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079757/sign_vs_U_checkerboard_high/real/L6_beta6/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 10.0,
+    "seed": 9104,
+    "measurements": {
+      "re": -0.0013683107006178645,
+      "im": -0.0006267268917046593,
+      "abs": 0.03215775325058047
+    },
+    "variances": {
+      "re": 0.0006826319079178226,
+      "im": 0.0006720494073234598,
+      "abs": 0.0003218166249621753
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1902882.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 10000.0,
+      "momentum_acceptance": 0.26471270699786326,
+      "permutation_acceptance": 0.2828054298642534,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 169847.0,
+      "auxiliary_site_flips": 3031125.0,
+      "auxiliary_log_delta": -2478817.306929325,
+      "auxiliary_phase_delta": -67392.53613702342
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079722/sign_vs_U_checkerboard_high/complex/L6_beta6/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 10.0,
+    "seed": 10104,
+    "measurements": {
+      "re": 0.0015886016705069128,
+      "im": -1.7820332577293567e-14,
+      "abs": 0.031929543490783106
+    },
+    "variances": {
+      "re": 0.0015933994152965442,
+      "im": 1.8751752265587715e-25,
+      "abs": 0.0005754332154172022
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1412881.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 6878.0,
+      "momentum_acceptance": 0.19654794894052707,
+      "permutation_acceptance": 0.1945135746606335,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 130140.0,
+      "auxiliary_site_flips": 2317336.0,
+      "auxiliary_log_delta": -3059430.2279535523,
+      "auxiliary_phase_delta": -58901.72066215502
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079758/sign_vs_U_checkerboard_high/real/L6_beta6/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 15.0,
+    "seed": 9105,
+    "measurements": {
+      "re": -0.0005867119767836576,
+      "im": -0.0006856869193951711,
+      "abs": 0.03218657844481006
+    },
+    "variances": {
+      "re": 0.0006494551077239215,
+      "im": 0.0006643644511961582,
+      "abs": 0.00027764623642104706
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 2029657.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 11175.0,
+      "momentum_acceptance": 0.2823485632567664,
+      "permutation_acceptance": 0.31603506787330315,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 171942.0,
+      "auxiliary_site_flips": 3062277.0,
+      "auxiliary_log_delta": -2827228.722089634,
+      "auxiliary_phase_delta": -92060.5773808242
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079723/sign_vs_U_checkerboard_high/complex/L6_beta6/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 15.0,
+    "seed": 10105,
+    "measurements": {
+      "re": -0.00044777865783410156,
+      "im": 1.8965796216280382e-14,
+      "abs": 0.030554705501151802
+    },
+    "variances": {
+      "re": 0.0014691109511520105,
+      "im": 5.69244367132129e-25,
+      "abs": 0.0005348090243909536
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1563744.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 7266.0,
+      "momentum_acceptance": 0.21753472222222223,
+      "permutation_acceptance": 0.2054864253393665,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 134638.0,
+      "auxiliary_site_flips": 2389620.0,
+      "auxiliary_log_delta": -3780863.3021534407,
+      "auxiliary_phase_delta": -73393.88757316471
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079759/sign_vs_U_checkerboard_high/real/L6_beta6/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 20.0,
+    "seed": 9106,
+    "measurements": {
+      "re": 0.00021867369887333525,
+      "im": -0.0005788106562466275,
+      "abs": 0.03262767091010896
+    },
+    "variances": {
+      "re": 0.0006895482252148403,
+      "im": 0.0006604343742175621,
+      "abs": 0.00028476027419941047
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 2105435.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 11856.0,
+      "momentum_acceptance": 0.2928901520210114,
+      "permutation_acceptance": 0.3352941176470588,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 175181.0,
+      "auxiliary_site_flips": 3108182.0,
+      "auxiliary_log_delta": -3138178.7875257656,
+      "auxiliary_phase_delta": -75643.401284131
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079724/sign_vs_U_checkerboard_high/complex/L6_beta6/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 20.0,
+    "seed": 10106,
+    "measurements": {
+      "re": -0.0018023653513824867,
+      "im": 3.0023619406780354e-14,
+      "abs": 0.031243249567972073
+    },
+    "variances": {
+      "re": 0.0015075881896997093,
+      "im": 9.69074079630417e-25,
+      "abs": 0.0005337450483002133
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1650639.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 8072.0,
+      "momentum_acceptance": 0.22962281316773503,
+      "permutation_acceptance": 0.22828054298642533,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 135020.0,
+      "auxiliary_site_flips": 2389282.0,
+      "auxiliary_log_delta": -4054670.415401549,
+      "auxiliary_phase_delta": -79815.30295710234
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079760/sign_vs_U_checkerboard_high/real/L6_beta6/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 25.0,
+    "seed": 9107,
+    "measurements": {
+      "re": -0.0005534950477923775,
+      "im": -0.00017866417209335347,
+      "abs": 0.03145027875341367
+    },
+    "variances": {
+      "re": 0.0006517334411169851,
+      "im": 0.0006131575308635203,
+      "abs": 0.00027514266488625914
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 2155260.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 12296.0,
+      "momentum_acceptance": 0.29982138087606836,
+      "permutation_acceptance": 0.34773755656108596,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 167859.0,
+      "auxiliary_site_flips": 2971222.0,
+      "auxiliary_log_delta": -2865822.107693379,
+      "auxiliary_phase_delta": -87571.03806013509
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079725/sign_vs_U_checkerboard_high/complex/L6_beta6/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 25.0,
+    "seed": 10107,
+    "measurements": {
+      "re": -0.0005175331221198154,
+      "im": 4.0357011576701245e-14,
+      "abs": 0.030718966013824574
+    },
+    "variances": {
+      "re": 0.001464793160251993,
+      "im": 1.8023234316971175e-24,
+      "abs": 0.0005204839508636814
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1713529.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 8537.0,
+      "momentum_acceptance": 0.23837153334223646,
+      "permutation_acceptance": 0.24143099547511312,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 124424.0,
+      "auxiliary_site_flips": 2198837.0,
+      "auxiliary_log_delta": -3428906.9113826333,
+      "auxiliary_phase_delta": -90141.71800945206
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079761/sign_vs_U_checkerboard_high/real/L6_beta6/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 30.0,
+    "seed": 9108,
+    "measurements": {
+      "re": -0.0003904221927012578,
+      "im": -0.0003550014443222809,
+      "abs": 0.03262646014957323
+    },
+    "variances": {
+      "re": 0.0006824550330832492,
+      "im": 0.0006827006731963564,
+      "abs": 0.00029990797891818954
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 2196597.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 12554.0,
+      "momentum_acceptance": 0.30557183159722223,
+      "permutation_acceptance": 0.3550339366515837,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 155277.0,
+      "auxiliary_site_flips": 2746270.0,
+      "auxiliary_log_delta": -2198129.221654047,
+      "auxiliary_phase_delta": -87139.89328261682
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079726/sign_vs_U_checkerboard_high/complex/L6_beta6/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 6,
+    "beta": 6.0,
+    "interaction": 30.0,
+    "seed": 10108,
+    "measurements": {
+      "re": 0.0008843065956221212,
+      "im": -8.04442939679173e-15,
+      "abs": 0.030172181019584944
+    },
+    "variances": {
+      "re": 0.0013975956372501565,
+      "im": 2.119052360689654e-24,
+      "abs": 0.000487127999374002
+    },
+    "diagnostics": {
+      "momentum_attempts": 7188480.0,
+      "momentum_accepts": 1762141.0,
+      "permutation_attempts": 35360.0,
+      "permutation_accepts": 8660.0,
+      "momentum_acceptance": 0.24513401998753562,
+      "permutation_acceptance": 0.24490950226244343,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 199680.0,
+      "auxiliary_slice_changes": 115364.0,
+      "auxiliary_site_flips": 2033941.0,
+      "auxiliary_log_delta": -2855361.485470009,
+      "auxiliary_phase_delta": -98894.19514235311
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079762/sign_vs_U_checkerboard_high/real/L6_beta6/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 0.0,
+    "seed": 9200,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 266240.0,
+      "auxiliary_site_flips": 8517789.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079727/sign_vs_U_checkerboard_high/complex/L8_beta8/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 0.0,
+    "seed": 10200,
+    "measurements": {
+      "re": 1.0,
+      "im": 0.0,
+      "abs": 1.0
+    },
+    "variances": {
+      "re": 0.0,
+      "im": 0.0,
+      "abs": 0.0
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 266240.0,
+      "auxiliary_site_flips": 8519320.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079763/sign_vs_U_checkerboard_high/real/L8_beta8/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 1.0,
+    "seed": 9201,
+    "measurements": {
+      "re": -0.0005034323024629791,
+      "im": -0.0010070214649547243,
+      "abs": 0.026488646294730654
+    },
+    "variances": {
+      "re": 0.0004656613339649411,
+      "im": 0.00045701424842236194,
+      "abs": 0.00022161010191572517
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 2435451.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 7294.0,
+      "momentum_acceptance": 0.14293089646559495,
+      "permutation_acceptance": 0.11312034739454094,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 229638.0,
+      "auxiliary_site_flips": 7334686.0,
+      "auxiliary_log_delta": -836304.8813279218,
+      "auxiliary_phase_delta": -46290.23761068714
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079728/sign_vs_U_checkerboard_high/complex/L8_beta8/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 1.0,
+    "seed": 10201,
+    "measurements": {
+      "re": 0.0009228634428223852,
+      "im": -1.327909796064504e-15,
+      "abs": 0.038744107360097264
+    },
+    "variances": {
+      "re": 0.002689866028079268,
+      "im": 1.9414248220967574e-27,
+      "abs": 0.0011881453257592634
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 1089626.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 4111.0,
+      "momentum_acceptance": 0.06394758958082933,
+      "permutation_acceptance": 0.06375620347394541,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 164505.0,
+      "auxiliary_site_flips": 5255951.0,
+      "auxiliary_log_delta": -803548.1460348725,
+      "auxiliary_phase_delta": -12940.220140136384
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079764/sign_vs_U_checkerboard_high/real/L8_beta8/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 2.0,
+    "seed": 9202,
+    "measurements": {
+      "re": 0.0004465975717938497,
+      "im": 0.000844182734745818,
+      "abs": 0.022874462956591818
+    },
+    "variances": {
+      "re": 0.00034806495160840404,
+      "im": 0.00033103304983932386,
+      "abs": 0.00015625845428073076
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 3350310.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 10982.0,
+      "momentum_acceptance": 0.19662182147686297,
+      "permutation_acceptance": 0.1703163771712159,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 220683.0,
+      "auxiliary_site_flips": 7047685.0,
+      "auxiliary_log_delta": -1104453.610495611,
+      "auxiliary_phase_delta": -69009.01551233894
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079729/sign_vs_U_checkerboard_high/complex/L8_beta8/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 2.0,
+    "seed": 10202,
+    "measurements": {
+      "re": -9.599300486617964e-05,
+      "im": -7.235027654680627e-15,
+      "abs": 0.027193582725060835
+    },
+    "variances": {
+      "re": 0.0012042199097340796,
+      "im": 1.182840616053112e-25,
+      "abs": 0.0004640153269284394
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 1998247.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 5757.0,
+      "momentum_acceptance": 0.11727242102989784,
+      "permutation_acceptance": 0.0892834987593052,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 126732.0,
+      "auxiliary_site_flips": 4043558.0,
+      "auxiliary_log_delta": -1084886.1950002299,
+      "auxiliary_phase_delta": -27897.34276387735
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079765/sign_vs_U_checkerboard_high/real/L8_beta8/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 5.0,
+    "seed": 9203,
+    "measurements": {
+      "re": 0.00010933505704438885,
+      "im": 9.753285167799121e-05,
+      "abs": 0.021823496134664784
+    },
+    "variances": {
+      "re": 0.00031491065107512665,
+      "im": 0.0002852271947976206,
+      "abs": 0.00012342879296038938
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 4336720.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 16615.0,
+      "momentum_acceptance": 0.2545119065504808,
+      "permutation_acceptance": 0.25767679900744417,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 240150.0,
+      "auxiliary_site_flips": 7651639.0,
+      "auxiliary_log_delta": -2439847.902138067,
+      "auxiliary_phase_delta": -61561.91256353323
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079730/sign_vs_U_checkerboard_high/complex/L8_beta8/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 5.0,
+    "seed": 10203,
+    "measurements": {
+      "re": -0.00010264598540146014,
+      "im": 1.0998363954440668e-14,
+      "abs": 0.022356865875912405
+    },
+    "variances": {
+      "re": 0.0007834799377519981,
+      "im": 8.193829769757591e-25,
+      "abs": 0.00028317244061660943
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 3064687.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 10440.0,
+      "momentum_acceptance": 0.1798592787522536,
+      "permutation_acceptance": 0.1619106699751861,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 157443.0,
+      "auxiliary_site_flips": 5009553.0,
+      "auxiliary_log_delta": -4406156.804990081,
+      "auxiliary_phase_delta": -56482.69431889095
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079766/sign_vs_U_checkerboard_high/real/L8_beta8/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 10.0,
+    "seed": 9204,
+    "measurements": {
+      "re": 0.0003434362379656977,
+      "im": -0.00023180765235552648,
+      "abs": 0.02139800446172705
+    },
+    "variances": {
+      "re": 0.00028349520325514414,
+      "im": 0.00029434511626708515,
+      "abs": 0.00011968999538946538
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 4884650.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 19983.0,
+      "momentum_acceptance": 0.2866686307466947,
+      "permutation_acceptance": 0.30991004962779156,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 230279.0,
+      "auxiliary_site_flips": 7318030.0,
+      "auxiliary_log_delta": -2309143.3744533625,
+      "auxiliary_phase_delta": -91505.84230175609
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079731/sign_vs_U_checkerboard_high/complex/L8_beta8/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 10.0,
+    "seed": 10204,
+    "measurements": {
+      "re": -0.00070996806569343,
+      "im": 1.9318196475228467e-14,
+      "abs": 0.020795316301703094
+    },
+    "variances": {
+      "re": 0.0006868060449767003,
+      "im": 1.1370943890121834e-24,
+      "abs": 0.0002544426897039927
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 3686577.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 12810.0,
+      "momentum_acceptance": 0.2163565415602464,
+      "permutation_acceptance": 0.19866625310173697,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 114167.0,
+      "auxiliary_site_flips": 3627503.0,
+      "auxiliary_log_delta": -2604333.6361251073,
+      "auxiliary_phase_delta": -65018.40155869444
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079767/sign_vs_U_checkerboard_high/real/L8_beta8/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 15.0,
+    "seed": 9205,
+    "measurements": {
+      "re": -5.737893709113171e-05,
+      "im": 8.902952605383647e-05,
+      "abs": 0.020549731685399038
+    },
+    "variances": {
+      "re": 0.0002754829933457032,
+      "im": 0.000262477815732739,
+      "abs": 0.00011526776916368944
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 5134774.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 22704.0,
+      "momentum_acceptance": 0.3013478205754207,
+      "permutation_acceptance": 0.3521091811414392,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 229789.0,
+      "auxiliary_site_flips": 7284319.0,
+      "auxiliary_log_delta": -2478903.1404967643,
+      "auxiliary_phase_delta": -93407.91670366637
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079732/sign_vs_U_checkerboard_high/complex/L8_beta8/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 15.0,
+    "seed": 10205,
+    "measurements": {
+      "re": -0.0005322384428223831,
+      "im": -7.445775090178003e-15,
+      "abs": 0.01992377585158151
+    },
+    "variances": {
+      "re": 0.0006140037246236734,
+      "im": 2.7309900938358416e-24,
+      "abs": 0.00021694240300273331
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 3986188.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 14568.0,
+      "momentum_acceptance": 0.23394000713641827,
+      "permutation_acceptance": 0.22593052109181141,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 119154.0,
+      "auxiliary_site_flips": 3780595.0,
+      "auxiliary_log_delta": -3406643.029940214,
+      "auxiliary_phase_delta": -102877.73462710477
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079768/sign_vs_U_checkerboard_high/real/L8_beta8/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 20.0,
+    "seed": 9206,
+    "measurements": {
+      "re": -0.0002611906866654318,
+      "im": 0.0006398205702697161,
+      "abs": 0.020463407304343813
+    },
+    "variances": {
+      "re": 0.00026759512626039214,
+      "im": 0.00025960660192868914,
+      "abs": 0.00010851941117233912
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 5282051.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 23828.0,
+      "momentum_acceptance": 0.3099911616398738,
+      "permutation_acceptance": 0.3695409429280397,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 241818.0,
+      "auxiliary_site_flips": 7643863.0,
+      "auxiliary_log_delta": -3250581.729144569,
+      "auxiliary_phase_delta": -50785.092440449924
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079733/sign_vs_U_checkerboard_high/complex/L8_beta8/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 20.0,
+    "seed": 10206,
+    "measurements": {
+      "re": 0.0004666590632603405,
+      "im": -1.2618149630810139e-14,
+      "abs": 0.01897144920924573
+    },
+    "variances": {
+      "re": 0.0005740688751498559,
+      "im": 5.599125974239469e-24,
+      "abs": 0.00021401914967215162
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 4183633.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 15813.0,
+      "momentum_acceptance": 0.245527590238131,
+      "permutation_acceptance": 0.24523883374689825,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 155489.0,
+      "auxiliary_site_flips": 4912301.0,
+      "auxiliary_log_delta": -6424707.672353243,
+      "auxiliary_phase_delta": -153724.41172545592
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079769/sign_vs_U_checkerboard_high/real/L8_beta8/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 25.0,
+    "seed": 9207,
+    "measurements": {
+      "re": 0.0010197654221152485,
+      "im": -0.000522386835529632,
+      "abs": 0.021050246724318357
+    },
+    "variances": {
+      "re": 0.0002731484254327671,
+      "im": 0.0002845647381584968,
+      "abs": 0.0001154812188251035
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 5379247.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 24349.0,
+      "momentum_acceptance": 0.31569536649263824,
+      "permutation_acceptance": 0.3776209677419355,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 229666.0,
+      "auxiliary_site_flips": 7244402.0,
+      "auxiliary_log_delta": -2640746.530873675,
+      "auxiliary_phase_delta": -69280.66670427761
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079734/sign_vs_U_checkerboard_high/complex/L8_beta8/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 25.0,
+    "seed": 10207,
+    "measurements": {
+      "re": 0.00035450881995133785,
+      "im": -5.201715090160443e-14,
+      "abs": 0.02053585006082723
+    },
+    "variances": {
+      "re": 0.0006579876895594075,
+      "im": 4.82332490408837e-24,
+      "abs": 0.00023598011156666948
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 4272176.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 15901.0,
+      "momentum_acceptance": 0.2507239708533654,
+      "permutation_acceptance": 0.24660359801488835,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 118961.0,
+      "auxiliary_site_flips": 3759043.0,
+      "auxiliary_log_delta": -3754461.82338448,
+      "auxiliary_phase_delta": -132424.41353411728
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079770/sign_vs_U_checkerboard_high/real/L8_beta8/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 30.0,
+    "seed": 9208,
+    "measurements": {
+      "re": -0.0006849724341517847,
+      "im": -9.678478878798351e-05,
+      "abs": 0.019820795535302436
+    },
+    "variances": {
+      "re": 0.0002560241017156151,
+      "im": 0.0002457815476794975,
+      "abs": 0.0001090367048513303
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 5432496.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 24611.0,
+      "momentum_acceptance": 0.31882042518028847,
+      "permutation_acceptance": 0.38168424317617866,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 211273.0,
+      "auxiliary_site_flips": 6654829.0,
+      "auxiliary_log_delta": -1928182.135505598,
+      "auxiliary_phase_delta": -85954.69365106878
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079735/sign_vs_U_checkerboard_high/complex/L8_beta8/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 8,
+    "beta": 8.0,
+    "interaction": 30.0,
+    "seed": 10208,
+    "measurements": {
+      "re": 0.0006919099756691002,
+      "im": -2.7919571146504506e-14,
+      "abs": 0.019324057177615567
+    },
+    "variances": {
+      "re": 0.0005980438211519324,
+      "im": 4.126758178857456e-24,
+      "abs": 0.00022473881909653747
+    },
+    "diagnostics": {
+      "momentum_attempts": 17039360.0,
+      "momentum_accepts": 4341480.0,
+      "permutation_attempts": 64480.0,
+      "permutation_accepts": 16228.0,
+      "momentum_acceptance": 0.254791259765625,
+      "permutation_acceptance": 0.2516749379652605,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 266240.0,
+      "auxiliary_slice_changes": 98208.0,
+      "auxiliary_site_flips": 3102385.0,
+      "auxiliary_log_delta": -2399878.609007933,
+      "auxiliary_phase_delta": -130668.26324076047
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079771/sign_vs_U_checkerboard_high/real/L8_beta8/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 0.0,
+    "seed": 9300,
+    "measurements": {
+      "re": 0.9999999999999999,
+      "im": 0.0,
+      "abs": 0.9999999999999999
+    },
+    "variances": {
+      "re": 1.1113082866238126e-16,
+      "im": 0.0,
+      "abs": 1.1113082866238126e-16
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 332800.0,
+      "auxiliary_site_flips": 16638803.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079736/sign_vs_U_checkerboard_high/complex/L10_beta10/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 0.0,
+    "seed": 10300,
+    "measurements": {
+      "re": 0.9999999999999999,
+      "im": 0.0,
+      "abs": 0.9999999999999999
+    },
+    "variances": {
+      "re": 1.1113082866238126e-16,
+      "im": 0.0,
+      "abs": 1.1113082866238126e-16
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 0.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 0.0,
+      "momentum_acceptance": 0.0,
+      "permutation_acceptance": 0.0,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 332800.0,
+      "auxiliary_site_flips": 16638861.0,
+      "auxiliary_log_delta": 0.0,
+      "auxiliary_phase_delta": 0.0
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079772/sign_vs_U_checkerboard_high/real/L10_beta10/U0/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 1.0,
+    "seed": 9301,
+    "measurements": {
+      "re": 2.88151977310644e-05,
+      "im": 0.00043259814736575265,
+      "abs": 0.01751206992674667
+    },
+    "variances": {
+      "re": 0.00020988683021494684,
+      "im": 0.00019168651855066854,
+      "abs": 9.47891331585216e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 5734209.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 14075.0,
+      "momentum_acceptance": 0.172301953125,
+      "permutation_acceptance": 0.13809850863422293,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 330856.0,
+      "auxiliary_site_flips": 16524843.0,
+      "auxiliary_log_delta": -2681124.611948854,
+      "auxiliary_phase_delta": -11112.260004771873
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079737/sign_vs_U_checkerboard_high/complex/L10_beta10/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 1.0,
+    "seed": 10301,
+    "measurements": {
+      "re": -0.0008967238908275164,
+      "im": -5.676201856814304e-16,
+      "abs": 0.022538828826021914
+    },
+    "variances": {
+      "re": 0.0008954716423269042,
+      "im": 6.171488721246634e-26,
+      "abs": 0.00038778115972765533
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 2775129.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 10588.0,
+      "momentum_acceptance": 0.08338728966346154,
+      "permutation_acceptance": 0.10388540031397174,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 315997.0,
+      "auxiliary_site_flips": 15772516.0,
+      "auxiliary_log_delta": -2883531.1799461157,
+      "auxiliary_phase_delta": -25946.413725998165
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079773/sign_vs_U_checkerboard_high/real/L10_beta10/U1/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 2.0,
+    "seed": 9302,
+    "measurements": {
+      "re": -0.0007385094785242419,
+      "im": 0.0004169238793610587,
+      "abs": 0.01625140596515472
+    },
+    "variances": {
+      "re": 0.00017265633261458492,
+      "im": 0.00017179124959112684,
+      "abs": 8.080114090466408e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 7418261.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 21043.0,
+      "momentum_acceptance": 0.22290447716346154,
+      "permutation_acceptance": 0.20646585557299843,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 330659.0,
+      "auxiliary_site_flips": 16503482.0,
+      "auxiliary_log_delta": -3594663.6343114576,
+      "auxiliary_phase_delta": -13371.280416908097
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079738/sign_vs_U_checkerboard_high/complex/L10_beta10/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 2.0,
+    "seed": 10302,
+    "measurements": {
+      "re": 0.0007540854000498484,
+      "im": -1.0877480045771148e-14,
+      "abs": 0.01793301735418744
+    },
+    "variances": {
+      "re": 0.0005173350859030537,
+      "im": 7.417547550030603e-25,
+      "abs": 0.0001959968123602776
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 4733890.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 14498.0,
+      "momentum_acceptance": 0.14224429086538462,
+      "permutation_acceptance": 0.14224882260596547,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 304556.0,
+      "auxiliary_site_flips": 15186292.0,
+      "auxiliary_log_delta": -4799659.275406677,
+      "auxiliary_phase_delta": -71958.17973047418
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079774/sign_vs_U_checkerboard_high/real/L10_beta10/U2/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 5.0,
+    "seed": 9303,
+    "measurements": {
+      "re": -1.5731560729645915e-05,
+      "im": -0.0003303101962304117,
+      "abs": 0.015703020022155643
+    },
+    "variances": {
+      "re": 0.00015684313230224573,
+      "im": 0.00015225037700389882,
+      "abs": 6.237708979423044e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 9146440.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 29257.0,
+      "momentum_acceptance": 0.2748329326923077,
+      "permutation_acceptance": 0.2870584772370487,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 331193.0,
+      "auxiliary_site_flips": 16496675.0,
+      "auxiliary_log_delta": -4596378.476813759,
+      "auxiliary_phase_delta": -8327.972953870207
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079739/sign_vs_U_checkerboard_high/complex/L10_beta10/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 5.0,
+    "seed": 10303,
+    "measurements": {
+      "re": -0.00042402090603190477,
+      "im": 3.221296957622609e-14,
+      "abs": 0.014992619796859426
+    },
+    "variances": {
+      "re": 0.00034580041853245745,
+      "im": 1.9875275631073186e-24,
+      "abs": 0.00012098201466550206
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 6766406.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 20276.0,
+      "momentum_acceptance": 0.20331748798076923,
+      "permutation_acceptance": 0.1989403453689168,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 310054.0,
+      "auxiliary_site_flips": 15419815.0,
+      "auxiliary_log_delta": -7452470.863405732,
+      "auxiliary_phase_delta": -137205.91755288062
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079775/sign_vs_U_checkerboard_high/real/L10_beta10/U5/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 10.0,
+    "seed": 9304,
+    "measurements": {
+      "re": -0.0012613631903203467,
+      "im": 0.0001572900168354005,
+      "abs": 0.014734624934826909
+    },
+    "variances": {
+      "re": 0.00014034516792897923,
+      "im": 0.0001362261211728125,
+      "abs": 6.086724589937075e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 10080632.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 35322.0,
+      "momentum_acceptance": 0.30290360576923075,
+      "permutation_acceptance": 0.34656593406593406,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 330953.0,
+      "auxiliary_site_flips": 16440439.0,
+      "auxiliary_log_delta": -5169647.772502245,
+      "auxiliary_phase_delta": -17749.849453377283
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079740/sign_vs_U_checkerboard_high/complex/L10_beta10/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 10.0,
+    "seed": 10304,
+    "measurements": {
+      "re": -0.0004668611353439676,
+      "im": 5.293869585436897e-14,
+      "abs": 0.013966401576520444
+    },
+    "variances": {
+      "re": 0.00029425063435639177,
+      "im": 1.3181936271893787e-24,
+      "abs": 9.92177588870031e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 7934261.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 24747.0,
+      "momentum_acceptance": 0.23840928485576923,
+      "permutation_acceptance": 0.24280808477237048,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 309804.0,
+      "auxiliary_site_flips": 15357101.0,
+      "auxiliary_log_delta": -8850022.000405625,
+      "auxiliary_phase_delta": -232179.40506355366
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079776/sign_vs_U_checkerboard_high/real/L10_beta10/U10/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 15.0,
+    "seed": 9305,
+    "measurements": {
+      "re": -0.0002501479885294552,
+      "im": -0.00014453194751713232,
+      "abs": 0.014856059432953216
+    },
+    "variances": {
+      "re": 0.00014106632266103563,
+      "im": 0.0001369440302986163,
+      "abs": 5.717565570018989e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 10487845.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 37690.0,
+      "momentum_acceptance": 0.3151395733173077,
+      "permutation_acceptance": 0.3697998430141287,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 330249.0,
+      "auxiliary_site_flips": 16359975.0,
+      "auxiliary_log_delta": -5415230.748028519,
+      "auxiliary_phase_delta": -24903.639324819298
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079741/sign_vs_U_checkerboard_high/complex/L10_beta10/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 15.0,
+    "seed": 10305,
+    "measurements": {
+      "re": 0.0001231656592721832,
+      "im": -1.812983064905832e-15,
+      "abs": 0.014239021217597235
+    },
+    "variances": {
+      "re": 0.00031489579002737705,
+      "im": 1.6738451892085498e-26,
+      "abs": 0.00011196305807577033
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 8452870.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 27742.0,
+      "momentum_acceptance": 0.25399248798076923,
+      "permutation_acceptance": 0.2721938775510204,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 304027.0,
+      "auxiliary_site_flips": 15027203.0,
+      "auxiliary_log_delta": -9293142.585269766,
+      "auxiliary_phase_delta": -281788.29465639044
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079777/sign_vs_U_checkerboard_high/real/L10_beta10/U15/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 20.0,
+    "seed": 9306,
+    "measurements": {
+      "re": -0.00037678044692823423,
+      "im": -4.752318150663832e-05,
+      "abs": 0.01464934769233562
+    },
+    "variances": {
+      "re": 0.00014670321398854694,
+      "im": 0.00013110170877258335,
+      "abs": 6.313611940488144e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 10728817.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 39309.0,
+      "momentum_acceptance": 0.3223803185096154,
+      "permutation_acceptance": 0.3856848508634223,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 331293.0,
+      "auxiliary_site_flips": 16362157.0,
+      "auxiliary_log_delta": -5592791.247432141,
+      "auxiliary_phase_delta": -23745.881415609412
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079742/sign_vs_U_checkerboard_high/complex/L10_beta10/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 20.0,
+    "seed": 10306,
+    "measurements": {
+      "re": 0.00047221616400797617,
+      "im": 3.703980214471043e-14,
+      "abs": 0.014335898554336986
+    },
+    "variances": {
+      "re": 0.0003228894620961035,
+      "im": 9.04272691306457e-25,
+      "abs": 0.00011739378346775216
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 8770231.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 28775.0,
+      "momentum_acceptance": 0.26352857572115385,
+      "permutation_acceptance": 0.2823292778649921,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 311263.0,
+      "auxiliary_site_flips": 15328785.0,
+      "auxiliary_log_delta": -10046593.134242572,
+      "auxiliary_phase_delta": -341742.4488574979
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079778/sign_vs_U_checkerboard_high/real/L10_beta10/U20/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 25.0,
+    "seed": 9307,
+    "measurements": {
+      "re": 0.00034835619585567296,
+      "im": -4.2550593675871265e-05,
+      "abs": 0.014524446911503362
+    },
+    "variances": {
+      "re": 0.00013433069883045558,
+      "im": 0.00013714190677023937,
+      "abs": 6.043011392455152e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 10881175.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 40505.0,
+      "momentum_acceptance": 0.32695838341346156,
+      "permutation_acceptance": 0.3974195447409733,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 327571.0,
+      "auxiliary_site_flips": 16143670.0,
+      "auxiliary_log_delta": -5548215.297061636,
+      "auxiliary_phase_delta": -11085.883022421653
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079743/sign_vs_U_checkerboard_high/complex/L10_beta10/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 25.0,
+    "seed": 10307,
+    "measurements": {
+      "re": -0.00040503489531405827,
+      "im": -4.694609165925725e-14,
+      "abs": 0.014557888833499502
+    },
+    "variances": {
+      "re": 0.00032990712863101616,
+      "im": 5.523853339655979e-24,
+      "abs": 0.00011793204769393113
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 8980306.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 29331.0,
+      "momentum_acceptance": 0.2698409254807692,
+      "permutation_acceptance": 0.28778453689167977,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 311023.0,
+      "auxiliary_site_flips": 15279582.0,
+      "auxiliary_log_delta": -10368823.75157775,
+      "auxiliary_phase_delta": -397084.74504313513
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079779/sign_vs_U_checkerboard_high/real/L10_beta10/U25/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 30.0,
+    "seed": 9308,
+    "measurements": {
+      "re": 0.0005941981237927782,
+      "im": -0.0003668617000241673,
+      "abs": 0.014612248824417588
+    },
+    "variances": {
+      "re": 0.00013429332778074692,
+      "im": 0.00013420653324859258,
+      "abs": 5.526146361743718e-05
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 10987963.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 41100.0,
+      "momentum_acceptance": 0.3301671574519231,
+      "permutation_acceptance": 0.4032574568288854,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 328521.0,
+      "auxiliary_site_flips": 16145114.0,
+      "auxiliary_log_delta": -5675031.032921697,
+      "auxiliary_phase_delta": -21448.980357091034
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079744/sign_vs_U_checkerboard_high/complex/L10_beta10/U30/average_sign_vs_U.json"
+  },
+  {
+    "lattice_size": 10,
+    "beta": 10.0,
+    "interaction": 30.0,
+    "seed": 10308,
+    "measurements": {
+      "re": 0.00034320865528414797,
+      "im": -4.232294791515714e-15,
+      "abs": 0.013819381698654041
+    },
+    "variances": {
+      "re": 0.00030003278822080047,
+      "im": 7.948463328291278e-24,
+      "abs": 0.00010898870337966549
+    },
+    "diagnostics": {
+      "momentum_attempts": 33280000.0,
+      "momentum_accepts": 9097599.0,
+      "permutation_attempts": 101920.0,
+      "permutation_accepts": 29785.0,
+      "momentum_acceptance": 0.2733653545673077,
+      "permutation_acceptance": 0.292239010989011,
+      "total_sweeps": 1040.0,
+      "measurement_sweeps": 1024.0,
+      "auxiliary_slice_updates": 332800.0,
+      "auxiliary_slice_changes": 289953.0,
+      "auxiliary_site_flips": 14206023.0,
+      "auxiliary_log_delta": -9157328.42626558,
+      "auxiliary_phase_delta": -396478.4176609922
+    },
+    "samples": 1024,
+    "source": "experiments/slurm_runs/1079708/sign_vs_U_checkerboard_high/real/L10_beta10/U30/average_sign_vs_U.json"
+  }
+]

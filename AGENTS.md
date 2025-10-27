@@ -167,6 +167,11 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Aggregated per-point outputs into `experiments/analysis/sign_vs_U_checkerboard/{complex,real}_data.json`, consolidated tables (`summary.json` / `summary.csv`), and generated overview plots `plots/complex_re_vs_U.png` & `plots/real_re_vs_U.png` (multiple L curves per figure).
 - Archived raw Slurm results to `experiments/archive/sign_vs_U_checkerboard_20251027_215058/` and removed intermediate comparison plots to keep only the new deliverables.
 
+## Stage 18 – High-U Sweep (2025-10-27)
+- Submitted 72 single-point jobs for `U ∈ {0, 1, 2, 5, 10, 15, 20, 25, 30}` with the same lattice grid (`L = β ∈ {4, 6, 8, 10}`) and checkerboard auxiliary seeds, covering both FFT modes. MC parameters unchanged (`thermalization=128`, `sweeps=1024`, `measurement_interval=32`).
+- Processed results into `experiments/analysis/sign_vs_U_checkerboard_high/` (`complex_data.json`, `real_data.json`, `summary.{json,csv}`) and generated plots `plots/complex_re_vs_U.png` / `plots/real_re_vs_U.png` summarising Re ⟨S⟩.
+- Archived raw outputs to `experiments/archive/sign_vs_U_checkerboard_high_20251027_230602/`.
+
 ## Cluster Workflow Reference (updated 2025-10-20)
 - **Sync the repo** – On the server run `git clone` (or `git pull`) so that source files stay aligned with the local workspace. Use `rsync` only for large data folders that are intentionally excluded from version control.
 - **Prepare the environment** – Create and activate the micromamba environment `qmc311` (Python 3.11 with numpy/scipy/matplotlib), then install the project with `pip install -e .[dev]`. Verify once with `pytest`. Every job or interactive run starts with `micromamba activate qmc311`.

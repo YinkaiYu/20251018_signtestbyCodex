@@ -81,6 +81,7 @@ print(result.to_dict())
 ### Recent experiments
 
 - `experiments/analysis/sign_vs_U_checkerboard/` – consolidated outputs for the low-U sweep (checkerboard auxiliary seed) covering `L=β∈{4,6,8,10}` and `U∈{0,0.05,0.1,0.15,0.2,0.4,0.6,0.8,1.0}` under both FFT modes. See `plots/complex_re_vs_U.png` and `plots/real_re_vs_U.png` for the corresponding Re ⟨S⟩ curves.
+- `experiments/analysis/sign_vs_U_checkerboard_high/` – consolidated outputs for the high-U sweep with the same lattice set but `U∈{0,1,2,5,10,15,20,25,30}`. Corresponding figures: `plots/complex_re_vs_U.png` (FFT=complex) and `plots/real_re_vs_U.png` (FFT=real).
 
 ## Configuration Reference
 
