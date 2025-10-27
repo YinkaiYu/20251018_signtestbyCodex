@@ -50,7 +50,7 @@ Z=\text{tr}\left( e^{-\beta H} \right)=
 $$
 其中
 $$
-\bra{k'}T_{l,\sigma}\ket{k}=e^{-\frac{\Delta\tau}{2}(\varepsilon_{k'}+\varepsilon_k)}\frac{W_{l,\sigma}(k-k')}{V}
+\bra{k'}T_{l,\sigma}\ket{k}=\bra{k'}e^{-\frac{\Delta\tau}{2}K}\,e^{-\Delta\tau V_\ell}\,e^{-\frac{\Delta\tau}{2}K}\ket{k}=e^{-\frac{\Delta\tau}{2}(\varepsilon_{k'}+\varepsilon_k)}\frac{W_{l,\sigma}(k-k')}{V}
 $$
 $$
 W_{l,\uparrow}(q)=\sum_{i} e^{i q r_i} e^{\lambda s_{il}},\quad
