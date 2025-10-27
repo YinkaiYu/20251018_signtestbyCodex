@@ -17,6 +17,7 @@ from .worldline import (
     flatten_momentum_index,
     unflatten_momentum_index,
 )
+from . import lattice
 
 
 @dataclass
@@ -117,7 +118,8 @@ class MonteCarloState:
     log_weight: float
     rng: np.random.Generator
     occupancy_masks: Dict[Spin, np.ndarray]
-    momentum_tables: Optional[Dict[Spin, Tuple[MomentumProposalTable, ...]]] = None
+    half_step_factor: np.ndarray
+    momentum_tables: Optional[Dict[Spin, List[MomentumProposalTable]]] = None
 
 
 def metropolis_sweep(
@@ -205,7 +207,225 @@ def metropolis_sweep(
     diagnostics["permutation_acceptance"] = _ratio(
         diagnostics["permutation_accepts"], diagnostics["permutation_attempts"]
     )
+    if auxiliary is not None:
+        aux_diag = _gibbs_update_auxiliary(params, auxiliary, mc_state)
+        diagnostics.update(aux_diag)
+        if phase_samples:
+            phase_samples[-1] = mc_state.phase
+        else:
+            phase_samples.append(mc_state.phase)
     return diagnostics, phase_samples
+
+
+def _gibbs_update_auxiliary(
+    params: SimulationParameters,
+    auxiliary: AuxiliaryField,
+    mc_state: MonteCarloState,
+) -> Dict[str, float]:
+    time_slices = params.time_slices
+    if time_slices <= 0:
+        return {
+            "auxiliary_slice_updates": 0.0,
+            "auxiliary_slice_changes": 0.0,
+            "auxiliary_site_flips": 0.0,
+        }
+
+    magnetization = _compute_local_magnetization(params, mc_state)
+    coupling = params.auxiliary_coupling
+    rng = mc_state.rng
+
+    total_flips = 0
+    total_log_delta = 0.0
+    total_phase_delta = 0.0
+    changed_slices = 0
+
+    for slice_index in range(time_slices):
+        slice_cache = auxiliary.slices[slice_index]
+        old_field = slice_cache.spatial_field.copy()
+
+        probs = 0.5 * (1.0 + np.tanh(coupling * magnetization[slice_index]))
+        probs = np.clip(probs, 0.0, 1.0)
+        draws = rng.random(size=probs.shape)
+        new_field = np.where(draws < probs, 1, -1).astype(np.int8)
+
+        if np.array_equal(new_field, old_field):
+            continue
+
+        delta_log, delta_phase, applied = _apply_auxiliary_slice_refresh(
+            params,
+            auxiliary,
+            mc_state.configuration,
+            slice_index,
+            old_field,
+            new_field,
+        )
+        if not applied:
+            continue
+        mc_state.log_weight += delta_log
+        mc_state.phase *= np.exp(1j * delta_phase)
+
+        total_log_delta += delta_log
+        total_phase_delta += delta_phase
+        current_field = auxiliary.slices[slice_index].spatial_field
+        flips = int(np.count_nonzero(current_field != old_field))
+        total_flips += flips
+        if flips > 0:
+            changed_slices += 1
+
+        if mc_state.momentum_tables is not None:
+            for spin in mc_state.momentum_tables:
+                table = MomentumProposalTable.from_magnitude(
+                    auxiliary.magnitude(slice_index, spin)
+                )
+                mc_state.momentum_tables[spin][slice_index] = table
+
+    return {
+        "auxiliary_slice_updates": float(time_slices),
+        "auxiliary_slice_changes": float(changed_slices),
+        "auxiliary_site_flips": float(total_flips),
+        "auxiliary_log_delta": total_log_delta,
+        "auxiliary_phase_delta": total_phase_delta,
+    }
+
+
+def _apply_auxiliary_slice_refresh(
+    params: SimulationParameters,
+    auxiliary: AuxiliaryField,
+    configuration: WorldlineConfiguration,
+    slice_index: int,
+    old_field: np.ndarray,
+    new_field: np.ndarray,
+) -> Tuple[float, float, bool]:
+    contributions = _collect_slice_contributions(
+        params, configuration, slice_index
+    )
+    if not contributions:
+        auxiliary.refresh_slice(slice_index, new_field)
+        return 0.0, 0.0, True
+
+    old_log = 0.0
+    old_phase = 0.0
+    for spin, k_from, k_to in contributions:
+        log_mag, phase = transition_log_components(
+            params,
+            auxiliary,
+            spin,
+            slice_index,
+            k_from,
+            k_to,
+        )
+        if np.isneginf(log_mag):
+            raise ValueError(
+                "Encountered zero-magnitude transition before auxiliary refresh."
+            )
+        old_log += log_mag
+        old_phase += phase
+
+    auxiliary.refresh_slice(slice_index, new_field)
+
+    new_log = 0.0
+    new_phase = 0.0
+    for spin, k_from, k_to in contributions:
+        log_mag, phase = transition_log_components(
+            params,
+            auxiliary,
+            spin,
+            slice_index,
+            k_from,
+            k_to,
+        )
+        if np.isneginf(log_mag):
+            auxiliary.refresh_slice(slice_index, old_field)
+            return 0.0, 0.0, False
+        new_log += log_mag
+        new_phase += phase
+
+    return new_log - old_log, new_phase - old_phase, True
+
+
+def _collect_slice_contributions(
+    params: SimulationParameters,
+    configuration: WorldlineConfiguration,
+    slice_index: int,
+) -> List[Tuple[Spin, int, int]]:
+    contributions: List[Tuple[Spin, int, int]] = []
+    time_slices = params.time_slices
+    for spin, worldline_state in configuration.worldlines.items():
+        if slice_index >= worldline_state.time_slices:
+            continue
+        perm = configuration.permutations[spin]
+        for particle in range(worldline_state.particles):
+            forward_ts, forward_target = _forward_link_info(
+                worldline_state,
+                perm,
+                slice_index,
+                particle,
+                time_slices,
+            )
+            if forward_ts != slice_index:
+                continue
+            k_from = int(worldline_state.trajectories[slice_index, particle])
+            contributions.append((spin, k_from, forward_target))
+    return contributions
+
+
+def _compute_local_magnetization(
+    params: SimulationParameters,
+    mc_state: MonteCarloState,
+) -> np.ndarray:
+    wavefunctions = _compute_half_step_wavefunctions(params, mc_state)
+    time_slices = params.time_slices
+    lattice_size = params.lattice_size
+    magnetization = np.zeros(
+        (time_slices, lattice_size, lattice_size), dtype=np.float64
+    )
+
+    psi_up = wavefunctions.get("up")
+    psi_down = wavefunctions.get("down")
+
+    zero = np.zeros((lattice_size, lattice_size), dtype=np.float64)
+
+    for slice_index in range(time_slices):
+        if psi_up is not None:
+            psi_l = psi_up[slice_index]
+            psi_next = psi_up[(slice_index + 1) % time_slices]
+            n_up = np.real(psi_next * np.conj(psi_l))
+        else:
+            n_up = zero
+
+        if psi_down is not None:
+            psi_l = psi_down[slice_index]
+            psi_next = psi_down[(slice_index + 1) % time_slices]
+            n_down = np.real(psi_next * np.conj(psi_l))
+        else:
+            n_down = zero
+
+        magnetization[slice_index] = n_up - n_down
+
+    return magnetization
+
+
+def _compute_half_step_wavefunctions(
+    params: SimulationParameters,
+    mc_state: MonteCarloState,
+) -> Dict[Spin, np.ndarray]:
+    lattice_size = params.lattice_size
+    time_slices = params.time_slices
+    volume = params.volume
+
+    half_step = np.asarray(mc_state.half_step_factor, dtype=np.float64)
+    if half_step.size != volume:
+        raise ValueError("half_step_factor size mismatch with lattice volume.")
+
+    wavefunctions: Dict[Spin, np.ndarray] = {}
+    for spin, mask in mc_state.occupancy_masks.items():
+        if mask.shape != (time_slices, volume):
+            raise ValueError("Occupancy mask shape mismatch for magnetization.")
+        weighted = mask.astype(np.float64, copy=False) * half_step[np.newaxis, :]
+        weighted_grid = weighted.reshape(time_slices, lattice_size, lattice_size)
+        psi = np.fft.ifftn(weighted_grid, axes=(1, 2), norm="ortho")
+        wavefunctions[spin] = psi
+    return wavefunctions
 
 
 def _attempt_momentum_update(

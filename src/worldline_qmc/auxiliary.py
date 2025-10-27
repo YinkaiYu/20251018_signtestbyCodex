@@ -37,6 +37,24 @@ class AuxiliaryFieldSlice:
 
         return np.angle(self.w_fourier[spin])
 
+    def refresh(
+        self,
+        new_spatial_field: np.ndarray,
+        *,
+        coupling: float,
+        fft_mode: str,
+    ) -> None:
+        """Replace the spatial field and recompute cached Fourier data."""
+
+        field = np.asarray(new_spatial_field, dtype=np.int8)
+        if field.shape != self.spatial_field.shape:
+            msg = (
+                "New spatial field shape does not match existing auxiliary slice."
+            )
+            raise ValueError(msg)
+        self.spatial_field = field
+        self.w_fourier = _build_fourier_caches(field, coupling=coupling, mode=fft_mode)
+
 
 @dataclass
 class AuxiliaryField:
@@ -65,6 +83,17 @@ class AuxiliaryField:
     @property
     def time_slices(self) -> int:
         return len(self.slices)
+
+    def refresh_slice(self, slice_index: int, new_spatial_field: np.ndarray) -> None:
+        """Update the specified slice with a new spatial configuration."""
+
+        if slice_index < 0 or slice_index >= len(self.slices):
+            raise IndexError("slice_index out of range for auxiliary field.")
+        self.slices[slice_index].refresh(
+            new_spatial_field,
+            coupling=self.auxiliary_coupling,
+            fft_mode=self.fft_mode,
+        )
 
 
 def generate_auxiliary_field(
@@ -101,17 +130,11 @@ def generate_auxiliary_field(
             mode=params.auxiliary_mode,
         )
 
-        spatial_float = spatial_field.astype(float)
-        exp_up = np.exp(coupling * spatial_float)
-        exp_down = np.exp(-coupling * spatial_float)
-
-        w_up = _fourier_sum(exp_up, mode=fft_mode)
-        w_down = _fourier_sum(exp_down, mode=fft_mode)
-
-        slice_cache = AuxiliaryFieldSlice(
+        slice_cache = _build_slice(
             slice_index=l,
             spatial_field=spatial_field,
-            w_fourier={"up": w_up, "down": w_down},
+            coupling=coupling,
+            fft_mode=fft_mode,
         )
         slices.append(slice_cache)
 
@@ -163,3 +186,33 @@ def _fourier_sum(field: np.ndarray, mode: str) -> np.ndarray:
         return np.real(fft)
     msg = f"Unsupported fft_mode: {mode}"
     raise ValueError(msg)
+
+
+def _build_slice(
+    *,
+    slice_index: int,
+    spatial_field: np.ndarray,
+    coupling: float,
+    fft_mode: str,
+) -> AuxiliaryFieldSlice:
+    caches = _build_fourier_caches(spatial_field, coupling=coupling, mode=fft_mode)
+    return AuxiliaryFieldSlice(
+        slice_index=slice_index,
+        spatial_field=np.asarray(spatial_field, dtype=np.int8),
+        w_fourier=caches,
+    )
+
+
+def _build_fourier_caches(
+    spatial_field: np.ndarray,
+    *,
+    coupling: float,
+    mode: str,
+) -> Dict[Spin, np.ndarray]:
+    field_float = spatial_field.astype(float)
+    exp_up = np.exp(coupling * field_float)
+    exp_down = np.exp(-coupling * field_float)
+    return {
+        "up": _fourier_sum(exp_up, mode=mode),
+        "down": _fourier_sum(exp_down, mode=mode),
+    }

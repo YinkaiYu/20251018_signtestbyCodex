@@ -71,6 +71,11 @@ def run_simulation(
     total_momentum_accepts = 0
     total_permutation_attempts = 0
     total_permutation_accepts = 0
+    total_aux_slice_updates = 0.0
+    total_aux_slice_changes = 0.0
+    total_aux_site_flips = 0.0
+    total_aux_log_delta = 0.0
+    total_aux_phase_delta = 0.0
 
     log_handle = None
     if params.log_path is not None:
@@ -98,6 +103,11 @@ def run_simulation(
             total_momentum_accepts += diagnostics.get("momentum_accepts", 0)
             total_permutation_attempts += diagnostics.get("permutation_attempts", 0)
             total_permutation_accepts += diagnostics.get("permutation_accepts", 0)
+            total_aux_slice_updates += diagnostics.get("auxiliary_slice_updates", 0.0)
+            total_aux_slice_changes += diagnostics.get("auxiliary_slice_changes", 0.0)
+            total_aux_site_flips += diagnostics.get("auxiliary_site_flips", 0.0)
+            total_aux_log_delta += diagnostics.get("auxiliary_log_delta", 0.0)
+            total_aux_phase_delta += diagnostics.get("auxiliary_phase_delta", 0.0)
 
             is_measurement = sweep_index >= params.thermalization_sweeps
             samples_for_logging = phase_samples if phase_samples else [mc_state.phase]
@@ -146,6 +156,11 @@ def run_simulation(
         "permutation_acceptance": permutation_acceptance,
         "total_sweeps": float(total_sweeps),
         "measurement_sweeps": float(params.sweeps),
+        "auxiliary_slice_updates": total_aux_slice_updates,
+        "auxiliary_slice_changes": total_aux_slice_changes,
+        "auxiliary_site_flips": total_aux_site_flips,
+        "auxiliary_log_delta": total_aux_log_delta,
+        "auxiliary_phase_delta": total_aux_phase_delta,
     }
 
     return SimulationResult(
@@ -192,19 +207,24 @@ def _initialize_mc_state(
 ) -> MonteCarloState:
     log_weight, phase = _compute_weight_and_phase(params, auxiliary, configuration)
     occupancy_masks = _build_occupancy_masks(params, configuration)
+    half_step_factor = _compute_half_step_factor(params)
     momentum_tables = None
     if params.momentum_proposal == "w_magnitude":
-        momentum_tables = build_momentum_tables(
+        raw_tables = build_momentum_tables(
             params,
             auxiliary,
             spins=configuration.worldlines.keys(),
         )
+        momentum_tables = {
+            spin: list(per_spin) for spin, per_spin in raw_tables.items()
+        }
     return MonteCarloState(
         configuration=configuration,
         phase=phase,
         log_weight=log_weight,
         rng=rng,
         occupancy_masks=occupancy_masks,
+        half_step_factor=half_step_factor,
         momentum_tables=momentum_tables,
     )
 
@@ -294,6 +314,15 @@ def _resolve_schedule(
         worldline_moves=worldline_moves,
         permutation_moves=permutation_moves,
     )
+
+
+def _compute_half_step_factor(params: SimulationParameters) -> np.ndarray:
+    """Return exp(-Δτ ε_k / 2) flattened over the momentum grid."""
+
+    grid = lattice.momentum_grid(params.lattice_size)
+    energies = lattice.dispersion(grid, params.hopping)
+    exponent = -0.5 * params.delta_tau * energies
+    return np.exp(exponent).astype(np.float64, copy=False).ravel()
 
 
 def _build_occupancy_masks(

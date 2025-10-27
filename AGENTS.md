@@ -10,7 +10,7 @@
 
 ## Repository Snapshot
 - Canonical upstream: <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>
-- Primary goal: simulate the momentum-space worldline QMC formulation at half filling with fixed auxiliary fields, focusing on average-sign measurements.
+- Primary goal: simulate the momentum-space worldline QMC formulation at half filling with Gibbs-sampled auxiliary fields, focusing on average-sign measurements.
 - Current data products: high-statistics checkerboard/FFT=complex sweep stored under `experiments/output_checkerboard_complex_highsweep/`.
 
 ## Development Workflow
@@ -157,6 +157,11 @@ Future updates to this plan should timestamp new sections to preserve progress h
 - Momentum Metropolis updates now draw proposals via these tables and add the `\log P_l(q_{\text{old}}) - \log P_l(q_{\text{new}})` correction to maintain detailed balance while keeping the stored log-weight purely physical.
 - Added regression coverage (`tests/test_updates.py::test_momentum_update_weighted_proposal`) validating the selective cancellation of `|W|` factors and phase preservation.
 - README and `note.md` refreshed to document the new proposal mode and acceptance-ratio bookkeeping.
+
+## Stage 16 – Auxiliary Field Gibbs Sampling (2025-10-20)
+- Added once-per-sweep Gibbs updates of the auxiliary field using half-step wavefunctions to reconstruct the local magnetization and logistic heat-bath probabilities.
+- Auxiliary slices now refresh their cached Fourier transforms in place; momentum proposal tables are rebuilt slice-by-slice and the Monte Carlo state keeps incremental `\Delta\log|w|`/`\Delta\Phi` corrections in sync.
+- Expanded diagnostics with auxiliary slice/flip counters and introduced regression tests covering magnetization reconstruction, zero-magnetization heat baths, real-FFT phase conservation, and sweep-level weight/phase consistency; documentation (`note.md`, README, AGENTS) updated with the new workflow guidance.
 
 ## Cluster Workflow Reference (updated 2025-10-20)
 - **Sync the repo** – On the server run `git clone` (or `git pull`) so that source files stay aligned with the local workspace. Use `rsync` only for large data folders that are intentionally excluded from version control.

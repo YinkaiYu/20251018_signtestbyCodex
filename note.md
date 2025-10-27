@@ -165,8 +165,35 @@ Pauli 不相容原理：对每个切片 $l$ 和自旋 $\sigma$，单粒子动量
   $$\Delta\Phi_{\text{perm}}=\arg\frac{M_{L_\tau-1,\sigma}(k_{0}^{(P b)}\leftarrow k_{L_\tau-1}^{(a)})}{M_{L_\tau-1,\sigma}(k_{0}^{(P a)}\leftarrow k_{L_\tau-1}^{(a)})}
   +\arg\frac{M_{L_\tau-1,\sigma}(k_{0}^{(P a)}\leftarrow k_{L_\tau-1}^{(b)})}{M_{L_\tau-1,\sigma}(k_{0}^{(P b)}\leftarrow k_{L_\tau-1}^{(b)})}.$$
 
+
+### 辅助场 Gibbs 更新（半步波函数与磁化）
+
+- 定义半步传播因子 $D(k)=\exp\left[-\frac{\Delta\tau}{2}\varepsilon_k\right]$，并以动量占据 $n_{\sigma,l}(k)$ 构造半步波函数
+  $$
+  \psi_{\sigma,l}(r)
+  =\frac{1}{\sqrt{V}}\sum_k D(k)\,n_{\sigma,l}(k)\,e^{i k\cdot r},\qquad
+  \psi_{\sigma,l+1}(r)
+  =\frac{1}{\sqrt{V}}\sum_k D(k)\,n_{\sigma,l+1}(k)\,e^{i k\cdot r},
+  $$
+  实现中通过 IFFT（单位归一化）快速得到 $\psi$。
+- 邻近时间片的重叠给出实空间粒子数
+  $$
+  n_{il\sigma} = \operatorname{Re}\!\left[\psi_{\sigma,l+1}(r_i)\,\psi_{\sigma,l}^\*(r_i)\right],\qquad
+  m_{il}=n_{il\uparrow}-n_{il\downarrow}.
+  $$
+- 条件分布为独立的 Bernoulli（热浴）：
+  $$
+  P(s_{il}=+1)=\frac{1+\tanh(\lambda m_{il})}{2},\qquad
+  P(s_{il}=-1)=1-P(s_{il}=+1).
+  $$
+- 一次 Gibbs sweep 遍历全部 $(i,l)$，按上述概率重采样 $s_{il}$。若某时间片发生翻转，则需：
+  1. 重新计算该片的 $W_{l,\sigma}(q)$ 并更新任何依赖 $|W|$ 的提议表；
+  2. 对所有穿过该时间片的链路，重新评估 $M_{l,\sigma}$ 的模与相位，累加
+     $\Delta\log|w|$ 与 $\Delta\Phi$，从而保持全局权重与测量的连贯性。
+- 在当前实现中，每个 Monte Carlo sweep 末执行一次完整的辅助场 Gibbs 更新；未来若需要，可再将其穿插于动量或 permutation 更新之间。
+
 实现要点与建议：
-- 固定辅助场：在模拟开始生成 $s_{il}=\pm1$（独立同分布即可），并据此通过 FFT 预计算所有片的 $W_{l,\sigma}(q)$、其模 $|W|$ 与相位 $\arg W$；模拟过程中不再更新 $s_{il}$。
+- 辅助场 Gibbs 更新：模拟开始仍会根据配置生成初始 $s_{il}$ 并预存 $W_{l,\sigma}(q)$；随后每个 sweep 末按热浴分布重采样所有 $s_{il}$，并同步刷新 $W$、动量提议分布以及对应的 $\log|w|/\Phi$ 增量。
 - 初始化：可取 $P_{\sigma}=\text{id}$，并将 $k_{l,\sigma}^{(n)}$ 在 BZ 上均匀初始化，且对每个切片 $l$、自旋 $\sigma$ 确保不同粒子 $n$ 的动量互不相同（满足 Pauli 约束）。
 - 更新日程：一次 sweep 可包含若干次 $K$ 局部更新（遍历 $l,n,\sigma$ 或随机抽样若干对 $(l,n,\sigma)$），以及若干次 permutation 的二体换位尝试；必要时可加入“循环移动”或“洗牌”以改善遍历性。
 - 采样权重：Metropolis 接受率一律使用 $|w|$ 的比值；$\text{sgn}(P_{\uparrow})\text{sgn}(P_{\downarrow})$ 与 $\arg W$ 只进入观测量 $S(X)$。

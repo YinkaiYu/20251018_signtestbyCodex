@@ -1,6 +1,6 @@
 # Fermionic Worldline QMC
 
-Fermionic Worldline QMC simulates the momentum-space worldline formulation of the half-filled Hubbard model with a fixed auxiliary Hubbard–Stratonovich field.  The implementation follows the derivations collected in `note.md`, samples fermionic worldlines and permutations, and measures the complex average sign/phase.
+Fermionic Worldline QMC simulates the momentum-space worldline formulation of the half-filled Hubbard model with a Gibbs-sampled auxiliary Hubbard–Stratonovich field.  The implementation follows the derivations collected in `note.md`, sampling fermionic worldlines, permutations, and auxiliary fields while measuring the complex average sign/phase.
 
 The canonical upstream lives at <https://github.com/YinkaiYu/Fermionic-Worldline-QMC.git>.  Issues, feature requests, and data contributions should reference this repository.
 
@@ -8,6 +8,7 @@ The canonical upstream lives at <https://github.com/YinkaiYu/Fermionic-Worldline
 
 - Momentum-space worldline Monte Carlo with explicit permutation sampling.
 - Auxiliary field precomputation (`W_{l,σ}(q)`) via FFT, including optional checkerboard/uniform modes.
+- Once-per-sweep Gibbs updates of the auxiliary field using reconstructed real-space magnetization.
 - Log-domain Metropolis updates with optional `|W|`-weighted momentum proposals.
 - Incremental complex phase accumulation and sweep-level binning for error bars.
 - Experiment scripts for parameter sweeps and plotting utilities for quick diagnostics.
@@ -30,7 +31,7 @@ micromamba activate qmc311
 pip install -e .[dev]
 ```
 
-After activation, `pytest` should report `36 passed`, confirming the environment.
+After activation, `pytest` should report `41 passed`, confirming the environment.
 
 ## Repository Layout
 
@@ -74,6 +75,8 @@ aux_field = auxiliary.generate_auxiliary_field(params)
 result = simulation.run_simulation(params, aux_field)
 print(result.to_dict())
 ```
+
+`run_simulation` mutates the supplied auxiliary field in place: each sweep performs a Gibbs refresh of all slices and updates the cached Fourier data so proposal tables and phase bookkeeping stay consistent with the worldline configuration.
 
 ## Configuration Reference
 
